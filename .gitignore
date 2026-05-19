@@ -151,4 +151,5 @@ pubspec.lock
 **/generated_plugins.cmake
 **/macos/**/GeneratedPluginRegistrant.swift
 
-**/AppLocalization*.dart
+**/app_localizations*.dart
+**/gen/
