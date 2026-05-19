@@ -1,4 +1,4 @@
-package com.example.finwise
+package com.finwise.finance.calc.loanchecker
 
 import io.flutter.embedding.android.FlutterActivity
 

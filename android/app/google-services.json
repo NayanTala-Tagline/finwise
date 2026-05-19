@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "701508118565",
+    "project_id": "finwise-e24b0",
+    "storage_bucket": "finwise-e24b0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:701508118565:android:985924a130bb2b1bb677cc",
+        "android_client_info": {
+          "package_name": "com.finwise.finance.calc.loanchecker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzZy37NFLuJ2jnBQ5_Bhy5LcCgB6ijbGg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

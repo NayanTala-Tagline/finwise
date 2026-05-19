@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:ad_manager/ad_manager.dart';
+import 'package:finwise/firebase_option.dart';
 import 'package:finwise/utils/remote_config.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -20,14 +21,14 @@ import 'utils/crashlytics_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   FlutterError.onError = (FlutterErrorDetails details) {
     CrashlyticsManager.instance.logFlutterError(details);
   };
-  // PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
-  //   CrashlyticsManager.instance.logHandledDartError(error: error, stackTrace: stack);
-  //   return true;
-  // };
+  PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
+    CrashlyticsManager.instance.logHandledDartError(error: error, stackTrace: stack);
+    return true;
+  };
   await Hive.initFlutter();
   Injector.initModules();
 
@@ -66,7 +67,7 @@ class MyApp extends StatelessWidget {
         // return Consumer<LocaleProvider>(
         //     builder: (context,localeProvider,_) {
               return MaterialApp.router(
-                title: 'Finlora',
+                title: 'FinWise',
                 debugShowCheckedModeBanner: false,
                 localizationsDelegates: AppLocalizations.localizationsDelegates,
                 supportedLocales: AppLocalizations.supportedLocales,

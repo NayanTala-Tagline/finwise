@@ -47,7 +47,7 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/',
       pageBuilder: (context, state) =>
-          MaterialPage(key: state.pageKey, child: const Scaffold()),
+          MaterialPage(key: state.pageKey, child: const Scaffold(body: Center(child: Text('Home Screen'),),)),
     ),
 
     // Loan-finder flow — shared LoanFinderProvider (form) +

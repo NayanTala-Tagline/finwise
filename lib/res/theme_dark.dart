@@ -1,9 +1,7 @@
-
 import 'package:finwise/res/theme_colors.dart';
 import 'package:finwise/res/theme_text_colors.dart';
 import 'package:flutter/material.dart';
-
-import '../gen/fonts.gen.dart';
+ import '../gen/fonts.gen.dart';
 import '../utils/app_size.dart';
 
 /// Application Theme

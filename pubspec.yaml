@@ -102,16 +102,15 @@ flutter:
     generate: true,
     assets:
       [
-        "assets/compareIcons/",
-        "assets/icons/",
-        "assets/fonts/",
-        "assets/homeIcons/",
+        "assets/botombar_icons/",
         "assets/images/",
-        "assets/loan_finder/",
-        "assets/navIcons/",
-        "assets/settingIcons/",
-        "assets/toolsIcons/",
-        "assets/splash/",
+        "assets/fonts/",
+        "assets/home_icons/",
+        "assets/onboarding_icons/",
+        "assets/personal_loan_icons/",
+        "assets/required_documents/",
+        "assets/temperature_icons/",
+        "assets/tips_advice_icons/",
       ],
     fonts:
       [

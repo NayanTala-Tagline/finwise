@@ -4,7 +4,7 @@ import 'package:finwise/res/theme_colors.dart';
 import 'package:finwise/res/theme_text_colors.dart';
 import 'package:flutter/material.dart';
 
-import '../gen/fonts.gen.dart';
+ import '../gen/fonts.gen.dart';
 import '../utils/app_size.dart';
 
 /// Application Theme
@@ -13,9 +13,9 @@ final _lightThemeData = ThemeData.dark(useMaterial3: true);
 
 const _themeColors = ThemeColors(
     whiteColor: Color(0xFFFFFFFF),
-    backgroundColor: Color(0xFFEDEDED),
+    backgroundColor: Color(0xFFF8F9FA),
     backgroundColor2: Color(0xFFFFFAF9),
-    primary: Color(0xFFF95024),
+    primary: Color(0xFF2563EB),
     secondary: Color(0xFFF07146),
     secondary2: Color(0xFFFBD7B7),
     borderColor: Color(0xFFED5237),
@@ -31,12 +31,12 @@ const _themeColors = ThemeColors(
  );
 
 const _themeTextColors = ThemeTextColors(
-    textColor: Color(0xFF000000),
+    textColor: Color(0xFF0F172A),
     textBlackColor: Color(0xFF132B28),
     hintTextColor: Color(0xFF757575),
-    descriptionColor: Color(0xFF807F7E),
+    descriptionColor: Color(0xFF64748B),
     pastalYellow: Color(0xF3DCC1CC),
-    primaryTextColor: Color(0xFFF95024),
+    primaryTextColor: Color(0xFF2563EB),
     secondaryTextColor: Color(0xFFffffff)
 
 );
