@@ -7,89 +7,7 @@ import 'package:flutter/material.dart';
 import '../extension/ext_context.dart';
 import '../utils/app_size.dart';
 
-// ── Glow button painter ────────────────────────────────────────────────────
-// Exactly replicates the SVG:
-//   • Elliptical radial gradient via the exact gradientTransform matrix
-//       matrix(0, 69.664, -452.997, -13.1548, 177, -8.72577)
-//   • Center at gradient-space origin → user-space (177, -8.73) — just above top-centre
-//   • Horizontal semi-axis ≈ 453 px, vertical semi-axis ≈ 70 px
-//   • Stops: #FFFF37 @ 0.08, black @ 1.0
-//   • BlendMode.colorDodge (mix-blend-mode: color-dodge)
-//   • Inner highlight: white stroke offset (1,1) at 20 % opacity
-class _GlowPainter extends CustomPainter {
-  final double borderRadius;
-  final bool isDisabled;
 
-  const _GlowPainter({required this.borderRadius, this.isDisabled = false});
-
-  // SVG gradientTransform: matrix(a, b, c, d, e, f)
-  //   a=0  b=69.664  c=-452.997  d=-13.1548  e=177  f=-8.72577
-  //
-  // In Skia/Flutter, ui.Gradient.radial's localMatrix maps gradient→canvas.
-  // Skia applies its inverse to canvas coords to get gradient coords — which
-  // exactly matches SVG's gradientTransform semantics.
-  //
-  // 4×4 column-major layout (index = row + col*4):
-  //   col 0 → [a, b, 0, 0]
-  //   col 1 → [c, d, 0, 0]
-  //   col 2 → [0, 0, 1, 0]
-  //   col 3 → [e, f, 0, 1]
-  static final Float64List _gradientMatrix = Float64List.fromList([
-    0, 69.664, 0, 0, // col 0
-    -452.997, -13.1548, 0, 0, // col 1
-    0, 0, 1, 0, // col 2
-    177, -8.72577, 0, 1, // col 3
-  ]);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final rrect = RRect.fromRectAndRadius(
-      Offset.zero & size,
-      Radius.circular(borderRadius),
-    );
-
-    // ── Elliptical radial gradient (color-dodge) ───────────────────────────
-    // center = (0,0) in gradient space (cx=0, cy=0 from SVG)
-    // radius = 1.0  (r=1 from SVG)
-    // matrix = gradientTransform — Skia applies its inverse when sampling
-    final gradientPaint = Paint()
-      ..shader = ui.Gradient.radial(
-        Offset.zero,
-        1.6,
-        isDisabled
-            ? [Colors.grey.shade600, Colors.grey.shade900]
-            : [const Color(0xFF42fe40), Colors.black],
-        const [0.01, 0.3],
-        TileMode.clamp,
-        _gradientMatrix,
-      )
-      ..blendMode = BlendMode.srcOver;
-
-    canvas.drawRRect(rrect, gradientPaint);
-
-    // ── Inner highlight shadow (white, offset 1,1, 20 %) ──────────────────
-    canvas.save();
-    canvas.clipRRect(rrect);
-
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(0.5, 0.5, size.width - 1, size.height - 1),
-        Radius.circular(borderRadius - 0.5),
-      ),
-      Paint()
-        ..color = Colors.white.withOpacity(0.20)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.5
-        ..blendMode = BlendMode.srcOver,
-    );
-
-    canvas.restore();
-  }
-
-  @override
-  bool shouldRepaint(_GlowPainter old) =>
-      old.borderRadius != borderRadius || old.isDisabled != isDisabled;
-}
 
 // ── AppButton ──────────────────────────────────────────────────────────────
 
@@ -108,6 +26,8 @@ class AppButton extends StatefulWidget {
     this.foregroundColor,
     this.buttonStyle,
     this.icon,
+    this.prefixIcon,
+    this.suffixIcon,
     this.visualDensity,
     this.textStyle,
     this.buttonColor,
@@ -131,6 +51,8 @@ class AppButton extends StatefulWidget {
   final VisualDensity? visualDensity;
   final TextStyle? textStyle;
   final Widget? icon;
+  final Widget? prefixIcon;
+  final Widget? suffixIcon;
   final bool showIconOnly;
   final bool isFillButton;
   final bool isOutlined;
@@ -270,35 +192,25 @@ class _AppButtonState extends State<AppButton> {
     // If a custom gradient was explicitly passed, fall back to the original
     // flat-gradient look so caller behaviour is preserved.
     if (widget.gradient == null) {
+      final buttonColor = widget.backgroundColor ?? Colors.white;
+      
       return Container(
         height: height,
         width: height != null ? double.infinity : null,
         padding: padding,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-                color: Color(0xffF9D2C5),
-              blurRadius:AppSize.r16,
-              spreadRadius: AppSize.sp2
-            )
-          ],
-          gradient:
-              widget.gradient ??
-              LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  context.themeColors.buttonColor.withValues(alpha: 0.1),
-                  context.themeColors.buttonColor2.withValues(alpha: 0.2),
-                ],
-                stops: [0,1]
-              ),
+          color: buttonColor,
           borderRadius: BorderRadius.circular(radius),
-          border: Border.all(
-            width: 2,
-            color:  context.themeColors.buttonColor.withValues(alpha: 0.55),
-          ),
+          boxShadow: buttonColor == Colors.white
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
         ),
         child: child,
       );
@@ -336,13 +248,17 @@ class _AppButtonState extends State<AppButton> {
   // ── Loading indicator (unchanged) ────────────────────────────────────────
 
   Widget _loader() {
+    final bool isWhiteButton = widget.backgroundColor == Colors.white || widget.backgroundColor == null;
+    
     return Padding(
       padding: EdgeInsets.symmetric(vertical: AppSize.h2),
       child: FittedBox(
         fit: BoxFit.scaleDown,
         child: Center(
           child: CircularProgressIndicator.adaptive(
-            valueColor: AlwaysStoppedAnimation(context.themeColors.iconColor),
+            valueColor: AlwaysStoppedAnimation(
+              isWhiteButton ? context.themeColors.primary : Colors.white,
+            ),
           ),
         ),
       ),
@@ -353,9 +269,10 @@ class _AppButtonState extends State<AppButton> {
 
   Widget _buildButtonContent(BuildContext context) {
     final bool isOutlineButton = widget.buttonColor != null;
+    final bool isWhiteButton = widget.backgroundColor == Colors.white || widget.backgroundColor == null;
     final textColor = widget.isDisabled
         ? Colors.grey.shade400
-        : (widget.foregroundColor ?? context.themeTextColors.textColor);
+        : (widget.foregroundColor ?? (isWhiteButton ? context.themeTextColors.textColor : Colors.white));
 
     final textWidget = Padding(
       padding: EdgeInsets.only(top: AppSize.h0),
@@ -391,6 +308,17 @@ class _AppButtonState extends State<AppButton> {
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: AppSize.w14),
         child: Row(spacing: AppSize.w35, children: [widget.icon!, textWidget]),
+      );
+    } else if (widget.prefixIcon != null || widget.suffixIcon != null) {
+      // Handle prefix and suffix icons
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        spacing: AppSize.w8,
+        children: [
+          if (widget.prefixIcon != null) widget.prefixIcon!,
+          textWidget,
+          if (widget.suffixIcon != null) widget.suffixIcon!,
+        ],
       );
     } else if (widget.icon != null) {
       return Row(

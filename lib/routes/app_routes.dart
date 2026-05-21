@@ -7,10 +7,12 @@ class AppRoutes {
   const AppRoutes._();
 
   static const String splash = 'SplashScreen';
+  static const String welcome = 'WelcomeScreen';
   static const String onboarding1 = 'Onboarding1Screen';
   static const String onboarding2 = 'Onboarding2Screen';
   static const String onboarding3 = 'Onboarding3Screen';
   static const String onboarding4 = 'Onboarding4Screen';
+  static const String onboarding5 = 'Onboarding5Screen';
 
   static const String home = 'home';
   static const String tools = 'tools';

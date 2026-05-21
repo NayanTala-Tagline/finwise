@@ -122,6 +122,10 @@ class RemoteConfigService {
 
   AdData get languageNative2 => _getAdData('language_native_2');
 
+  AdData get welcomeNative => _getAdData('welcome_native');
+
+  AdData get welcomeInter => _getAdData('welcome_inter');
+
   AdData get onboardingNative1 => _getAdData('onboarding_screen1');
 
   AdData get onboardingNative2 => _getAdData('onboarding_screen2');
@@ -130,6 +134,8 @@ class RemoteConfigService {
 
   AdData get onboardingNative4 => _getAdData('onboarding_screen4');
 
+  AdData get onboardingNative5 => _getAdData('onboarding_screen5');
+
   AdData get onboardingInter1 => _getAdData('onboarding_inter1');
 
   AdData get onboardingInter2 => _getAdData('onboarding_inter2');
@@ -137,6 +143,8 @@ class RemoteConfigService {
   AdData get onboardingInter3 => _getAdData('onboarding_inter3');
 
   AdData get onboardingInter4 => _getAdData('onboarding_inter4');
+
+  AdData get onboardingInter5 => _getAdData('onboarding_inter5');
 
   AdData get bottomNavBanner1 => _getAdData('bottom_nav_banner_1');
 
@@ -207,6 +215,26 @@ class RemoteConfigService {
   AdData get languageNative => _getAdData('language_native');
 
   AdData get contactNative => _getAdData('contact_native');
+
+  AdData get bottomHome => _getAdData('bottom_home');
+  AdData get bottomTool => _getAdData('bottom_tool');
+  AdData get bottomCompare => _getAdData('bottom_compare');
+  AdData get bottomSetting => _getAdData('bottom_setting');
+
+  bool get onboarding1ButtonBottom => _get('onboarding_1_button_bottom', false);
+  bool get onboarding2ButtonBottom => _get('onboarding_2_button_bottom', false);
+  bool get onboarding3ButtonBottom => _get('onboarding_3_button_bottom', false);
+  bool get onboarding4ButtonBottom => _get('onboarding_4_button_bottom', false);
+  bool get onboarding5ButtonBottom => _get('onboarding_5_button_bottom', false);
+
+  bool get step1ButtonBottom => _get('step_1_button_bottom', false);
+  bool get step2ButtonBottom => _get('step_2_button_bottom', false);
+  bool get step3ButtonBottom => _get('step_3_button_bottom', false);
+  bool get step4ButtonBottom => _get('step_4_button_bottom', false);
+  bool get step5ButtonBottom => _get('step_5_button_bottom', false);
+  bool get step6ButtonBottom => _get('step_6_button_bottom', false);
+  bool get step7ButtonBottom => _get('step_7_button_bottom', false);
+
 
   AdData get appReward => _getAdData('app_reward');
 

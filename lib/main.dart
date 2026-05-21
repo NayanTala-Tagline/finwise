@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:ad_manager/ad_manager.dart';
 import 'package:finwise/firebase_option.dart';
+import 'package:finwise/utils/install_referrer_service.dart';
 import 'package:finwise/utils/remote_config.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -34,12 +36,18 @@ void main() async {
 
   // assetToFilePath(Assets.images.onBoarding2.path);
   await Injector.instance.isReady<AppDB>();
-  // await GoogleSignIn.instance.initialize();
-  // await RemoteConfigService.instance.init();
-  // await MobileAds.instance.initialize();
+  await GoogleSignIn.instance.initialize();
+  await RemoteConfigService.instance.init();
+  await MobileAds.instance.initialize();
+  unawaited(InstallReferrerService.instance.resolveOnce());
 
   // 🔒 Lock orientation (portrait only)
   // _iZootoInitialise();
+  // await NotificationHelper.initializeNotification();
+  // OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+  // OneSignal.initialize("0f5903ef-d2b4-4091-91c8-c7d42bb53dfe");
+  // OneSignal.Notifications.requestPermission(false);
+  // await AnalyticsManager.instance.initMetaSdk();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(
       // MultiProvider(
