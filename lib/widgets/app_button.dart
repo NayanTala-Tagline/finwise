@@ -192,7 +192,7 @@ class _AppButtonState extends State<AppButton> {
     // If a custom gradient was explicitly passed, fall back to the original
     // flat-gradient look so caller behaviour is preserved.
     if (widget.gradient == null) {
-      final buttonColor = widget.backgroundColor ?? Colors.white;
+      final buttonColor = widget.backgroundColor ?? context.themeColors.primary;
       
       return Container(
         height: height,
@@ -248,7 +248,7 @@ class _AppButtonState extends State<AppButton> {
   // ── Loading indicator (unchanged) ────────────────────────────────────────
 
   Widget _loader() {
-    final bool isWhiteButton = widget.backgroundColor == Colors.white || widget.backgroundColor == null;
+    final bool isWhiteButton = widget.backgroundColor == Colors.white;
     
     return Padding(
       padding: EdgeInsets.symmetric(vertical: AppSize.h2),
@@ -269,7 +269,7 @@ class _AppButtonState extends State<AppButton> {
 
   Widget _buildButtonContent(BuildContext context) {
     final bool isOutlineButton = widget.buttonColor != null;
-    final bool isWhiteButton = widget.backgroundColor == Colors.white || widget.backgroundColor == null;
+    final bool isWhiteButton = widget.backgroundColor == Colors.white;
     final textColor = widget.isDisabled
         ? Colors.grey.shade400
         : (widget.foregroundColor ?? (isWhiteButton ? context.themeTextColors.textColor : Colors.white));

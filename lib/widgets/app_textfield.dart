@@ -177,12 +177,7 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
         if (widget.title != null)
           Row(
             children: [
-              SizedBox(width: AppSize.w10,),
-              Container(
-                width: AppSize.w4,
-                height: AppSize.h26,
-                decoration: BoxDecoration(color: Color(0xffF87354),borderRadius: BorderRadius.circular(AppSize.r10)),
-              ),
+
               Text(
                 '  ${widget.title}',
                 style:
@@ -352,14 +347,19 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
       builder: (context, isFocused, child) {
         return Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(widget.borderRadius ?? AppSize.r12),
-            boxShadow: widget.fillColor != null ? null : [
+            borderRadius: BorderRadius.circular(widget.borderRadius ?? AppSize.r36),
+            border: Border.all(color: Color(0xffE2E8F0)),
+            boxShadow: widget.fillColor != null
+                ? null
+                : [
               widget.shadow ??
-              BoxShadow(
-                color: Color(0xffFF8F4A).withValues(alpha: 0.25),
-                blurRadius: AppSize.r24,
-                spreadRadius: AppSize.sp1,
-               ),
+                  BoxShadow(
+                    color:
+                      Color(0xff000000).withValues(alpha: 0.1),
+                    offset: Offset(0, 4),
+                    blurRadius: AppSize.r6,
+                    spreadRadius: -AppSize.sp4,
+                  ),
             ],
           ),
           child: TextFormField(
@@ -404,7 +404,7 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
                   border:
                       widget.inputBorder ??
                       OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(widget.borderRadius ?? AppSize.r12),
+                        borderRadius: BorderRadius.circular(widget.borderRadius ?? AppSize.r36),
                         borderSide: widget.borderSide ?? BorderSide.none,
                       ),
                   prefixIcon: widget.prefixIcon == null

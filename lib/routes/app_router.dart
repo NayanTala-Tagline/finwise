@@ -1,4 +1,15 @@
 import 'package:ad_manager/ad_manager.dart';
+import 'package:finwise/features/loan_finder/credit_score_screen.dart';
+import 'package:finwise/features/loan_finder/employment_status_screen.dart';
+import 'package:finwise/features/loan_finder/existing_loans_screen.dart';
+import 'package:finwise/features/loan_finder/loan_amount_screen.dart';
+import 'package:finwise/features/loan_finder/loan_purpose_screen.dart';
+import 'package:finwise/features/loan_finder/loan_urgency_screen.dart';
+import 'package:finwise/features/loan_finder/model/loan_finder_result.dart';
+import 'package:finwise/features/loan_finder/monthly_income_screen.dart';
+import 'package:finwise/features/loan_finder/provider/loan_finder_ad_provider.dart';
+import 'package:finwise/features/loan_finder/provider/loan_finder_provider.dart';
+import 'package:finwise/features/loan_finder/recommendations_screen.dart';
 import 'package:finwise/features/onboarding/welcome_screen.dart';
 import 'package:finwise/features/onboarding/onboarding1_screen.dart';
 import 'package:finwise/features/onboarding/onboarding2_screen.dart';
@@ -143,7 +154,123 @@ final appRouter = GoRouter(
 
     // Loan-finder flow — shared LoanFinderProvider (form) +
     // LoanFinderAdProvider (ads) across all 7 steps.
-
+    ShellRoute(
+      builder: (context, state, child) => MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => LoanFinderProvider()),
+          ChangeNotifierProvider(create: (_) => LoanFinderAdProvider()),
+        ],
+        child: child,
+      ),
+      routes: [
+        GoRoute(
+          path: '/${AppRoutes.loanPurpose}',
+          name: AppRoutes.loanPurpose,
+          pageBuilder: (context, state) =>
+              MaterialPage(key: state.pageKey, child: const LoanPurposeScreen()),
+        ),
+        GoRoute(
+          path: '/${AppRoutes.loanAmount}',
+          name: AppRoutes.loanAmount,
+          pageBuilder: (context, state) {
+            final ad = state.extra is InlineAdManager
+                ? state.extra as InlineAdManager
+                : null;
+            return MaterialPage(
+              key: state.pageKey,
+              child: LoanAmountScreen(inlineAd: ad),
+            );
+          },
+        ),
+        GoRoute(
+          path: '/${AppRoutes.monthlyIncome}',
+          name: AppRoutes.monthlyIncome,
+          pageBuilder: (context, state) {
+            final ad = state.extra is InlineAdManager
+                ? state.extra as InlineAdManager
+                : null;
+            return MaterialPage(
+              key: state.pageKey,
+              child: MonthlyIncomeScreen(inlineAd: ad),
+            );
+          },
+        ),
+        GoRoute(
+          path: '/${AppRoutes.employmentStatus}',
+          name: AppRoutes.employmentStatus,
+          pageBuilder: (context, state) {
+            final ad = state.extra is InlineAdManager
+                ? state.extra as InlineAdManager
+                : null;
+            return MaterialPage(
+              key: state.pageKey,
+              child: EmploymentStatusScreen(inlineAd: ad),
+            );
+          },
+        ),
+        GoRoute(
+          path: '/${AppRoutes.creditScore}',
+          name: AppRoutes.creditScore,
+          pageBuilder: (context, state) {
+            final ad = state.extra is InlineAdManager
+                ? state.extra as InlineAdManager
+                : null;
+            return MaterialPage(
+              key: state.pageKey,
+              child: CreditScoreScreen(inlineAd: ad),
+            );
+          },
+        ),
+        GoRoute(
+          path: '/${AppRoutes.existingLoans}',
+          name: AppRoutes.existingLoans,
+          pageBuilder: (context, state) {
+            final ad = state.extra is InlineAdManager
+                ? state.extra as InlineAdManager
+                : null;
+            return MaterialPage(
+              key: state.pageKey,
+              child: ExistingLoansScreen(inlineAd: ad),
+            );
+          },
+        ),
+        GoRoute(
+          path: '/${AppRoutes.loanUrgency}',
+          name: AppRoutes.loanUrgency,
+          pageBuilder: (context, state) {
+            final ad = state.extra is InlineAdManager
+                ? state.extra as InlineAdManager
+                : null;
+            return MaterialPage(
+              key: state.pageKey,
+              child: LoanUrgencyScreen(inlineAd: ad),
+            );
+          },
+        ),
+        // GoRoute(
+        //   path: '/${AppRoutes.language}',
+        //   name: AppRoutes.language,
+        //   pageBuilder: (context, state) {
+        //     return MaterialPage(key: state.pageKey, child:   LanguageScreen());
+        //   },
+        // ),
+        // GoRoute(
+        //   path: '/${AppRoutes.contactUs}',
+        //   name: AppRoutes.contactUs,
+        //   pageBuilder: (context, state) {
+        //     return MaterialPage(key: state.pageKey, child:   ContactUsScreen());
+        //   },
+        // ),
+      ],
+    ),
+    GoRoute(
+      path: '/${AppRoutes.recommendations}',
+      name: AppRoutes.recommendations,
+      pageBuilder: (context, state) => MaterialPage(
+        key: state.pageKey,
+        child: RecommendationsScreen(result: state.extra! as LoanFinderResult),
+      ),
+    ),
     // StatefulShellRoute.indexedStack(
     //   builder: (context, state, navigationShell) {
     //     return BottomNavPage(key: state.pageKey, child: navigationShell);
