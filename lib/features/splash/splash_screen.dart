@@ -246,10 +246,10 @@ class _SplashScreenState extends State<SplashScreen> {
       print('enter');
       unawaited(_welcomeNative?.dispose());
       _welcomeNative = null;
-      // context.goNamed(AppRoutes.home);
-      final handoff = _welcomeNative;
-      _welcomeNative = null;
-      context.goNamed(AppRoutes.welcome, extra: handoff);
+      context.goNamed(AppRoutes.home);
+      // final handoff = _welcomeNative;
+      // _welcomeNative = null;
+      // context.goNamed(AppRoutes.welcome, extra: handoff);
       return;
     }
 

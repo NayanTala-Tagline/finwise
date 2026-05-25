@@ -1,6 +1,3 @@
-import 'dart:typed_data';
-
-import 'package:finwise/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 
 import '../extension/ext_context.dart';
@@ -74,26 +71,33 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final defaultLeading = GestureDetector(
-      onTap: onBackPress ?? () {
-        NavigationHelper().handleBackPress(context);
-      },
+      onTap: onBackPress ?? () => NavigationHelper().handleBackPress(context),
+      behavior: HitTestBehavior.opaque,
       child: Padding(
-        padding:   EdgeInsets.symmetric(vertical: AppSize.h6),
-        // child: Center(
-        //   child:  Assets.icons.icBack.svg()
-        // ),
+        padding: EdgeInsets.symmetric(horizontal: AppSize.w4),
+        child: Icon(
+          Icons.chevron_left_rounded,
+          size: AppSize.sp30,
+          color: context.themeTextColors.textColor,
+        ),
       ),
     );
 
     return SafeArea(
       bottom: false,
-      child: Padding(
+      child: Container(
+        decoration: BoxDecoration(
+          color: backgroundColor ?? Colors.white,
+          border: const Border(
+            bottom: BorderSide(color: Color(0xFFE2E8F0), width: 1),
+          ),
+        ),
         padding: EdgeInsets.symmetric(
           horizontal: horizontalPadding ?? AppSize.w18,
           vertical: verticalPadding ?? 0.0,
         ),
         child: AppBar(
-          backgroundColor: backgroundColor ?? Colors.transparent,
+          backgroundColor: Colors.transparent,
           elevation: 0,
           automaticallyImplyLeading: false,
           titleSpacing: 0.0,
@@ -103,7 +107,11 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
           title: title ??
               Text(
                 titleText ?? '',
-                style: context.textTheme.titleSmall?.copyWith(fontSize: AppSize.sp19),
+                style: titleTextStyle ??
+                    context.textTheme.titleSmall?.copyWith(
+                      fontSize: AppSize.sp18,
+                      fontWeight: FontWeight.w700,
+                    ),
               ),
           centerTitle: true,
           actions: actions,

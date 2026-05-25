@@ -1,4 +1,8 @@
 import 'package:ad_manager/ad_manager.dart';
+import 'package:finwise/features/bottom_nav/ui/bottom_nav_page.dart';
+import 'package:finwise/features/compare_module/compare_screen.dart';
+import 'package:finwise/features/document_required/document_required_screen.dart';
+import 'package:finwise/features/home_module/home_screen.dart';
 import 'package:finwise/features/loan_finder/credit_score_screen.dart';
 import 'package:finwise/features/loan_finder/employment_status_screen.dart';
 import 'package:finwise/features/loan_finder/existing_loans_screen.dart';
@@ -16,7 +20,13 @@ import 'package:finwise/features/onboarding/onboarding2_screen.dart';
 import 'package:finwise/features/onboarding/onboarding3_screen.dart';
 import 'package:finwise/features/onboarding/onboarding4_screen.dart';
 import 'package:finwise/features/onboarding/onboarding5_screen.dart';
+import 'package:finwise/features/loan_calculator/loan_calculator_screen.dart';
+import 'package:finwise/features/loan_detail/loan_detail_screen.dart';
+import 'package:finwise/features/loan_detail/model/loan_detail_data.dart';
+import 'package:finwise/features/setting_module/setting_screen.dart';
 import 'package:finwise/features/splash/splash_screen.dart';
+import 'package:finwise/features/tips_advice/tips_advice_screen.dart';
+import 'package:finwise/features/tools_module/tools_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -25,8 +35,8 @@ import 'package:provider/provider.dart';
 import '../db/app_db.dart';
 import '../di/injector.dart';
 
-part 'app_routes.dart';
 part 'bottom_nav_routes.dart';
+part 'app_routes.dart';
 
 /// bottom navigation routes
 
@@ -151,7 +161,22 @@ final appRouter = GoRouter(
         );
       },
     ),
-
+    GoRoute(
+      path: '/${AppRoutes.documentRequired}',
+      name: AppRoutes.documentRequired,
+      pageBuilder: (context, state) => MaterialPage(
+        key: state.pageKey,
+        child: const DocumentRequiredScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/${AppRoutes.tipsAdvice}',
+      name: AppRoutes.tipsAdvice,
+      pageBuilder: (context, state) => MaterialPage(
+        key: state.pageKey,
+        child: const TipsAdviceScreen(),
+      ),
+    ),
     // Loan-finder flow — shared LoanFinderProvider (form) +
     // LoanFinderAdProvider (ads) across all 7 steps.
     ShellRoute(
@@ -271,11 +296,27 @@ final appRouter = GoRouter(
         child: RecommendationsScreen(result: state.extra! as LoanFinderResult),
       ),
     ),
-    // StatefulShellRoute.indexedStack(
-    //   builder: (context, state, navigationShell) {
-    //     return BottomNavPage(key: state.pageKey, child: navigationShell);
-    //   },
-    //   branches: _bottomNavBranches,
-    // ),
+    GoRoute(
+      path: '/${AppRoutes.loanDetail}',
+      name: AppRoutes.loanDetail,
+      pageBuilder: (context, state) => MaterialPage(
+        key: state.pageKey,
+        child: LoanDetailScreen(loanType: state.extra! as LoanType),
+      ),
+    ),
+    GoRoute(
+      path: '/${AppRoutes.loanCalculator}',
+      name: AppRoutes.loanCalculator,
+      pageBuilder: (context, state) => MaterialPage(
+        key: state.pageKey,
+        child: const LoanCalculatorScreen(),
+      ),
+    ),
+    StatefulShellRoute.indexedStack(
+      builder: (context, state, navigationShell) {
+        return BottomNavPage(key: state.pageKey, child: navigationShell);
+      },
+      branches: _bottomNavBranches,
+    ),
   ],
 );

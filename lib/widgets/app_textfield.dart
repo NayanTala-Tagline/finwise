@@ -218,36 +218,34 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
 
   // Dropdown widget
   Widget _buildDropdown(BuildContext context) {
+    final radius = widget.borderRadius ?? AppSize.r36;
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(widget.borderRadius ?? AppSize.r12),
-        boxShadow: widget.fillColor != null ? null : [
-          widget.shadow ??
-          BoxShadow(
-            color: Color(0xffFF8F4A).withValues(alpha: 0.25),
-            blurRadius: AppSize.r24,
-            spreadRadius: AppSize.sp1,
-            // offset: Offset(0, AppSize.h2),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(radius),
+        border: Border.all(color: const Color(0xffE2E8F0)),
+        boxShadow: widget.fillColor != null
+            ? null
+            : [
+                widget.shadow ??
+                    BoxShadow(
+                      color: const Color(0xff000000).withValues(alpha: 0.1),
+                      offset: const Offset(0, 4),
+                      blurRadius: AppSize.r6,
+                      spreadRadius: -AppSize.sp4,
+                    ),
+              ],
       ),
       child: InkWell(
         onTap: () => _showDropdownMenu(context),
-        borderRadius: BorderRadius.circular(widget.borderRadius ?? AppSize.r12),
+        borderRadius: BorderRadius.circular(radius),
         child: Container(
           padding: EdgeInsets.symmetric(
-            horizontal: widget.contentWidth ?? AppSize.w20,
-            vertical: widget.contentHeight ?? AppSize.h16,
+            horizontal: widget.contentWidth ?? AppSize.w14,
+            vertical: widget.contentHeight ?? AppSize.h12,
           ),
           decoration: BoxDecoration(
             color: widget.fillColor ?? context.themeColors.whiteColor,
-            borderRadius: BorderRadius.circular(widget.borderRadius ?? AppSize.r12),
-            border: widget.borderSide != null
-                ? Border.all(
-                    color: widget.borderSide!.color,
-                    width: widget.borderSide!.width,
-                  )
-                : null,
+            borderRadius: BorderRadius.circular(radius),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -255,17 +253,20 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
               Expanded(
                 child: Text(
                   _selectedDropdownValue ?? widget.hintText ?? '',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: _selectedDropdownValue != null
                       ? (widget.style ??
                           context.textTheme.titleSmall?.copyWith(
-                            color: widget.textColor ,
-                            fontSize: AppSize.sp16,
+                            color: widget.textColor,
+                            fontSize: AppSize.sp18,
+                            fontWeight: FontWeight.w500,
                           ))
                       : (widget.hintStyle ??
-                      context.textTheme.titleSmall?.copyWith(
-                        color: widget.textColor ?? Color(0xffAAA9A8),
-                        fontSize: AppSize.sp16,
-                      )),
+                          context.textTheme.titleSmall?.copyWith(
+                            color: widget.textColor ?? const Color(0xffAAA9A8),
+                            fontSize: AppSize.sp14,
+                          )),
                 ),
               ),
               Icon(
@@ -394,7 +395,7 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.symmetric(
                     horizontal: widget.contentWidth ?? AppSize.w20,
-                    vertical: widget.contentHeight ?? AppSize.h16,
+                    vertical: widget.contentHeight ?? AppSize.h12,
                   ),
                   errorMaxLines: 3,
                   counterText: '',

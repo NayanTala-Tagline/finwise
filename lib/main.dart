@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:ad_manager/ad_manager.dart';
+import 'package:finwise/features/currency_screen/provider/currency_provider.dart';
 import 'package:finwise/firebase_option.dart';
 import 'package:finwise/utils/install_referrer_service.dart';
 import 'package:finwise/utils/remote_config.dart';
@@ -50,14 +51,14 @@ void main() async {
   // await AnalyticsManager.instance.initMetaSdk();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(
-      // MultiProvider(
-      //   providers: [
-      //     ChangeNotifierProvider(create: (_) => LocaleProvider()),
-      //     ChangeNotifierProvider(create: (_) => CurrencyProvider()),
-      //   ],
-      //   child:
+      MultiProvider(
+        providers: [
+          // ChangeNotifierProvider(create: (_) => LocaleProvider()),
+          ChangeNotifierProvider(create: (_) => CurrencyProvider()),
+        ],
+        child:
         MyApp(),
-      // )
+      )
   );
 }
 
