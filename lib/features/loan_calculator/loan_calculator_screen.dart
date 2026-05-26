@@ -20,6 +20,7 @@ import '../../widgets/app_button.dart';
 import '../../widgets/app_textfield.dart';
 import '../../widgets/app_summary_background.dart';
 import '../../widgets/common_appbar.dart';
+import '../../widgets/rate_slider.dart';
 import 'package:go_router/go_router.dart';
 import 'provider/loan_calculator_provider.dart';
 
@@ -920,74 +921,13 @@ class _InterestRateCard extends StatelessWidget {
             ],
           ),
           SizedBox(height: AppSize.h16),
-          _RateSlider(value: rate, min: _min, max: _max, onChanged: onChanged),
+          RateSlider(value: rate, min: _min, max: _max, onChanged: onChanged, minLabel: '8%', maxLabel: '20%'),
         ],
       ),
     );
   }
 }
 
-class _RateSlider extends StatelessWidget {
-  const _RateSlider({required this.value, required this.min, required this.max, required this.onChanged});
-
-  final double value;
-  final double min;
-  final double max;
-  final ValueChanged<double> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    const activeColor = Color(0xFF2563EB);
-    final t = max == min ? 0.0 : ((value - min) / (max - min)).clamp(0.0, 1.0);
-
-    return LayoutBuilder(builder: (ctx, constraints) {
-      final w = constraints.maxWidth;
-      final pos = t * w;
-
-      void emit(double localX) {
-        final newT = (localX / w).clamp(0.0, 1.0);
-        onChanged(double.parse((min + newT * (max - min)).toStringAsFixed(1)));
-      }
-
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTapDown: (d) => emit(d.localPosition.dx),
-            onPanUpdate: (d) => emit(d.localPosition.dx),
-            child: SizedBox(
-              height: AppSize.h24,
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Positioned(left: 0, right: 0, top: AppSize.h9,
-                    child: Container(height: AppSize.h6, decoration: BoxDecoration(color: const Color(0xFFE8EAED), borderRadius: BorderRadius.circular(AppSize.r4)))),
-                  Positioned(left: 0, top: AppSize.h9,
-                    child: Container(width: pos, height: AppSize.h6, decoration: BoxDecoration(color: activeColor, borderRadius: BorderRadius.circular(AppSize.r4)))),
-                  Positioned(left: pos - AppSize.w12, top: 0,
-                    child: Container(
-                      width: AppSize.w24, height: AppSize.h24,
-                      decoration: BoxDecoration(color: activeColor, shape: BoxShape.circle, border: Border.all(color: Colors.white, width: 3),
-                        boxShadow: const [BoxShadow(color: Color(0x402563EB), blurRadius: 8, offset: Offset(0, 2))]),
-                    )),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: AppSize.h8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('8%', style: context.textTheme.bodySmall?.copyWith(color: context.themeTextColors.descriptionColor, fontSize: AppSize.sp13)),
-              Text('20%', style: context.textTheme.bodySmall?.copyWith(color: context.themeTextColors.descriptionColor, fontSize: AppSize.sp13)),
-            ],
-          ),
-        ],
-      );
-    });
-  }
-}
 
 // ═══════════════════════════════════════════════════════════════════════
 // HELPERS

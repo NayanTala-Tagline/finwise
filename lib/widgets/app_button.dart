@@ -129,25 +129,6 @@ class _AppButtonState extends State<AppButton> {
   }
 
   Widget _fullWidthLayout(double radius) {
-    // Outlined button should be compact (not full width)
-    if (widget.isOutlined) {
-      return Align(
-        alignment: Alignment.center,
-        child: IntrinsicWidth(
-          child: _glowContainer(
-            radius: radius,
-            height: AppSize.h42,
-            padding: EdgeInsets.symmetric(
-              horizontal: widget.horizontalPad ?? (widget.isOutlined ? AppSize.w44 : AppSize.w20),
-              vertical: AppSize.h8,
-            ),
-            child: widget.isLoading ? _loader() : _buildButtonContent(context),
-          ),
-        ),
-      );
-    }
-
-    // Filled button takes full width
     return Padding(
       padding: EdgeInsets.all(AppSize.r5),
       child: _glowContainer(
@@ -283,24 +264,13 @@ class _AppButtonState extends State<AppButton> {
         style:
             widget.textStyle ??
             context.textTheme.titleSmall?.copyWith(
-               color: widget.isOutlined ? context.themeTextColors.descriptionColor : textColor,
+               color: widget.isOutlined ? Colors.black : textColor,
               fontSize:  AppSize.sp17,
             ),
       ),
     );
 
-    // Fixed refresh icon for outlined buttons
-    if (widget.isOutlined) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        spacing: AppSize.w10,
-        children: [
-         // Assets.icons.icRefresh.svg(width: AppSize.w16,height: AppSize.h16,fit: BoxFit.fill),
-          textWidget,
-        ],
-      );
-    }
+
 
     if (widget.icon != null && widget.showIconOnly) {
       return widget.icon!;

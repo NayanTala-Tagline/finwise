@@ -470,7 +470,11 @@ class _BottomButtons extends StatelessWidget {
               suffixIcon: const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 18),
               onPressed: () {
                 NavigationHelper().navigateWithAdCheck(context, () {
-                  context.pushNamed(AppRoutes.loanCalculator);
+                  if (data.type == LoanType.creditCard) {
+                    context.pushNamed(AppRoutes.creditScoreEstimator);
+                  } else {
+                    context.pushNamed(AppRoutes.loanCalculator);
+                  }
                 });
               },
             ),

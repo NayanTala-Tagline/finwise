@@ -20,6 +20,9 @@ import 'package:finwise/features/onboarding/onboarding2_screen.dart';
 import 'package:finwise/features/onboarding/onboarding3_screen.dart';
 import 'package:finwise/features/onboarding/onboarding4_screen.dart';
 import 'package:finwise/features/onboarding/onboarding5_screen.dart';
+import 'package:finwise/features/credit_score_estimator/credit_score_estimator_screen.dart';
+import 'package:finwise/features/credit_score_estimator/credit_score_result_screen.dart';
+import 'package:finwise/features/credit_score_estimator/provider/credit_score_estimator_provider.dart';
 import 'package:finwise/features/loan_calculator/loan_calculator_screen.dart';
 import 'package:finwise/features/loan_detail/loan_detail_screen.dart';
 import 'package:finwise/features/loan_detail/model/loan_detail_data.dart';
@@ -27,6 +30,11 @@ import 'package:finwise/features/setting_module/setting_screen.dart';
 import 'package:finwise/features/splash/splash_screen.dart';
 import 'package:finwise/features/tips_advice/tips_advice_screen.dart';
 import 'package:finwise/features/tools_module/tools_screen.dart';
+import 'package:finwise/features/tools_module/screens/temperature_convert_screen.dart';
+import 'package:finwise/features/tools_module/screens/mass_convert_screen.dart';
+import 'package:finwise/features/tools_module/screens/speed_convert_screen.dart';
+import 'package:finwise/features/tools_module/screens/length_convert_screen.dart';
+import 'package:finwise/features/tools_module/provider/tools_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -311,6 +319,62 @@ final appRouter = GoRouter(
         key: state.pageKey,
         child: const LoanCalculatorScreen(),
       ),
+    ),
+    GoRoute(
+      path: '/${AppRoutes.creditScoreEstimator}',
+      name: AppRoutes.creditScoreEstimator,
+      pageBuilder: (context, state) => MaterialPage(
+        key: state.pageKey,
+        child: const CreditScoreEstimatorScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/${AppRoutes.creditScoreResult}',
+      name: AppRoutes.creditScoreResult,
+      pageBuilder: (context, state) => MaterialPage(
+        key: state.pageKey,
+        child: CreditScoreResultScreen(result: state.extra! as CreditScoreResult),
+      ),
+    ),
+    ShellRoute(
+      builder: (context, state, child) => ChangeNotifierProvider(
+        create: (_) => ToolsProvider(),
+        child: child,
+      ),
+      routes: [
+        GoRoute(
+          path: '/${AppRoutes.temperatureConvert}',
+          name: AppRoutes.temperatureConvert,
+          pageBuilder: (context, state) => MaterialPage(
+            key: state.pageKey,
+            child: const TemperatureConvertScreen(),
+          ),
+        ),
+        GoRoute(
+          path: '/${AppRoutes.massConvert}',
+          name: AppRoutes.massConvert,
+          pageBuilder: (context, state) => MaterialPage(
+            key: state.pageKey,
+            child: const MassConvertScreen(),
+          ),
+        ),
+        GoRoute(
+          path: '/${AppRoutes.speedConvert}',
+          name: AppRoutes.speedConvert,
+          pageBuilder: (context, state) => MaterialPage(
+            key: state.pageKey,
+            child: const SpeedConvertScreen(),
+          ),
+        ),
+        GoRoute(
+          path: '/${AppRoutes.lengthConvert}',
+          name: AppRoutes.lengthConvert,
+          pageBuilder: (context, state) => MaterialPage(
+            key: state.pageKey,
+            child: const LengthConvertScreen(),
+          ),
+        ) ,
+      ],
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
