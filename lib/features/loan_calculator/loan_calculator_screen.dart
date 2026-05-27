@@ -111,7 +111,7 @@ class _LoanCalculatorViewState extends State<_LoanCalculatorView> {
             fontSize: AppSize.sp18,
             fontWeight: FontWeight.w700,
           ),
-          leading: GestureDetector(
+           leading: GestureDetector(
             onTap: () {
               if (isResult) {
                 provider.refresh();
@@ -124,8 +124,8 @@ class _LoanCalculatorViewState extends State<_LoanCalculatorView> {
               padding: EdgeInsets.symmetric(vertical: AppSize.h6),
               child: Center(
                 child: Assets.personalLoanIcons.icBack.svg(
-                  width: AppSize.w24,
-                  height: AppSize.h24,
+                  width: AppSize.w26,
+                  height: AppSize.h26,
                   colorFilter: ColorFilter.mode(textColors.textColor, BlendMode.srcIn),
                 ),
               ),
@@ -261,7 +261,7 @@ class _FormBottomBar extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: EdgeInsets.fromLTRB(AppSize.w20, AppSize.h12, AppSize.w20, AppSize.h16),
+          padding: EdgeInsets.fromLTRB(AppSize.w20, AppSize.h12, AppSize.w20, AppSize.h0),
           child: AppButton(
             text: 'Calculate Now',
             backgroundColor: const Color(0xFF2563EB),
@@ -323,7 +323,7 @@ class _ResultBottomBar extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: EdgeInsets.fromLTRB(AppSize.w20, AppSize.h12, AppSize.w20, AppSize.h16),
+          padding: EdgeInsets.fromLTRB(AppSize.w20, AppSize.h12, AppSize.w20, AppSize.h0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -338,8 +338,7 @@ class _ResultBottomBar extends StatelessWidget {
                   });
                 },
               ),
-              SizedBox(height: AppSize.h10),
-              AppButton(
+               AppButton(
                 text: 'Reset',
                 isOutlined: true,
                 borderRadius: AppSize.r50,

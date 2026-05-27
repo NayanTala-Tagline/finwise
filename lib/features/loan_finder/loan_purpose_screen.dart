@@ -93,6 +93,82 @@ class _LoanPurposeScreenState extends State<LoanPurposeScreen> {
 
     final showDownPayment = formProvider.purpose == LoanPurpose.other;
 
+    final mainOptions = options.sublist(0, options.length - 1);
+    final otherOption = options.last;
+
+    Widget buildTile(_PurposeOption option, int index) {
+      final isSelected = formProvider.purpose == option.value;
+      final isOther = option.value == LoanPurpose.other;
+      return GestureDetector(
+        onTap: () {
+          AnalyticsManager.instance.logEvent(
+            name: 'loan_finder_option_selected',
+            parameters: {'step': 1, 'purpose': option.value.name},
+          );
+          context.read<LoanFinderProvider>().setPurpose(option.value);
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: AppSize.h10, horizontal: AppSize.w10),
+          decoration: BoxDecoration(
+            color: isSelected ? const Color(0xFFEFF6FF) : Colors.white,
+            borderRadius: BorderRadius.circular(isOther ? AppSize.r30 : AppSize.r16),
+            border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
+            gradient: isSelected
+                ? LinearGradient(colors: [context.themeColors.primary, const Color(0xff153885)])
+                : const LinearGradient(colors: [Colors.white, Color(0xffE7F1FF)]),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (!isOther) ...[
+                Container(
+                  padding: EdgeInsets.all(AppSize.sp8),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? context.themeColors.whiteColor.withValues(alpha: 0.11)
+                        : context.themeColors.primary.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(AppSize.r12),
+                  ),
+                  child: option.icon.svg(
+                    width: AppSize.w28,
+                    height: AppSize.h28,
+                    colorFilter: isSelected
+                        ? const ColorFilter.mode(Color(0xFFffffff), BlendMode.srcIn)
+                        : const ColorFilter.mode(Color(0xFF64748B), BlendMode.srcIn),
+                  ),
+                ),
+                SizedBox(height: AppSize.h8),
+              ],
+              Flexible(
+                child: Text(
+                  option.label,
+                  style: context.textTheme.titleMedium?.copyWith(
+                    color: isSelected
+                        ? context.themeTextColors.secondaryTextColor
+                        : context.themeTextColors.descriptionColor,
+                    fontSize: AppSize.sp13,
+                  ),
+                  textAlign: TextAlign.start,
+                  maxLines: 2,
+                ),
+              ),
+            ],
+          ),
+        ),
+      )
+          .animate()
+          .fadeIn(delay: (300 + index * 55).ms, duration: 380.ms)
+          .scale(
+            begin: const Offset(0.8, 0.8),
+            end: const Offset(1, 1),
+            delay: (300 + index * 55).ms,
+            duration: 500.ms,
+            curve: Curves.easeOutCubic,
+          );
+    }
+
     return LoanFinderLayout(
       stepIndex: 0,
       title: 'What do you need a loan for?',
@@ -101,13 +177,13 @@ class _LoanPurposeScreenState extends State<LoanPurposeScreen> {
       adSlot: AdSlot(ad: _inlineAd),
       onNextPressed: _next,
       child: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: AppSize.w20,),
+        padding: EdgeInsets.symmetric(horizontal: AppSize.w20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: AppSize.h16),
 
-            // Grid view of loan purposes
+            // 6-item grid (excludes "Other")
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -117,92 +193,24 @@ class _LoanPurposeScreenState extends State<LoanPurposeScreen> {
                 mainAxisSpacing: AppSize.h12,
                 childAspectRatio: 1.3,
               ),
-              itemCount: options.length,
-              itemBuilder: (context, index) {
-                final option = options[index];
-                final isSelected = formProvider.purpose == option.value;
-                final isOther = option.value == LoanPurpose.other;
-                return GestureDetector(
-                  onTap: () {
-                    AnalyticsManager.instance.logEvent(
-                      name: 'loan_finder_option_selected',
-                      parameters: {'step': 1, 'purpose': option.value.name},
-                    );
-                    context.read<LoanFinderProvider>().setPurpose(option.value);
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: AppSize.h10,horizontal: AppSize.w10),
-                    decoration: BoxDecoration(
-                      color: isSelected ? const Color(0xFFEFF6FF) : Colors.white,
-                      borderRadius: BorderRadius.circular(AppSize.r16),
-                      border: Border.all(
-                        color: const Color(0xFFE2E8F0),
-                        width: 1,
-                      ),
-                      gradient: isSelected ? LinearGradient(colors: [context.themeColors.primary,Color(0xff153885),]) : LinearGradient(colors: [Colors.white,Color(0xffE7F1FF),])
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (!isOther) ...[
-                          Container(
-                            padding: EdgeInsets.all(AppSize.sp8),
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ?   context.themeColors.whiteColor.withOpacity(0.11)
-                                  : context.themeColors.primary.withOpacity(0.08),
-                              borderRadius: BorderRadius.circular(AppSize.r12),
-                            ),
-                            child: option.icon.svg(
-                              width: AppSize.w28,
-                              height: AppSize.h28,
-                              colorFilter: isSelected
-                                  ? const ColorFilter.mode(
-                                      Color(0xFFffffff),
-                                      BlendMode.srcIn,
-                                    )
-                                  : ColorFilter.mode(
-                                Color(0xFF64748B),
-                                BlendMode.srcIn,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: AppSize.h8),
-                        ],
-                        Flexible(
-                          child: Text(
-                            option.label,
-                            style: context.textTheme.titleMedium?.copyWith(color: isSelected
-                                ?   context.themeTextColors.secondaryTextColor
-                                : context.themeTextColors.descriptionColor,fontSize: AppSize.sp13),
-                            textAlign: TextAlign.start,
-                            maxLines: 2,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-                    .animate()
-                    .fadeIn(delay: (300 + index * 55).ms, duration: 380.ms)
-                    .scale(
-                      begin: const Offset(0.8, 0.8),
-                      end: const Offset(1, 1),
-                      delay: (300 + index * 55).ms,
-                      duration: 500.ms,
-                      curve: Curves.easeOutCubic,
-                    );
-              },
+              itemCount: mainOptions.length,
+              itemBuilder: (context, index) => buildTile(mainOptions[index], index),
             ),
-
+            SizedBox(height: AppSize.h12),
+            // "Other" as a half-width tile, height driven by content
+            Row(
+              children: [
+                Expanded(child: buildTile(otherOption, mainOptions.length)),
+                SizedBox(width: AppSize.w12),
+                const Expanded(child: SizedBox()),
+              ],
+            ),
             // Down payment section (shown when "Other" is selected)
             if (showDownPayment) ...[
-              SizedBox(height: AppSize.h24),
+              SizedBox(height: AppSize.h12),
               AppTextFormField(
                 title: 'Down Payment',
-                 controller: _downPaymentController,
+                controller: _downPaymentController,
                 keyboardType: TextInputType.number,
                 hintText: 'Enter down payment amount',
               )
@@ -210,7 +218,7 @@ class _LoanPurposeScreenState extends State<LoanPurposeScreen> {
                   .fadeIn(duration: 300.ms)
                   .slideY(begin: -0.2, end: 0, duration: 400.ms, curve: Curves.easeOut),
             ],
-            
+
             SizedBox(height: AppSize.h24),
           ],
         ),

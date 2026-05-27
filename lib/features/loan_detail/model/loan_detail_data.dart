@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 enum LoanType { homeLoan, personalLoan, carLoan, educationLoan, businessLoan, creditCard }
 
 class LoanFeature {
@@ -22,6 +24,8 @@ class LoanDetailData {
     required this.useCases,
     required this.steps,
     required this.processButtonLabel,
+    required this.themeColor,
+    required this.gradientColors,
   });
 
   final LoanType type;
@@ -31,6 +35,8 @@ class LoanDetailData {
   final List<String> useCases;
   final List<LoanStep> steps;
   final String processButtonLabel;
+  final Color themeColor;
+  final List<Color> gradientColors;
 
   static LoanDetailData forType(LoanType type) {
     switch (type) {
@@ -64,6 +70,8 @@ class LoanDetailData {
             LoanStep('Receive Funds', 'Loan amount disbursed directly to your bank account'),
           ],
           processButtonLabel: 'View Application Steps',
+          themeColor: Color(0xFF2563EB),
+          gradientColors: [Color(0xFF2563EB), Color(0xFF153885)],
         );
 
       case LoanType.homeLoan:
@@ -96,6 +104,8 @@ class LoanDetailData {
             LoanStep('Get Disbursed', 'Loan disbursed directly to the builder or seller'),
           ],
           processButtonLabel: 'View Application Steps',
+          themeColor: Color(0xFF0D9488),
+          gradientColors: [Color(0xFF0D9488), Color(0xFF065E55)],
         );
 
       case LoanType.carLoan:
@@ -128,6 +138,8 @@ class LoanDetailData {
             LoanStep('Drive Home', 'Loan disbursed directly to the dealer'),
           ],
           processButtonLabel: 'View Application Steps',
+          themeColor: Color(0xFF0D9488),
+          gradientColors: [Color(0xFF0D9488), Color(0xFF065E55)],
         );
 
       case LoanType.educationLoan:
@@ -160,6 +172,8 @@ class LoanDetailData {
             LoanStep('Get Disbursed', 'Payment sent directly to the institution'),
           ],
           processButtonLabel: 'View Application Steps',
+          themeColor: Color(0xFFD97706),
+          gradientColors: [Color(0xFFD97706), Color(0xFF92400E)],
         );
 
       case LoanType.businessLoan:
@@ -192,6 +206,8 @@ class LoanDetailData {
             LoanStep('Get Funded', 'Amount disbursed to your business account'),
           ],
           processButtonLabel: 'View Application Steps',
+          themeColor: Color(0xFF7C3AED),
+          gradientColors: [Color(0xFF7C3AED), Color(0xFF4C1D95)],
         );
 
       case LoanType.creditCard:
@@ -224,6 +240,8 @@ class LoanDetailData {
             LoanStep('Instant Credit', 'Amount credited to your account immediately'),
           ],
           processButtonLabel: 'View Application Steps',
+          themeColor: Color(0xFFDC2626),
+          gradientColors: [Color(0xFFDC2626), Color(0xFF991B1B)],
         );
     }
   }

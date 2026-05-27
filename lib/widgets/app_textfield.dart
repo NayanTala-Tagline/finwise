@@ -124,6 +124,7 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
   final FocusNode _focusNode = FocusNode();
   final ValueNotifier<bool> _isFocused = ValueNotifier(false);
   String? _selectedDropdownValue;
+  String? _fieldError;
 
   @override
   void initState() {
@@ -345,30 +346,41 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
     return ValueListenableBuilder(
       valueListenable: _isFocused,
       builder: (context, isFocused, child) {
-        return Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(widget.borderRadius ?? AppSize.r36),
-            border: Border.all(color: Color(0xffE2E8F0)),
-            boxShadow: widget.fillColor != null
-                ? null
-                : [
-              widget.shadow ??
-                  BoxShadow(
-                    color:
-                      Color(0xff000000).withValues(alpha: 0.1),
-                    offset: Offset(0, 4),
-                    blurRadius: AppSize.r6,
-                    spreadRadius: -AppSize.sp4,
-                  ),
-            ],
-          ),
-          child: TextFormField(
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(widget.borderRadius ?? AppSize.r36),
+                border: Border.all(color: Color(0xffE2E8F0)),
+                boxShadow: widget.fillColor != null
+                    ? null
+                    : [
+                  widget.shadow ??
+                      BoxShadow(
+                        color: Color(0xff000000).withValues(alpha: 0.1),
+                        offset: Offset(0, 4),
+                        blurRadius: AppSize.r6,
+                        spreadRadius: -AppSize.sp4,
+                      ),
+                ],
+              ),
+              child: TextFormField(
                 focusNode: widget.focusNode ?? _focusNode,
                 controller: widget.controller,
                 keyboardType: widget.keyboardType ?? TextInputType.number,
                 maxLength: widget.maxTextLength,
                 cursorColor: widget.cursorColor ?? context.themeColors.primary,
-                validator: widget.validator,
+                validator: widget.validator == null
+                    ? null
+                    : (value) {
+                        final error = widget.validator!(value);
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (mounted) setState(() => _fieldError = error);
+                        });
+                        return error;
+                      },
                 textInputAction: widget.textAction,
                 onChanged: widget.onChanged,
                 readOnly: widget.readOnly,
@@ -383,7 +395,6 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
                 autofocus: widget.autofocus ?? false,
                 autofillHints: widget.autofillHints,
                 minLines: widget.minLine,
-
                 style:
                     widget.style ??
                     context.textTheme.titleMedium?.copyWith(
@@ -396,7 +407,7 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
                     horizontal: widget.contentWidth ?? AppSize.w20,
                     vertical: widget.contentHeight ?? AppSize.h12,
                   ),
-                  errorMaxLines: 3,
+                  errorStyle: const TextStyle(fontSize: 0, height: 0),
                   counterText: '',
                   prefixIconConstraints: widget.prefixIconConstraints,
                   suffixIconConstraints: widget.suffixIconConstraints ?? BoxConstraints(minWidth: AppSize.w40),
@@ -445,15 +456,26 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
                   hintStyle:
                       widget.hintStyle ??
                       context.textTheme.titleSmall?.copyWith(
-                         color: widget.textColor ?? Color(0xffAAA9A8),
+                        color: widget.textColor ?? Color(0xffAAA9A8),
                         fontSize: AppSize.sp14,
                       ),
-                  errorStyle: TextStyle(color: Colors.red, fontSize: AppSize.sp12),
-
                   filled: widget.isFilled,
                   fillColor: widget.fillColor ?? context.themeColors.whiteColor,
                 ),
-          ),
+              ),
+            ),
+            if (_fieldError != null)
+              Padding(
+                padding: EdgeInsets.only(left: AppSize.w10, top: AppSize.h4),
+                child: Text(
+                  _fieldError!,
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: AppSize.sp12,
+                  ),
+                ),
+              ),
+          ],
         );
       },
     );

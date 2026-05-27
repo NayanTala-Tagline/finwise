@@ -33,8 +33,11 @@ class _RdDetailView extends StatefulWidget {
 class _RdDetailViewState extends State<_RdDetailView> {
   final ScrollController _scrollController = ScrollController();
   final GlobalKey _stepsKey = GlobalKey();
-  static const Color _green = Color(0xFF059669);
-  static const Color _greenDark = Color(0xFF047857);
+
+  static const Color _green = Color(0xFF06B6D4);
+  static const Color _greenDark = Color(0xFF099AB2);
+  // static const Color _green = Color(0xFF059669);
+  // static const Color _greenDark = Color(0xFF047857);
 
   static const _features = [
     (
@@ -208,7 +211,7 @@ class _RdDetailViewState extends State<_RdDetailView> {
                     SizedBox(height: AppSize.h12),
 
                     // Trust Badge
-                    _TrustBadgeCard(accentColor: _green),
+                    _TrustBadgeCard(accentColor: Color(0xFF059669)),
                     SizedBox(height: AppSize.h8),
                   ],
                 ),

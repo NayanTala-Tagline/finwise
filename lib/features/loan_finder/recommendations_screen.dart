@@ -4,8 +4,10 @@ import 'package:ad_manager/ad_manager.dart';
 import 'package:finwise/features/loan_finder/provider/loan_finder_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:provider/provider.dart';
 
 import '../../extension/ext_context.dart';
+import '../../features/currency_screen/provider/currency_provider.dart';
 import '../../gen/assets.gen.dart';
 import '../../notification_service/loan_status_notification.dart';
 import '../../notification_service/notification_permission_service.dart';
@@ -477,9 +479,10 @@ class _EstimatedCostsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.themeColors;
     final textColors = context.themeTextColors;
-    
+    final sym = context.watch<CurrencyProvider>().symbol;
+
     final loanAmount = result.loanAmount;
-    final processingFee = 00;
+    const processingFee = 0;
     final totalAmount = loanAmount + processingFee;
 
     return Container(
@@ -512,28 +515,20 @@ class _EstimatedCostsCard extends StatelessWidget {
           SizedBox(height: AppSize.h16),
           _CostRow(
             label: 'Loan Amount',
-            value: '₹${loanAmount.toInt()}',
+            value: '$sym${loanAmount.toInt()}',
             textColors: textColors,
           ),
-          Divider(
-            height: AppSize.h20,
-            thickness: 1,
-            color: Color(0xffE2E8F0),
-          ),          _CostRow(
+          Divider(height: AppSize.h20, thickness: 1, color: Color(0xffE2E8F0)),
+          _CostRow(
             label: 'Processing Fee',
-            value: '₹${processingFee.toInt()}',
+            value: '$sym$processingFee',
             textColors: textColors,
           ),
           SizedBox(height: AppSize.h12),
-
-          Divider(
-            height: AppSize.h0,
-            thickness: 1,
-            color: Color(0xffE2E8F0),
-          ),
+          Divider(height: AppSize.h0, thickness: 1, color: Color(0xffE2E8F0)),
           _CostRow(
             label: 'Total Amount',
-            value: '₹${totalAmount.toInt()}',
+            value: '$sym${totalAmount.toInt()}',
             textColors: textColors,
             isTotal: true,
             colors: colors,
@@ -686,6 +681,7 @@ class _DetailsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.themeColors;
     final l10n = context.l10n;
+    final sym = context.watch<CurrencyProvider>().symbol;
 
     final rows = <_DetailRow>[
       _DetailRow(
@@ -695,11 +691,11 @@ class _DetailsCard extends StatelessWidget {
       ),
       _DetailRow(
         label: 'Loan Amount',
-        value: result.loanAmount.toInt().toString(),
+        value: '$sym${result.loanAmount.toInt()}',
       ),
       _DetailRow(
         label: 'Monthly Income',
-        value: result.monthlyIncome.toInt().toString(),
+        value: '$sym${result.monthlyIncome.toInt()}',
       ),
       _DetailRow(
         label: 'Employment',

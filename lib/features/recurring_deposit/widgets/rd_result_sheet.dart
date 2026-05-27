@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../extension/ext_context.dart';
+import '../../currency_screen/provider/currency_provider.dart';
 import '../../../gen/assets.gen.dart';
 import '../../../utils/app_size.dart';
 import '../../../widgets/app_button.dart';
@@ -96,11 +97,12 @@ class _SummaryCard extends StatelessWidget {
   final VoidCallback onRefresh;
 
   static final _fmt = NumberFormat('#,##,##0', 'en_IN');
-  String _fmtAmt(double v) => '₹${_fmt.format(v.round())}';
+  String _fmtAmt(double v, String sym) => '$sym${_fmt.format(v.round())}';
 
   @override
   Widget build(BuildContext context) {
     final primary = context.themeColors.primary;
+    final sym = context.watch<CurrencyProvider>().symbol;
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppSize.r20),
@@ -163,7 +165,7 @@ class _SummaryCard extends StatelessWidget {
                   ),
                   SizedBox(height: AppSize.h4),
                   Text(
-                    _fmtAmt(result.maturityValue),
+                    _fmtAmt(result.maturityValue, sym),
                     style: context.textTheme.displaySmall?.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
@@ -202,7 +204,7 @@ class _SummaryCard extends StatelessWidget {
                         ),
                         SizedBox(height: AppSize.h4),
                         Text(
-                          _fmtAmt(result.totalInvested),
+                          _fmtAmt(result.totalInvested, sym),
                           style: context.textTheme.titleSmall?.copyWith(fontSize: AppSize.sp16),
                         ),
                       ],
@@ -229,7 +231,7 @@ class _SummaryCard extends StatelessWidget {
                         ),
                         SizedBox(height: AppSize.h4),
                         Text(
-                          _fmtAmt(result.interestEarned),
+                          _fmtAmt(result.interestEarned, sym),
                           style: context.textTheme.titleSmall?.copyWith(
                             color: primary,
                             fontSize: AppSize.sp16,
@@ -256,11 +258,12 @@ class _PaymentBreakdownCard extends StatelessWidget {
   final double interest;
 
   static final _fmt = NumberFormat('#,##,##0', 'en_IN');
-  String _fmtAmt(double v) => '₹${_fmt.format(v.round())}';
+  String _fmtAmt(double v, String sym) => '$sym${_fmt.format(v.round())}';
 
   @override
   Widget build(BuildContext context) {
     final primary = context.themeColors.primary;
+    final sym = context.watch<CurrencyProvider>().symbol;
     final interestColor = Color.lerp(primary, Colors.white, 0.55)!;
 
     return Container(
@@ -309,9 +312,9 @@ class _PaymentBreakdownCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _LegendItem(color: primary, label: 'Investment', value: _fmtAmt(totalInvested)),
+              _LegendItem(color: primary, label: 'Investment', value: _fmtAmt(totalInvested, sym)),
               SizedBox(width: AppSize.w24),
-              _LegendItem(color: interestColor, label: 'Interest', value: _fmtAmt(interest)),
+              _LegendItem(color: interestColor, label: 'Interest', value: _fmtAmt(interest, sym)),
             ],
           ),
         ],

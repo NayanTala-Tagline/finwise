@@ -76,7 +76,7 @@ class _LoanDetailScreenState extends State<LoanDetailScreen> {
                   children: [
                     _SectionHeader(icon: Assets.personalLoanIcons.icInstantApproval.svg(), title: 'Key Features'),
                     SizedBox(height: AppSize.h12),
-                    _FeaturesGrid(features: data.features),
+                    _FeaturesGrid(features: data.features, themeColor: data.themeColor),
                     SizedBox(height: AppSize.h20),
                     _SectionHeader(icon: Assets.homeIcons.icDocuments.svg(), title: 'Common Use Cases'),
                     SizedBox(height: AppSize.h12),
@@ -84,7 +84,7 @@ class _LoanDetailScreenState extends State<LoanDetailScreen> {
                     SizedBox(height: AppSize.h20),
                     _SectionHeader(icon:Assets.personalLoanIcons.icClock.svg(), title: 'Application Process'),
                     SizedBox(height: AppSize.h12),
-                    _StepsCard(steps: data.steps),
+                    _StepsCard(steps: data.steps, themeColor: data.themeColor),
                     SizedBox(height: AppSize.h16),
                     AdSlot(ad: _inlineAd, safeAreaBottom: false, safeAreaTop: false),
                     // SizedBox(height: AppSize.h10),
@@ -113,7 +113,7 @@ class _LoanHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppSummaryBackground(
 
-      gradientColors: const [Color(0xFF2563EB), Color(0xFF153885)],
+      gradientColors: data.gradientColors,
       borderRadius:   BorderRadius.only(
         bottomLeft: Radius.circular(AppSize.r24),
         bottomRight: Radius.circular(AppSize.r24),
@@ -132,7 +132,7 @@ class _LoanHeader extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: () => NavigationHelper().handleBackPress(context),
-                child:   Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: AppSize.sp25),
+                child:   Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: AppSize.sp22),
               ),
               SizedBox(height: AppSize.h16),
               Text(
@@ -189,9 +189,10 @@ class _SectionHeader extends StatelessWidget {
 // ── Key Features 2×2 grid ─────────────────────────────────────────────────────
 
 class _FeaturesGrid extends StatelessWidget {
-  const _FeaturesGrid({required this.features});
+  const _FeaturesGrid({required this.features, required this.themeColor});
 
   final List<LoanFeature> features;
+  final Color themeColor;
 
   @override
   Widget build(BuildContext context) {
@@ -205,11 +206,11 @@ class _FeaturesGrid extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(child: _FeatureCard(feature: features[left])),
+                Expanded(child: _FeatureCard(feature: features[left], themeColor: themeColor)),
                 SizedBox(width: AppSize.w12),
                 Expanded(
                   child: right < features.length
-                      ? _FeatureCard(feature: features[right])
+                      ? _FeatureCard(feature: features[right], themeColor: themeColor)
                       : const SizedBox(),
                 ),
               ],
@@ -222,9 +223,10 @@ class _FeaturesGrid extends StatelessWidget {
 }
 
 class _FeatureCard extends StatelessWidget {
-  const _FeatureCard({required this.feature});
+  const _FeatureCard({required this.feature, required this.themeColor});
 
   final LoanFeature feature;
+  final Color themeColor;
 
   @override
   Widget build(BuildContext context) {
@@ -244,7 +246,7 @@ class _FeatureCard extends StatelessWidget {
             width: AppSize.w36,
             height: AppSize.h36,
             decoration: BoxDecoration(
-              color: const Color(0xFF2563EB).withValues(alpha: 0.08),
+              color: themeColor.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(AppSize.r8),
             ),
             child: Center(
@@ -252,7 +254,7 @@ class _FeatureCard extends StatelessWidget {
                 feature.iconPath,
                 width: AppSize.w20,
                 height: AppSize.h20,
-                colorFilter: const ColorFilter.mode(Color(0xFF2563EB), BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(themeColor, BlendMode.srcIn),
               ),
             ),
           ),
@@ -322,9 +324,10 @@ class _UseCasesCard extends StatelessWidget {
 // ── Application Process steps ─────────────────────────────────────────────────
 
 class _StepsCard extends StatelessWidget {
-  const _StepsCard({required this.steps});
+  const _StepsCard({required this.steps, required this.themeColor});
 
   final List<LoanStep> steps;
+  final Color themeColor;
 
   @override
   Widget build(BuildContext context) {
@@ -349,14 +352,14 @@ class _StepsCard extends StatelessWidget {
                   width: AppSize.w36,
                   height: AppSize.h36,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF2563EB).withValues(alpha: 0.1),
+                    color: themeColor.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Center(
                     child: Text(
                       '${i + 1}',
                       style: context.textTheme.labelMedium?.copyWith(
-                        color: const Color(0xFF2563EB),
+                        color: themeColor,
                         fontWeight: FontWeight.w700,
                         fontSize: AppSize.sp14,
                       ),
@@ -477,8 +480,7 @@ class _BottomButtons extends StatelessWidget {
               AppButton(
                 text: 'Calculate',
                 backgroundColor: const Color(0xFF2563EB),
-                borderRadius: AppSize.r50,
-                suffixIcon: const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 18),
+                 suffixIcon:   Icon(Icons.arrow_forward_ios, color: Colors.white, size: AppSize.sp18),
                 onPressed: () {
                   NavigationHelper().navigateWithAdCheck(context, () {
                     if (data.type == LoanType.creditCard) {

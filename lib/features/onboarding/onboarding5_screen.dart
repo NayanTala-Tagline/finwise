@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import '../../db/app_db.dart';
 import '../../di/injector.dart';
 import '../../extension/ext_context.dart';
+import '../../features/currency_screen/model/currency_item.dart';
+import '../../features/currency_screen/provider/currency_provider.dart';
 import '../../gen/assets.gen.dart';
 import '../../routes/app_router.dart';
 import '../../utils/anaytics_manager.dart';
@@ -32,6 +34,10 @@ class _Onboarding5ScreenState extends State<Onboarding5Screen> {
   void initState() {
     super.initState();
     AnalyticsManager.instance.logScreenView(screenName: 'onboarding5_screen');
+    final current = context.read<CurrencyProvider>().code;
+    if (['INR', 'USD', 'EUR', 'GBP'].contains(current)) {
+      selectedCurrency = current;
+    }
   }
 
   @override
@@ -45,11 +51,18 @@ class _Onboarding5ScreenState extends State<Onboarding5Screen> {
       name: 'onboarding_complete',
       parameters: {'currency': selectedCurrency},
     );
-    
-    // Mark onboarding as completed
+
+    final item = CurrencyItem.all.firstWhere(
+      (c) => c.code == selectedCurrency,
+      orElse: () => CurrencyItem.all.firstWhere((c) => c.code == 'INR'),
+    );
+    final currencyProvider = context.read<CurrencyProvider>();
+    await currencyProvider.setCurrency(item);
+
+    if (!mounted) return;
     final db = Injector.instance<AppDB>();
     db.isOnboardingCompleted = true;
-    
+
     await provider.finishOnboarding(context, AppRoutes.loanPurpose);
   }
 
@@ -212,7 +225,7 @@ class _CurrencyCard extends StatelessWidget {
 padding: EdgeInsets.symmetric(horizontal: AppSize.w12,vertical: AppSize.h4),
               decoration: BoxDecoration(
                 color: isSelected 
-                    ? Colors.white.withOpacity(0.2) 
+                    ? Colors.white.withValues(alpha: 0.2)
                     : const Color(0xFFF1F5F9),
                 borderRadius: BorderRadius.circular(AppSize.r14),
               ),
@@ -245,7 +258,7 @@ padding: EdgeInsets.symmetric(horizontal: AppSize.w12,vertical: AppSize.h4),
                       fontSize: AppSize.sp14,
                       fontWeight: FontWeight.w400,
                       color: isSelected 
-                          ? Colors.white.withOpacity(0.9) 
+                          ? Colors.white.withValues(alpha: 0.9)
                           : const Color(0xFF64748B),
                     ),
                   ),

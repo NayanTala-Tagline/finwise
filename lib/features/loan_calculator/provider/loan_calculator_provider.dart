@@ -16,6 +16,17 @@ class LoanCalculatorProvider with ChangeNotifier {
   DateTime? _startDate;
   DateTime? get startDate => _startDate;
 
+  LoanCalculatorProvider() {
+    _initStartDate();
+  }
+
+  void _initStartDate() {
+    final today = DateTime.now();
+    _startDate = today;
+    startDateController.text =
+        '${today.day.toString().padLeft(2, '0')}/${today.month.toString().padLeft(2, '0')}/${today.year}';
+  }
+
   bool _isCalculated = false;
   bool get isCalculated => _isCalculated;
 
@@ -50,11 +61,10 @@ class LoanCalculatorProvider with ChangeNotifier {
   void refresh() {
     loanAmountController.clear();
     loanTermController.clear();
-    startDateController.clear();
     _interestRate = 10.5;
     _termUnit = 'Months';
-    _startDate = null;
     _isCalculated = false;
+    _initStartDate();
     notifyListeners();
   }
 

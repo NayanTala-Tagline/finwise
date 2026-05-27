@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../extension/ext_context.dart';
+import '../../features/currency_screen/provider/currency_provider.dart';
+import '../../features/language_screen/provider/locale_provider.dart';
 import '../../gen/assets.gen.dart';
+import '../../routes/app_router.dart';
 import '../../utils/app_size.dart';
 import '../../utils/remote_config.dart';
 import '../../widgets/app_summary_background.dart';
@@ -31,6 +36,15 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final currencyCode = context.watch<CurrencyProvider>().code;
+    final localeCode = context.watch<LocaleProvider>().getCurrentLocaleCode() ?? 'en';
+    const codeToName = {
+      'en': 'English', 'de': 'German', 'fr': 'French', 'sw': 'Swahili',
+      'ar': 'Arabic', 'hi': 'Hindi', 'ms': 'Malay', 'fil': 'Filipino',
+      'es': 'Spanish', 'nl': 'Dutch',
+    };
+    final languageName = codeToName[localeCode] ?? 'English';
+
     return Scaffold(
       backgroundColor: context.themeColors.backgroundColor,
       body: Column(
@@ -50,14 +64,14 @@ class _SettingScreenState extends State<SettingScreen> {
                       _SettingTile(
                         icon: Assets.onboardingIcons.icLanguage.svg(width: AppSize.w20, height: AppSize.h20, colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn)),
                         title: 'Language',
-                        badgeText: 'English',
-                        onTap: () {},
+                        badgeText: languageName,
+                        onTap: () => context.pushNamed(AppRoutes.language),
                       ),
                       _SettingTile(
                         icon: Assets.onboardingIcons.icCurrency.svg(width: AppSize.w20, height: AppSize.h20, colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn)),
                         title: 'Currency',
-                        badgeText: 'INR',
-                        onTap: () {},
+                        badgeText: currencyCode,
+                        onTap: () => context.pushNamed(AppRoutes.currencyUnit),
                       ),
                     ],
                   ),
@@ -92,7 +106,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       _SettingTile(
                         icon: Assets.temperatureIcons.icHelpCenter.svg(width: AppSize.w20, height: AppSize.h20, colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn)),
                         title: 'Help Center',
-                        onTap: () {},
+                        onTap: () => context.pushNamed(AppRoutes.contactUs),
                       ),
                     ],
                   ),

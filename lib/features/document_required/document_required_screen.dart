@@ -255,8 +255,8 @@ class _Header extends StatelessWidget {
                 onTap: onBack,
                 behavior: HitTestBehavior.opaque,
                 child: Assets.personalLoanIcons.icBack.svg(
-                  width: AppSize.sp22,
-                  height: AppSize.sp22,
+                  width: AppSize.sp26,
+                  height: AppSize.sp26,
                   colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
                 ),
               ),

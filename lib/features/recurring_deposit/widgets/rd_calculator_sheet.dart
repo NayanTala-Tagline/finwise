@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../extension/ext_context.dart';
+import '../../currency_screen/provider/currency_provider.dart';
 import '../../../utils/app_size.dart';
 import '../../../widgets/app_button.dart';
 import '../../../widgets/app_textfield.dart';
@@ -70,6 +71,7 @@ class _RdCalculatorSheetState extends State<RdCalculatorSheet> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<RecurringDepositProvider>();
+    final sym = context.watch<CurrencyProvider>().symbol;
     final dateLabel = DateFormat('dd/MM/yyyy').format(provider.startDate);
 
     return Scaffold(
@@ -98,7 +100,7 @@ class _RdCalculatorSheetState extends State<RdCalculatorSheet> {
                     onChanged: (_) {},
                     suffixIcon: Padding(
                       padding: EdgeInsets.only(right: AppSize.w16),
-                      child: Text('₹', style: context.textTheme.bodyLarge?.copyWith(fontSize: AppSize.sp16)),
+                      child: Text(sym, style: context.textTheme.bodyLarge?.copyWith(fontSize: AppSize.sp16)),
                     ),
                     suffixIconConstraints: BoxConstraints(minWidth: AppSize.w30, minHeight: 0),
                   ),

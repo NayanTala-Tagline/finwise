@@ -28,6 +28,9 @@ import 'package:finwise/features/loan_detail/loan_detail_screen.dart';
 import 'package:finwise/features/loan_detail/model/loan_detail_data.dart';
 import 'package:finwise/features/fixed_deposit/fixed_deposit_screen.dart';
 import 'package:finwise/features/recurring_deposit/recurring_deposit_screen.dart';
+import 'package:finwise/features/currency_screen/currency_screen.dart';
+import 'package:finwise/features/contact_us/contact_us_screen.dart';
+import 'package:finwise/features/language_screen/language_screen.dart';
 import 'package:finwise/features/setting_module/setting_screen.dart';
 import 'package:finwise/features/splash/splash_screen.dart';
 import 'package:finwise/features/tips_advice/tips_advice_screen.dart';
@@ -282,20 +285,18 @@ final appRouter = GoRouter(
             );
           },
         ),
-        // GoRoute(
-        //   path: '/${AppRoutes.language}',
-        //   name: AppRoutes.language,
-        //   pageBuilder: (context, state) {
-        //     return MaterialPage(key: state.pageKey, child:   LanguageScreen());
-        //   },
-        // ),
-        // GoRoute(
-        //   path: '/${AppRoutes.contactUs}',
-        //   name: AppRoutes.contactUs,
-        //   pageBuilder: (context, state) {
-        //     return MaterialPage(key: state.pageKey, child:   ContactUsScreen());
-        //   },
-        // ),
+        GoRoute(
+          path: '/${AppRoutes.language}',
+          name: AppRoutes.language,
+          pageBuilder: (context, state) =>
+              MaterialPage(key: state.pageKey, child: const LanguageScreen()),
+        ),
+        GoRoute(
+          path: '/${AppRoutes.contactUs}',
+          name: AppRoutes.contactUs,
+          pageBuilder: (context, state) =>
+              MaterialPage(key: state.pageKey, child: const ContactUsScreen()),
+        ),
       ],
     ),
     GoRoute(
@@ -312,6 +313,14 @@ final appRouter = GoRouter(
       pageBuilder: (context, state) => MaterialPage(
         key: state.pageKey,
         child: LoanDetailScreen(loanType: state.extra! as LoanType),
+      ),
+    ),
+    GoRoute(
+      path: '/${AppRoutes.currencyUnit}',
+      name: AppRoutes.currencyUnit,
+      pageBuilder: (context, state) => MaterialPage(
+        key: state.pageKey,
+        child: const CurrencyScreen(),
       ),
     ),
     GoRoute(

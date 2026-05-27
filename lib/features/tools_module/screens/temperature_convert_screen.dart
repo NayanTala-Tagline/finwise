@@ -193,7 +193,7 @@ class _TemperatureConvertScreenState extends State<TemperatureConvertScreen> {
                         ),
                       ),
                     ],
-                   ],
+                  ],
                 ),
               ),
             ),
@@ -202,7 +202,13 @@ class _TemperatureConvertScreenState extends State<TemperatureConvertScreen> {
         bottomNavigationBar: Container(
           decoration: const BoxDecoration(
             color: Colors.white,
-            boxShadow: [BoxShadow(color: Color(0x26000000), offset: Offset(0, -1), blurRadius: 4)],
+            boxShadow: [
+              BoxShadow(
+                color: Color(0x26000000),
+                offset: Offset(0, -1),
+                blurRadius: 4,
+              ),
+            ],
           ),
           child: SafeArea(
             top: false,
@@ -225,7 +231,7 @@ class _TemperatureConvertScreenState extends State<TemperatureConvertScreen> {
                     ),
                     onPressed: _convert2,
                   ),
-                   AppButton(text: 'Reset', isOutlined: true, onPressed: _reset),
+                  AppButton(text: 'Reset', isOutlined: true, onPressed: _reset),
                 ],
               ),
             ),
@@ -578,13 +584,16 @@ class _ResultCard extends StatelessWidget {
               children: [
                 // Comfort badge
                 Container(
-                  padding: EdgeInsets.symmetric(vertical: AppSize.h5),
+                  padding: EdgeInsets.symmetric(
+                    vertical: AppSize.h5,
+                    horizontal: AppSize.w12,
+                  ),
                   decoration: BoxDecoration(
                     color: Color(0xffffffff).withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(AppSize.r20),
                   ),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Assets.temperatureIcons.icTemperatureConvert.svg(
                         height: AppSize.h14,

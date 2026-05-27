@@ -156,7 +156,7 @@ class _ScoreCard extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-              Assets.personalLoanIcons.icRestart.svg(fit: BoxFit.contain)
+                GestureDetector(onTap: () => context.pop(),child: Assets.personalLoanIcons.icRestart.svg(fit: BoxFit.contain))
 
 
               ],

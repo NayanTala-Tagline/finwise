@@ -73,13 +73,10 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
     final defaultLeading = GestureDetector(
       onTap: onBackPress ?? () => NavigationHelper().handleBackPress(context),
       behavior: HitTestBehavior.opaque,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: AppSize.w4),
-        child: Icon(
-          Icons.chevron_left_rounded,
-          size: AppSize.sp30,
-          color: context.themeTextColors.textColor,
-        ),
+      child: Icon(
+        Icons.chevron_left_rounded,
+        size: AppSize.sp34,
+        color: context.themeTextColors.textColor,
       ),
     );
 
@@ -93,7 +90,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ),
         padding: EdgeInsets.symmetric(
-          horizontal: horizontalPadding ?? AppSize.w18,
+          horizontal: horizontalPadding ?? AppSize.w10,
           vertical: verticalPadding ?? 0.0,
         ),
         child: AppBar(
@@ -102,7 +99,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
           automaticallyImplyLeading: false,
           titleSpacing: 0.0,
           toolbarHeight: height,
-          leadingWidth: AppSize.w40,
+          leadingWidth: AppSize.w30,
           leading: showLeading ? (leading ?? defaultLeading) : null,
           title: title ??
               Text(

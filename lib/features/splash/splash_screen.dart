@@ -247,15 +247,13 @@ class _SplashScreenState extends State<SplashScreen> {
       unawaited(_welcomeNative?.dispose());
       _welcomeNative = null;
       context.goNamed(AppRoutes.home);
-      // final handoff = _welcomeNative;
-      // _welcomeNative = null;
-      // context.goNamed(AppRoutes.welcome, extra: handoff);
+
       return;
     }
 
-    // final handoff = _onboardingNative1;
-    // _onboardingNative1 = null;
-    // context.goNamed(AppRoutes.welcome, extra: handoff);
+    final handoff = _welcomeNative;
+    _welcomeNative = null;
+    context.goNamed(AppRoutes.welcome, extra: handoff);
     // Ownership of the preloaded native transfers to WelcomeScreen.
 
   }
@@ -266,11 +264,11 @@ class _SplashScreenState extends State<SplashScreen> {
   ///   • `show_multiple_onboarding` (RC) → onboarding (ignore prior completion).
   ///   • otherwise → home if the user has completed onboarding before, else onboarding.
   bool _shouldGoHome() {
+    final rc = RemoteConfigService.instance;
+    if (rc.showMultipleOnboarding) return false;
     final db = Injector.instance<AppDB>();
     if (db.isOrganicInstall) return true;
-    final rc = RemoteConfigService.instance;
     if (rc.skipOnBoarding) return true;
-    if (rc.showMultipleOnboarding) return false;
     return db.isOnboardingCompleted ?? false;
   }
 

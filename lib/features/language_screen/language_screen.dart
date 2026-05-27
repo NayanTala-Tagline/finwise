@@ -1,28 +1,77 @@
+import 'dart:async';
+
+import 'package:ad_manager/ad_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../extension/ext_context.dart';
+import '../../utils/anaytics_manager.dart';
 import '../../utils/app_size.dart';
 import '../../utils/navigation_helper.dart';
+import '../../utils/remote_config.dart';
+import '../../widgets/ad_slot.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/common_appbar.dart';
-import 'model/currency_item.dart';
-import 'provider/currency_provider.dart';
+import 'provider/locale_provider.dart';
 
-class CurrencyScreen extends StatefulWidget {
-  const CurrencyScreen({super.key});
+class LanguageScreen extends StatefulWidget {
+  const LanguageScreen({super.key});
 
   @override
-  State<CurrencyScreen> createState() => _CurrencyScreenState();
+  State<LanguageScreen> createState() => _LanguageScreenState();
 }
 
-class _CurrencyScreenState extends State<CurrencyScreen> {
-  late CurrencyItem _pending;
+class _LanguageScreenState extends State<LanguageScreen> {
+  InlineAdManager? _inlineAd;
+  String? _selectedLanguageCode;
+  int? _selectedLanguageIndex;
+
+  final List<Map<String, String>> languages = const [
+    {'name': 'English', 'code': 'en', 'symbol': '🇬🇧'},
+    {'name': 'German', 'code': 'de', 'symbol': '🇩🇪'},
+    {'name': 'French', 'code': 'fr', 'symbol': '🇫🇷'},
+    {'name': 'Swahili', 'code': 'sw', 'symbol': '🇰🇪'},
+    {'name': 'Arabic', 'code': 'ar', 'symbol': '🇸🇦'},
+    {'name': 'Hindi', 'code': 'hi', 'symbol': '🇮🇳'},
+    {'name': 'Malay', 'code': 'ms', 'symbol': '🇲🇾'},
+    {'name': 'Filipino', 'code': 'fil', 'symbol': '🇵🇭'},
+    {'name': 'Spanish', 'code': 'es', 'symbol': '🇪🇸'},
+    {'name': 'Dutch', 'code': 'nl', 'symbol': '🇳🇱'},
+  ];
 
   @override
   void initState() {
     super.initState();
-    _pending = context.read<CurrencyProvider>().selected;
+    AnalyticsManager.instance.logScreenView(
+      screenName: 'language_selection_screen',
+    );
+    _loadInline();
+    _initializeSelectedLanguage();
+  }
+
+  void _initializeSelectedLanguage() {
+    final languageProvider = context.read<LocaleProvider>();
+    _selectedLanguageCode = languageProvider.getCurrentLocaleCode() ?? 'en';
+    _selectedLanguageIndex = languages.indexWhere(
+      (lang) => lang['code'] == _selectedLanguageCode,
+    );
+    if (_selectedLanguageIndex == -1) {
+      _selectedLanguageCode = 'en';
+      _selectedLanguageIndex = 0;
+    }
+  }
+
+  void _loadInline() {
+    final data = RemoteConfigService.instance.languageNative;
+    if (!data.enabled || data.adId.isEmpty) return;
+    _inlineAd = InlineAdManager(adData: data);
+    unawaited(_inlineAd!.load());
+  }
+
+  @override
+  void dispose() {
+    unawaited(_inlineAd?.dispose());
+    super.dispose();
   }
 
   @override
@@ -39,7 +88,7 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
       child: Scaffold(
         backgroundColor: colors.backgroundColor,
         appBar: CommonAppBar(
-          titleText: 'Currency',
+          titleText: 'Language',
           titleTextStyle: context.textTheme.bodyMedium?.copyWith(
             fontSize: AppSize.sp18,
             fontWeight: FontWeight.w700,
@@ -48,11 +97,10 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-
             Padding(
               padding: EdgeInsets.fromLTRB(AppSize.w16, AppSize.h16, AppSize.w16, AppSize.h8),
               child: Text(
-                'Currency List',
+                'Language List',
                 style: context.textTheme.titleMedium?.copyWith(
                   fontSize: AppSize.sp16,
                   fontWeight: FontWeight.w700,
@@ -67,14 +115,18 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
                   AppSize.w16,
                   AppSize.h12,
                 ),
-                itemCount: CurrencyItem.all.length,
+                itemCount: languages.length,
                 itemBuilder: (context, index) {
-                  final item = CurrencyItem.all[index];
-                  final isSelected = item.code == _pending.code;
+                  final lang = languages[index];
+                  final isSelected = _selectedLanguageCode == lang['code'];
+
                   return Padding(
                     padding: EdgeInsets.only(bottom: AppSize.h10),
                     child: GestureDetector(
-                      onTap: () => setState(() => _pending = item),
+                      onTap: () => setState(() {
+                        _selectedLanguageCode = lang['code'];
+                        _selectedLanguageIndex = index;
+                      }),
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
                         padding: EdgeInsets.symmetric(
@@ -92,18 +144,18 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
                                 : const Color(0xFFE2E8F0),
                             width: isSelected ? 1.5 : 1,
                           ),
-                          boxShadow:   [
+                          boxShadow: [
                             BoxShadow(
-                              color: Color(0xff000000).withValues(alpha: 0.04),
+                              color: const Color(0xff000000).withValues(alpha: 0.04),
                               blurRadius: 8,
                               spreadRadius: 0,
-                              offset: Offset(0, 2),
+                              offset: const Offset(0, 2),
                             ),
                           ],
                         ),
                         child: Row(
                           children: [
-                            // Symbol badge
+                            // Flag badge
                             Container(
                               width: AppSize.w34,
                               height: AppSize.h34,
@@ -115,27 +167,19 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
                               ),
                               child: Center(
                                 child: Text(
-                                  item.symbol,
-                                  style: context.textTheme.titleMedium?.copyWith(
-                                    fontSize: item.symbol.length > 2
-                                        ? AppSize.sp11
-                                        : AppSize.sp15,
-                                    fontWeight: FontWeight.w700,
-                                    color: isSelected
-                                        ? colors.primary
-                                        : textColors.textColor,
-                                  ),
+                                  lang['symbol']!,
+                                  style: TextStyle(fontSize: AppSize.sp18),
                                 ),
                               ),
                             ),
                             SizedBox(width: AppSize.w12),
-                            // Country + code
+                            // Language name + code
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    item.country,
+                                    lang['name']!,
                                     style: context.textTheme.bodyLarge?.copyWith(
                                       fontSize: AppSize.sp14,
                                       fontWeight: FontWeight.w600,
@@ -144,7 +188,7 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
                                   ),
                                   SizedBox(height: AppSize.h2),
                                   Text(
-                                    item.code,
+                                    lang['code']!.toUpperCase(),
                                     style: context.textTheme.bodySmall?.copyWith(
                                       fontSize: AppSize.sp12,
                                       color: textColors.descriptionColor,
@@ -162,27 +206,26 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
                                       padding: EdgeInsets.all(AppSize.sp3),
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        border: Border.all(color: colors.primary,
-                                        )
-                                       ),
+                                        border: Border.all(color: colors.primary),
+                                      ),
                                       child: Container(
                                         width: AppSize.w10,
                                         height: AppSize.h10,
                                         decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: colors.primary,
-
+                                          shape: BoxShape.circle,
+                                          color: colors.primary,
                                         ),
-                                      )
+                                      ),
                                     )
                                   : Container(
                                       key: const ValueKey('unselected'),
-                                padding: EdgeInsets.all(AppSize.sp7),
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(color: Colors.black,
-                                    )
-                                ),
+                                      padding: EdgeInsets.all(AppSize.sp7),
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Colors.black,
+                                        ),
+                                      ),
                                     ),
                             ),
                           ],
@@ -193,7 +236,7 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
                 },
               ),
             ),
-
+            AdSlot(ad: _inlineAd, safeAreaBottom: false),
             // Save button
             Container(
               decoration: const BoxDecoration(
@@ -219,8 +262,27 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
                     text: 'Save',
                     backgroundColor: colors.primary,
                     borderRadius: AppSize.r50,
-                    onPressed: () {
-                      context.read<CurrencyProvider>().setCurrency(_pending);
+                    onPressed: () async {
+                      if (_selectedLanguageCode != null && _selectedLanguageIndex != null) {
+                        final languageProvider = context.read<LocaleProvider>();
+                        final selectedLang = languages[_selectedLanguageIndex!];
+
+                        AnalyticsManager.instance.logEvent(
+                          name: 'language_changed',
+                          parameters: {
+                            'language_name': selectedLang['name'] ?? '',
+                            'language_code': selectedLang['code'] ?? '',
+                          },
+                        );
+
+                        await languageProvider.setLocale(
+                          Locale(_selectedLanguageCode!),
+                          _selectedLanguageIndex!,
+                          true,
+                        );
+                      }
+
+                      if (!context.mounted) return;
                       NavigationHelper().handleBackPress(context);
                     },
                   ),

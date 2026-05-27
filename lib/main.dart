@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:ad_manager/ad_manager.dart';
 import 'package:finwise/features/currency_screen/provider/currency_provider.dart';
+import 'package:finwise/features/language_screen/provider/locale_provider.dart';
 import 'package:finwise/firebase_option.dart';
 import 'package:finwise/utils/install_referrer_service.dart';
 import 'package:finwise/utils/remote_config.dart';
@@ -53,7 +54,7 @@ void main() async {
   runApp(
       MultiProvider(
         providers: [
-          // ChangeNotifierProvider(create: (_) => LocaleProvider()),
+          ChangeNotifierProvider(create: (_) => LocaleProvider()),
           ChangeNotifierProvider(create: (_) => CurrencyProvider()),
         ],
         child:
@@ -73,21 +74,21 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        // return Consumer<LocaleProvider>(
-        //     builder: (context,localeProvider,_) {
+        return Consumer<LocaleProvider>(
+            builder: (context,localeProvider,_) {
               return MaterialApp.router(
                 title: 'FinWise',
                 debugShowCheckedModeBanner: false,
                 localizationsDelegates: AppLocalizations.localizationsDelegates,
                 supportedLocales: AppLocalizations.supportedLocales,
-                // locale: localeProvider.locale ?? const Locale('en'),
+                locale: localeProvider.locale ?? const Locale('en'),
                 themeMode: ThemeMode.light,
                 theme: lightTheme,
                 darkTheme: darkTheme,
                 routerConfig: appRouter,
               );
-            // }
-        // );
+            }
+        );
       },
     );
   }
