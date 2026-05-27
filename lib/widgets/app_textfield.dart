@@ -259,9 +259,8 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
                       ? (widget.style ??
                           context.textTheme.titleSmall?.copyWith(
                             color: widget.textColor,
-                            fontSize: AppSize.sp18,
-                            fontWeight: FontWeight.w500,
-                          ))
+                            fontSize: AppSize.sp15,
+                           ))
                       : (widget.hintStyle ??
                           context.textTheme.titleSmall?.copyWith(
                             color: widget.textColor ?? const Color(0xffAAA9A8),

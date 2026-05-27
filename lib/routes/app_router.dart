@@ -26,6 +26,8 @@ import 'package:finwise/features/credit_score_estimator/provider/credit_score_es
 import 'package:finwise/features/loan_calculator/loan_calculator_screen.dart';
 import 'package:finwise/features/loan_detail/loan_detail_screen.dart';
 import 'package:finwise/features/loan_detail/model/loan_detail_data.dart';
+import 'package:finwise/features/fixed_deposit/fixed_deposit_screen.dart';
+import 'package:finwise/features/recurring_deposit/recurring_deposit_screen.dart';
 import 'package:finwise/features/setting_module/setting_screen.dart';
 import 'package:finwise/features/splash/splash_screen.dart';
 import 'package:finwise/features/tips_advice/tips_advice_screen.dart';
@@ -318,6 +320,22 @@ final appRouter = GoRouter(
       pageBuilder: (context, state) => MaterialPage(
         key: state.pageKey,
         child: const LoanCalculatorScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/${AppRoutes.fixedDeposit}',
+      name: AppRoutes.fixedDeposit,
+      pageBuilder: (context, state) => MaterialPage(
+        key: state.pageKey,
+        child: const FixedDepositScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/${AppRoutes.recurringDeposit}',
+      name: AppRoutes.recurringDeposit,
+      pageBuilder: (context, state) => MaterialPage(
+        key: state.pageKey,
+        child: const RecurringDepositScreen(),
       ),
     ),
     GoRoute(

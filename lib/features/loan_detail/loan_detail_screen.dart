@@ -456,40 +456,51 @@ class _BottomButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(AppSize.w16, AppSize.h8, AppSize.w16, AppSize.h12),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AppButton(
-              text: 'Calculate',
-              backgroundColor: const Color(0xFF2563EB),
-              borderRadius: AppSize.r50,
-              suffixIcon: const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 18),
-              onPressed: () {
-                NavigationHelper().navigateWithAdCheck(context, () {
-                  if (data.type == LoanType.creditCard) {
-                    context.pushNamed(AppRoutes.creditScoreEstimator);
-                  } else {
-                    context.pushNamed(AppRoutes.loanCalculator);
-                  }
-                });
-              },
-            ),
-            SizedBox(height: AppSize.h10),
-            AppButton(
-              text: data.processButtonLabel,
-              isOutlined: true,
-              borderRadius: AppSize.r50,
-              onPressed: () {
-                NavigationHelper().navigateWithAdCheck(context, () {
-                  context.pushNamed(AppRoutes.loanPurpose);
-                });
-              },
-            ),
-          ],
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Color(0x26000000),
+            offset: Offset(0, -1),
+            blurRadius: 4,
+          ),
+        ],
+      ),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(AppSize.w16, AppSize.h8, AppSize.w16, AppSize.h0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AppButton(
+                text: 'Calculate',
+                backgroundColor: const Color(0xFF2563EB),
+                borderRadius: AppSize.r50,
+                suffixIcon: const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 18),
+                onPressed: () {
+                  NavigationHelper().navigateWithAdCheck(context, () {
+                    if (data.type == LoanType.creditCard) {
+                      context.pushNamed(AppRoutes.creditScoreEstimator);
+                    } else {
+                      context.pushNamed(AppRoutes.loanCalculator);
+                    }
+                  });
+                },
+              ),
+               AppButton(
+                text: data.processButtonLabel,
+                isOutlined: true,
+                borderRadius: AppSize.r50,
+                onPressed: () {
+                  NavigationHelper().navigateWithAdCheck(context, () {
+                    context.pushNamed(AppRoutes.loanPurpose);
+                  });
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

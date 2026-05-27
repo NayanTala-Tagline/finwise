@@ -137,7 +137,7 @@ class _MassConvertScreenState extends State<MassConvertScreen> {
         NavigationHelper().handleBackPress(context);
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFF5F7FA),
+        backgroundColor: context.themeColors.backgroundColor,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [

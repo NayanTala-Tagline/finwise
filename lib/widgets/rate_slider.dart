@@ -114,7 +114,7 @@ class RateSlider extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: AppSize.h8),
+          SizedBox(height: AppSize.h6),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
