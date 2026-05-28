@@ -5,6 +5,7 @@ import 'package:ad_manager/ad_manager.dart';
 import 'package:finwise/features/currency_screen/provider/currency_provider.dart';
 import 'package:finwise/features/language_screen/provider/locale_provider.dart';
 import 'package:finwise/firebase_option.dart';
+import 'package:finwise/utils/anaytics_manager.dart';
 import 'package:finwise/utils/install_referrer_service.dart';
 import 'package:finwise/utils/remote_config.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -41,6 +42,7 @@ void main() async {
   await GoogleSignIn.instance.initialize();
   await RemoteConfigService.instance.init();
   await MobileAds.instance.initialize();
+  await AnalyticsManager.instance.initMetaSdk();
   unawaited(InstallReferrerService.instance.resolveOnce());
 
   // 🔒 Lock orientation (portrait only)
