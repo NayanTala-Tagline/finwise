@@ -86,15 +86,15 @@ class _LoanDetailScreenState extends State<LoanDetailScreen> {
                     SizedBox(height: AppSize.h12),
                     _StepsCard(steps: data.steps, themeColor: data.themeColor),
                     SizedBox(height: AppSize.h16),
-                    AdSlot(ad: _inlineAd, safeAreaBottom: false, safeAreaTop: false),
-                    // SizedBox(height: AppSize.h10),
-                    _TrustBadgeCard(),
+
+                     _TrustBadgeCard(),
                     SizedBox(height: AppSize.h8),
                   ],
                 ),
               ),
             ),
-            _BottomButtons(data: data),
+            AdSlot(ad: _inlineAd, safeAreaBottom: false,safeAreaTop: false,),
+            _BottomButtons(data: data, ),
           ],
         ),
       ),
@@ -453,9 +453,10 @@ class _TrustBadgeCard extends StatelessWidget {
 // ── Bottom buttons ────────────────────────────────────────────────────────────
 
 class _BottomButtons extends StatelessWidget {
-  const _BottomButtons({required this.data});
+  const _BottomButtons({required this.data });
 
   final LoanDetailData data;
+
 
   @override
   Widget build(BuildContext context) {
@@ -477,7 +478,7 @@ class _BottomButtons extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              AppButton(
+               AppButton(
                 text: 'Calculate',
                 backgroundColor: const Color(0xFF2563EB),
                  suffixIcon:   Icon(Icons.arrow_forward_ios, color: Colors.white, size: AppSize.sp18),

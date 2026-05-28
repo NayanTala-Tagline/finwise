@@ -20,9 +20,15 @@ import 'package:finwise/features/onboarding/onboarding2_screen.dart';
 import 'package:finwise/features/onboarding/onboarding3_screen.dart';
 import 'package:finwise/features/onboarding/onboarding4_screen.dart';
 import 'package:finwise/features/onboarding/onboarding5_screen.dart';
-import 'package:finwise/features/credit_score_estimator/credit_score_estimator_screen.dart';
 import 'package:finwise/features/credit_score_estimator/credit_score_result_screen.dart';
+import 'package:finwise/features/credit_score_estimator/provider/credit_score_ad_provider.dart';
 import 'package:finwise/features/credit_score_estimator/provider/credit_score_estimator_provider.dart';
+import 'package:finwise/features/credit_score_estimator/step1_payment_history_screen.dart';
+import 'package:finwise/features/credit_score_estimator/step2_account_mix_screen.dart';
+import 'package:finwise/features/credit_score_estimator/step3_credit_limits_screen.dart';
+import 'package:finwise/features/credit_score_estimator/step4_current_balances_screen.dart';
+import 'package:finwise/features/credit_score_estimator/step5_credit_inquiries_screen.dart';
+import 'package:finwise/features/credit_score_estimator/step6_history_length_screen.dart';
 import 'package:finwise/features/loan_calculator/loan_calculator_screen.dart';
 import 'package:finwise/features/loan_detail/loan_detail_screen.dart';
 import 'package:finwise/features/loan_detail/model/loan_detail_data.dart';
@@ -347,13 +353,64 @@ final appRouter = GoRouter(
         child: const RecurringDepositScreen(),
       ),
     ),
-    GoRoute(
-      path: '/${AppRoutes.creditScoreEstimator}',
-      name: AppRoutes.creditScoreEstimator,
-      pageBuilder: (context, state) => MaterialPage(
-        key: state.pageKey,
-        child: const CreditScoreEstimatorScreen(),
+    ShellRoute(
+      builder: (context, state, child) => MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => CreditScoreEstimatorProvider()),
+          ChangeNotifierProvider(create: (_) => CreditScoreAdProvider()),
+        ],
+        child: child,
       ),
+      routes: [
+        GoRoute(
+          path: '/${AppRoutes.creditScoreEstimator}',
+          name: AppRoutes.creditScoreEstimator,
+          pageBuilder: (context, state) => MaterialPage(
+            key: state.pageKey,
+            child: const Step1PaymentHistoryScreen(),
+          ),
+        ),
+        GoRoute(
+          path: '/${AppRoutes.creditScoreStep2}',
+          name: AppRoutes.creditScoreStep2,
+          pageBuilder: (context, state) {
+            final ad = state.extra is InlineAdManager ? state.extra as InlineAdManager : null;
+            return MaterialPage(key: state.pageKey, child: Step2AccountMixScreen(inlineAd: ad));
+          },
+        ),
+        GoRoute(
+          path: '/${AppRoutes.creditScoreStep3}',
+          name: AppRoutes.creditScoreStep3,
+          pageBuilder: (context, state) {
+            final ad = state.extra is InlineAdManager ? state.extra as InlineAdManager : null;
+            return MaterialPage(key: state.pageKey, child: Step3CreditLimitsScreen(inlineAd: ad));
+          },
+        ),
+        GoRoute(
+          path: '/${AppRoutes.creditScoreStep4}',
+          name: AppRoutes.creditScoreStep4,
+          pageBuilder: (context, state) {
+            final ad = state.extra is InlineAdManager ? state.extra as InlineAdManager : null;
+            return MaterialPage(key: state.pageKey, child: Step4CurrentBalancesScreen(inlineAd: ad));
+          },
+        ),
+        GoRoute(
+          path: '/${AppRoutes.creditScoreStep5}',
+          name: AppRoutes.creditScoreStep5,
+          pageBuilder: (context, state) {
+            final ad = state.extra is InlineAdManager ? state.extra as InlineAdManager : null;
+            return MaterialPage(key: state.pageKey, child: Step5CreditInquiriesScreen(inlineAd: ad));
+          },
+        ),
+        GoRoute(
+          path: '/${AppRoutes.creditScoreStep6}',
+          name: AppRoutes.creditScoreStep6,
+          pageBuilder: (context, state) {
+            final ad = state.extra is InlineAdManager ? state.extra as InlineAdManager : null;
+            return MaterialPage(key: state.pageKey, child: Step6HistoryLengthScreen(inlineAd: ad));
+          },
+        ),
+      ],
     ),
     GoRoute(
       path: '/${AppRoutes.creditScoreResult}',

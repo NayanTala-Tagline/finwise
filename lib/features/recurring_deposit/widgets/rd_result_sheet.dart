@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:ad_manager/ad_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -8,12 +10,40 @@ import '../../../extension/ext_context.dart';
 import '../../currency_screen/provider/currency_provider.dart';
 import '../../../gen/assets.gen.dart';
 import '../../../utils/app_size.dart';
+import '../../../utils/remote_config.dart';
+import '../../../widgets/ad_slot.dart';
 import '../../../widgets/app_button.dart';
 import '../../../widgets/common_appbar.dart';
 import '../provider/recurring_deposit_provider.dart';
 
-class RdResultSheet extends StatelessWidget {
+class RdResultSheet extends StatefulWidget {
   const RdResultSheet({super.key});
+
+  @override
+  State<RdResultSheet> createState() => _RdResultSheetState();
+}
+
+class _RdResultSheetState extends State<RdResultSheet> {
+  InlineAdManager? _inlineAd;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadInline();
+  }
+
+  void _loadInline() {
+    final data = RemoteConfigService.instance.recurringDepositResultNative;
+    if (!data.enabled || data.adId.isEmpty) return;
+    _inlineAd = InlineAdManager(adData: data);
+    unawaited(_inlineAd!.load());
+  }
+
+  @override
+  void dispose() {
+    unawaited(_inlineAd?.dispose());
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,11 +74,13 @@ class RdResultSheet extends StatelessWidget {
                   ),
                   SizedBox(height: AppSize.h16),
                   _GrowthTimelineCard(result: result),
-                ],
+                 ],
               ),
             ),
           ),
           // ── Bottom Buttons ─────────────────────────────────────────────────
+          AdSlot(ad: _inlineAd, safeAreaBottom: false),
+
           Container(
             decoration: const BoxDecoration(
               color: Colors.white,

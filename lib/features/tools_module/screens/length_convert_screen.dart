@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:ad_manager/ad_manager.dart';
 import 'package:finwise/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -5,6 +8,8 @@ import 'package:flutter/services.dart';
 import '../../../extension/ext_context.dart';
 import '../../../utils/app_size.dart';
 import '../../../utils/navigation_helper.dart';
+import '../../../utils/remote_config.dart';
+import '../../../widgets/ad_slot.dart';
 import '../../../widgets/app_button.dart';
 import '../../../widgets/app_summary_background.dart';
 import '../../../widgets/app_textfield.dart';
@@ -27,6 +32,8 @@ class _LengthConvertScreenState extends State<LengthConvertScreen> {
   double? _inputValue;
   double? _result;
 
+  InlineAdManager? _inlineAd;
+
   static const _units = ['m', 'km', 'cm', 'in', 'ft'];
   static const _gradient = [Color(0xFF059669), Color(0xFF047857)];
 
@@ -41,6 +48,7 @@ class _LengthConvertScreenState extends State<LengthConvertScreen> {
   @override
   void initState() {
     super.initState();
+    _loadInline();
     _controller.addListener(() {
       final has = _controller.text.trim().isNotEmpty;
       if (has != _hasInput) setState(() => _hasInput = has);
@@ -121,8 +129,16 @@ class _LengthConvertScreenState extends State<LengthConvertScreen> {
     });
   }
 
+  void _loadInline() {
+    final data = RemoteConfigService.instance.lengthNative;
+    if (!data.enabled || data.adId.isEmpty) return;
+    _inlineAd = InlineAdManager(adData: data);
+    unawaited(_inlineAd!.load());
+  }
+
   @override
   void dispose() {
+    unawaited(_inlineAd?.dispose());
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -208,6 +224,7 @@ class _LengthConvertScreenState extends State<LengthConvertScreen> {
                 ),
               ),
             ),
+            AdSlot(ad: _inlineAd, safeAreaBottom: false),
           ],
         ),
         bottomNavigationBar: Container(

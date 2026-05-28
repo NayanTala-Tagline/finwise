@@ -40,5 +40,10 @@ class AppRoutes {
   static const String documentRequired = 'DocumentRequiredScreen';
   static const String tipsAdvice = 'TipsAdviceScreen';
   static const String creditScoreEstimator = 'CreditScoreEstimatorScreen';
+  static const String creditScoreStep2 = 'CreditScoreStep2Screen';
+  static const String creditScoreStep3 = 'CreditScoreStep3Screen';
+  static const String creditScoreStep4 = 'CreditScoreStep4Screen';
+  static const String creditScoreStep5 = 'CreditScoreStep5Screen';
+  static const String creditScoreStep6 = 'CreditScoreStep6Screen';
   static const String creditScoreResult = 'CreditScoreResultScreen';
 }

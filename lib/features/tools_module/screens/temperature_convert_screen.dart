@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:ad_manager/ad_manager.dart';
 import 'package:finwise/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -5,6 +8,8 @@ import 'package:flutter/services.dart';
 import '../../../extension/ext_context.dart';
 import '../../../utils/app_size.dart';
 import '../../../utils/navigation_helper.dart';
+import '../../../utils/remote_config.dart';
+import '../../../widgets/ad_slot.dart';
 import '../../../widgets/app_button.dart';
 import '../../../widgets/app_summary_background.dart';
 import '../../../widgets/app_textfield.dart';
@@ -26,6 +31,8 @@ class _TemperatureConvertScreenState extends State<TemperatureConvertScreen> {
   String _toUnit = '°F';
   double? _inputValue;
   double? _result;
+
+  InlineAdManager? _inlineAd;
 
   static const _units = ['°C', '°F', 'K'];
   static const _gradient = [Color(0xFFE64A19), Color(0xFFFF7043)];
@@ -113,7 +120,21 @@ class _TemperatureConvertScreenState extends State<TemperatureConvertScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _loadInline();
+  }
+
+  void _loadInline() {
+    final data = RemoteConfigService.instance.temperatureNative;
+    if (!data.enabled || data.adId.isEmpty) return;
+    _inlineAd = InlineAdManager(adData: data);
+    unawaited(_inlineAd!.load());
+  }
+
+  @override
   void dispose() {
+    unawaited(_inlineAd?.dispose());
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -197,6 +218,7 @@ class _TemperatureConvertScreenState extends State<TemperatureConvertScreen> {
                 ),
               ),
             ),
+            AdSlot(ad: _inlineAd, safeAreaBottom: false),
           ],
         ),
         bottomNavigationBar: Container(

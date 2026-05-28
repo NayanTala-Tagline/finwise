@@ -219,6 +219,10 @@ class _DocumentRequiredScreenState extends State<DocumentRequiredScreen> {
             ),
           ],
         ),
+        bottomNavigationBar: SafeArea(
+          top: false,
+          child: AdSlot(ad: _inlineAd, safeAreaBottom: false),
+        ),
       ),
     );
   }

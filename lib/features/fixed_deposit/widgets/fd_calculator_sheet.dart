@@ -1,11 +1,15 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:ad_manager/ad_manager.dart';
 
 import '../../../extension/ext_context.dart';
 import '../../currency_screen/provider/currency_provider.dart';
 import '../../../utils/app_size.dart';
+import '../../../utils/remote_config.dart';
+import '../../../widgets/ad_slot.dart';
 import '../../../widgets/app_button.dart';
 import '../../../widgets/app_textfield.dart';
 import '../../../widgets/common_appbar.dart';
@@ -21,6 +25,27 @@ class FdCalculatorSheet extends StatefulWidget {
 
 class _FdCalculatorSheetState extends State<FdCalculatorSheet> {
   static const List<String> _tenureUnits = ['Month', 'Year'];
+
+  InlineAdManager? _inlineAd;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadInline();
+  }
+
+  void _loadInline() {
+    final data = RemoteConfigService.instance.fixedDepositCalculatorNative;
+    if (!data.enabled || data.adId.isEmpty) return;
+    _inlineAd = InlineAdManager(adData: data);
+    unawaited(_inlineAd!.load());
+  }
+
+  @override
+  void dispose() {
+    unawaited(_inlineAd?.dispose());
+    super.dispose();
+  }
 
   void _pickDate(BuildContext context) async {
     final provider = context.read<FixedDepositProvider>();
@@ -147,6 +172,7 @@ class _FdCalculatorSheetState extends State<FdCalculatorSheet> {
               ),
             ),
           ),
+          AdSlot(ad: _inlineAd, safeAreaBottom: false),
 
           // ── Bottom Button ────────────────────────────────────────────────────
           Container(

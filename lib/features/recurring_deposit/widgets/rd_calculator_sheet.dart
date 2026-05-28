@@ -1,11 +1,15 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:ad_manager/ad_manager.dart';
 
 import '../../../extension/ext_context.dart';
 import '../../currency_screen/provider/currency_provider.dart';
 import '../../../utils/app_size.dart';
+import '../../../utils/remote_config.dart';
+import '../../../widgets/ad_slot.dart';
 import '../../../widgets/app_button.dart';
 import '../../../widgets/app_textfield.dart';
 import '../../../widgets/common_appbar.dart';
@@ -21,6 +25,27 @@ class RdCalculatorSheet extends StatefulWidget {
 
 class _RdCalculatorSheetState extends State<RdCalculatorSheet> {
   static const List<String> _tenureUnits = ['Month', 'Year'];
+
+  InlineAdManager? _inlineAd;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadInline();
+  }
+
+  void _loadInline() {
+    final data = RemoteConfigService.instance.recurringDepositCalculatorNative;
+    if (!data.enabled || data.adId.isEmpty) return;
+    _inlineAd = InlineAdManager(adData: data);
+    unawaited(_inlineAd!.load());
+  }
+
+  @override
+  void dispose() {
+    unawaited(_inlineAd?.dispose());
+    super.dispose();
+  }
 
   void _pickDate(BuildContext context) async {
     final provider = context.read<RecurringDepositProvider>();
@@ -143,11 +168,12 @@ class _RdCalculatorSheetState extends State<RdCalculatorSheet> {
                     suffixIconConstraints: BoxConstraints(minWidth: AppSize.w30, minHeight: 0),
                   ),
                   SizedBox(height: AppSize.h32),
+
                 ],
               ),
             ),
           ),
-
+          AdSlot(ad: _inlineAd, safeAreaBottom: false),
           // ── Bottom Button ────────────────────────────────────────────────────
           Container(
             decoration: const BoxDecoration(
@@ -163,7 +189,7 @@ class _RdCalculatorSheetState extends State<RdCalculatorSheet> {
                 child: AppButton(
                   text: 'Calculate',
                   borderRadius: AppSize.r50,
-                  suffixIcon: const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 18),
+                  suffixIcon:   Icon(Icons.arrow_forward_ios, color: Colors.white, size: AppSize.sp18),
                   onPressed: () => _calculate(context),
                 ),
               ),

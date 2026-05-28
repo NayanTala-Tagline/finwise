@@ -1,3 +1,8 @@
+import 'dart:async';
+
+import 'package:ad_manager/inline_ad_manager.dart';
+import 'package:finwise/utils/remote_config.dart';
+import 'package:finwise/widgets/ad_slot.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -36,6 +41,8 @@ class _FdDetailViewState extends State<_FdDetailView> {
 
   static const Color _green = Color(0xFF059669);
   static const Color _greenDark = Color(0xFF047857);
+
+  InlineAdManager? _inlineAd;
 
   static const _features = [
     (
@@ -99,6 +106,25 @@ class _FdDetailViewState extends State<_FdDetailView> {
       curve: Curves.easeOut,
       alignment: 0.0,
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadInline();
+  }
+
+  void _loadInline() {
+    final data = RemoteConfigService.instance.fixedDepositNative;
+    if (!data.enabled || data.adId.isEmpty) return;
+    _inlineAd = InlineAdManager(adData: data);
+    unawaited(_inlineAd!.load());
+  }
+
+  @override
+  void dispose() {
+    unawaited(_inlineAd?.dispose());
+    super.dispose();
   }
 
   @override
@@ -219,6 +245,9 @@ class _FdDetailViewState extends State<_FdDetailView> {
               ),
             ),
 
+            // ── Inline Ad ───────────────────────────────────────────────────
+
+            AdSlot(ad: _inlineAd, safeAreaBottom: false),
             // ── Bottom Buttons ───────────────────────────────────────────────
             Container(
               decoration: const BoxDecoration(

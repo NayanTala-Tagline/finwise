@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:ad_manager/ad_manager.dart';
 import 'package:finwise/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -5,6 +8,8 @@ import 'package:flutter/services.dart';
 import '../../../extension/ext_context.dart';
 import '../../../utils/app_size.dart';
 import '../../../utils/navigation_helper.dart';
+import '../../../utils/remote_config.dart';
+import '../../../widgets/ad_slot.dart';
 import '../../../widgets/app_button.dart';
 import '../../../widgets/app_summary_background.dart';
 import '../../../widgets/app_textfield.dart';
@@ -27,6 +32,8 @@ class _SpeedConvertScreenState extends State<SpeedConvertScreen> {
   double? _inputValue;
   double? _result;
 
+  InlineAdManager? _inlineAd;
+
   static const _units = ['km/h', 'mph', 'm/s', 'kn', 'ft/s'];
   static const _gradient = [Color(0xFFF59E0B), Color(0xFFD97706)];
 
@@ -42,6 +49,7 @@ class _SpeedConvertScreenState extends State<SpeedConvertScreen> {
   @override
   void initState() {
     super.initState();
+    _loadInline();
     _controller.addListener(() {
       final has = _controller.text.trim().isNotEmpty;
       if (has != _hasInput) setState(() => _hasInput = has);
@@ -122,8 +130,16 @@ class _SpeedConvertScreenState extends State<SpeedConvertScreen> {
     });
   }
 
+  void _loadInline() {
+    final data = RemoteConfigService.instance.speedNative;
+    if (!data.enabled || data.adId.isEmpty) return;
+    _inlineAd = InlineAdManager(adData: data);
+    unawaited(_inlineAd!.load());
+  }
+
   @override
   void dispose() {
+    unawaited(_inlineAd?.dispose());
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -209,6 +225,7 @@ class _SpeedConvertScreenState extends State<SpeedConvertScreen> {
                 ),
               ),
             ),
+            AdSlot(ad: _inlineAd, safeAreaBottom: false),
           ],
         ),
         bottomNavigationBar: Container(

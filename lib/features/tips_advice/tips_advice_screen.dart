@@ -598,6 +598,10 @@ class _TipsAdviceScreenState extends State<TipsAdviceScreen> {
             ),
           ],
         ),
+        bottomNavigationBar: SafeArea(
+          top: false,
+          child: AdSlot(ad: _inlineAd, safeAreaBottom: false),
+        ),
       ),
     );
   }

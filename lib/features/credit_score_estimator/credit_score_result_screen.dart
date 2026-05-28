@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:ad_manager/ad_manager.dart';
 import 'package:finwise/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -8,14 +10,45 @@ import 'package:go_router/go_router.dart';
 import '../../extension/ext_context.dart';
 import '../../routes/app_router.dart';
 import '../../utils/app_size.dart';
+import '../../utils/remote_config.dart';
+import '../../widgets/ad_slot.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/app_summary_background.dart';
 import 'provider/credit_score_estimator_provider.dart';
 
-class CreditScoreResultScreen extends StatelessWidget {
+class CreditScoreResultScreen extends StatefulWidget {
   const CreditScoreResultScreen({super.key, required this.result});
 
   final CreditScoreResult result;
+
+  @override
+  State<CreditScoreResultScreen> createState() => _CreditScoreResultScreenState();
+}
+
+class _CreditScoreResultScreenState extends State<CreditScoreResultScreen> {
+  InlineAdManager? _nativeAd;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAd();
+  }
+
+  void _loadAd() {
+    final data = RemoteConfigService.instance.creditScoreResultNative;
+    if (!data.enabled || data.adId.isEmpty) return;
+    _nativeAd = InlineAdManager(adData: data);
+    unawaited(_nativeAd!.load());
+    _nativeAd!.future().then((_) {
+      if (mounted) setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    unawaited(_nativeAd?.dispose());
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +59,9 @@ class CreditScoreResultScreen extends StatelessWidget {
         padding: EdgeInsets.fromLTRB(AppSize.w16, AppSize.h16, AppSize.w16, AppSize.h100),
         child: Column(
           children: [
-            _ScoreCard(result: result).animate().fadeIn(duration: 500.ms).slideY(begin: 0.2, end: 0, duration: 600.ms, curve: Curves.easeOutCubic),
+            _ScoreCard(result: widget.result).animate().fadeIn(duration: 500.ms).slideY(begin: 0.2, end: 0, duration: 600.ms, curve: Curves.easeOutCubic),
             Container(
-              padding: EdgeInsets.symmetric(vertical: AppSize.h20,horizontal: AppSize.w20),
+              padding: EdgeInsets.symmetric(vertical: AppSize.h20, horizontal: AppSize.w20),
               decoration: BoxDecoration(
                 color: Colors.white,
                 boxShadow: [
@@ -38,42 +71,49 @@ class CreditScoreResultScreen extends StatelessWidget {
                     spreadRadius: AppSize.sp5,
                   ),
                 ],
-                borderRadius: BorderRadius.only(bottomRight: Radius.circular(AppSize.r20),bottomLeft: Radius.circular(AppSize.r20))
+                borderRadius: BorderRadius.only(
+                  bottomRight: Radius.circular(AppSize.r20),
+                  bottomLeft: Radius.circular(AppSize.r20),
+                ),
               ),
               child: Row(
                 children: [
                   Expanded(
                     child: _ScoreStat(
                       label: 'Utilization',
-                      value: '${result.utilization.toStringAsFixed(0)}%',
+                      value: '${widget.result.utilization.toStringAsFixed(0)}%',
                     ),
                   ),
                   SizedBox(width: AppSize.w20),
                   Expanded(
                     child: _ScoreStat(
                       label: 'Total Accounts',
-                      value: '${result.totalAccounts}',
+                      value: '${widget.result.totalAccounts}',
                     ),
                   ),
                 ],
               ),
             ),
             SizedBox(height: AppSize.h16),
-            _ScoreFactorsCard(result: result).animate().fadeIn(delay: 150.ms, duration: 500.ms).slideY(begin: 0.2, end: 0, delay: 150.ms, duration: 600.ms, curve: Curves.easeOutCubic),
-
+            _ScoreFactorsCard(result: widget.result).animate().fadeIn(delay: 150.ms, duration: 500.ms).slideY(begin: 0.2, end: 0, delay: 150.ms, duration: 600.ms, curve: Curves.easeOutCubic),
             SizedBox(height: AppSize.h16),
-            _FactorDistributionCard(result: result).animate().fadeIn(delay: 300.ms, duration: 500.ms).slideY(begin: 0.2, end: 0, delay: 300.ms, duration: 600.ms, curve: Curves.easeOutCubic),
+             _FactorDistributionCard(result: widget.result).animate().fadeIn(delay: 300.ms, duration: 500.ms).slideY(begin: 0.2, end: 0, delay: 300.ms, duration: 600.ms, curve: Curves.easeOutCubic),
             SizedBox(height: AppSize.h16),
-            _ImprovementTipsCard(result: result).animate().fadeIn(delay: 420.ms, duration: 500.ms).slideY(begin: 0.2, end: 0, delay: 420.ms, duration: 600.ms, curve: Curves.easeOutCubic),
+            _ImprovementTipsCard(result: widget.result).animate().fadeIn(delay: 420.ms, duration: 500.ms).slideY(begin: 0.2, end: 0, delay: 420.ms, duration: 600.ms, curve: Curves.easeOutCubic),
             SizedBox(height: AppSize.h12),
             _DisclaimerText().animate().fadeIn(delay: 500.ms, duration: 400.ms),
-
-           ],
+          ],
         ),
       ),
-      bottomNavigationBar: _BottomButtons(
-        onRecalculate: () => context.pop(),
-        onTips: () => context.push('/${AppRoutes.tipsAdvice}'),
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AdSlot(ad: _nativeAd,safeAreaBottom: false,),
+          _BottomButtons(
+            onRecalculate: () => context.pop(),
+            onTips: () => context.push('/${AppRoutes.tipsAdvice}'),
+          ),
+        ],
       ),
     );
   }
@@ -104,7 +144,11 @@ class _ResultAppBar extends StatelessWidget implements PreferredSizeWidget {
                 child: GestureDetector(
                   onTap: () => context.pop(),
                   behavior: HitTestBehavior.opaque,
-                  child: Icon(Icons.arrow_back_ios, size: AppSize.sp22, color: Colors.black),
+                  child: Assets.personalLoanIcons.icBack.svg(
+                    width: AppSize.w22,
+                    height: AppSize.h22,
+                    colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn),
+                  ),
                 ),
               ),
               Text(
@@ -298,7 +342,11 @@ class _ScoreFactorsCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.bar_chart_rounded, color: context.themeColors.primary, size: AppSize.sp22),
+              Assets.personalLoanIcons.icScoreFactors.svg(
+                width: AppSize.sp22,
+                height: AppSize.sp22,
+                colorFilter: ColorFilter.mode(context.themeColors.primary, BlendMode.srcIn),
+              ),
               SizedBox(width: AppSize.w8),
               Text(
                 'Score Factors',
@@ -416,7 +464,11 @@ class _FactorDistributionCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.pie_chart_rounded, color: context.themeColors.primary, size: AppSize.sp22),
+              Assets.personalLoanIcons.icPaymentBreakdown.svg(
+                width: AppSize.sp22,
+                height: AppSize.sp22,
+                colorFilter: ColorFilter.mode(context.themeColors.primary, BlendMode.srcIn),
+              ),
               SizedBox(width: AppSize.w8),
               Text(
                 'Factor Distribution',
@@ -555,44 +607,44 @@ class _ImprovementTipsCard extends StatelessWidget {
     final tips = <_TipData>[];
 
     if (result.creditUtilizationScore < 0.8) {
-      tips.add(const _TipData(
-        icon: Icons.credit_card_off_rounded,
-        iconColor: Color(0xFFDC2626),
+      tips.add(_TipData(
+        iconAsset: Assets.personalLoanIcons.icRightCurcle,
+        iconColor: const Color(0xFFDC2626),
         title: 'Reduce Credit Utilization',
         description: 'Keep balances below 30% of your total credit limit',
         badge: 'High Priority',
-        badgeColor: Color(0xFF2563EB),
+        badgeColor: const Color(0xFF2563EB),
       ));
     }
 
-    tips.add(const _TipData(
-      icon: Icons.checklist_rounded,
-      iconColor: Color(0xFF0D9488),
+    tips.add(_TipData(
+      iconAsset: Assets.personalLoanIcons.icRightCurcle,
+      iconColor: const Color(0xFF0D9488),
       title: 'Make On-Time Payments',
       description: 'Payment history is the most important factor',
       badge: 'Maintain',
-      badgeColor: Color(0xFF2563EB),
+      badgeColor: const Color(0xFF2563EB),
     ));
 
     if (result.creditInquiriesScore < 0.8) {
-      tips.add(const _TipData(
-        icon: Icons.check_circle_outline_rounded,
-        iconColor: Color(0xFF16A34A),
+      tips.add(_TipData(
+        iconAsset: Assets.personalLoanIcons.icRightCurcle,
+        iconColor: const Color(0xFF16A34A),
         title: 'Limit Credit Applications',
         description: 'Too many inquiries can lower your score',
         badge: 'Good',
-        badgeColor: Color(0xFF16A34A),
+        badgeColor: const Color(0xFF16A34A),
       ));
     }
 
     if (result.accountMixScore < 0.7) {
-      tips.add(const _TipData(
-        icon: Icons.account_balance_rounded,
-        iconColor: Color(0xFF0284C7),
+      tips.add(_TipData(
+        iconAsset: Assets.personalLoanIcons.icRightCurcle,
+        iconColor: const Color(0xFF0284C7),
         title: 'Diversify Account Types',
         description: 'Mix of credit cards, loans, and mortgages helps',
         badge: 'Consider',
-        badgeColor: Color(0xFF1E40AF),
+        badgeColor: const Color(0xFF1E40AF),
       ));
     }
 
@@ -608,7 +660,11 @@ class _ImprovementTipsCard extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(Icons.tips_and_updates_rounded, color: context.themeColors.primary, size: AppSize.sp22),
+            Assets.personalLoanIcons.icImprovementTips.svg(
+              width: AppSize.sp22,
+              height: AppSize.sp22,
+              colorFilter: ColorFilter.mode(context.themeColors.primary, BlendMode.srcIn),
+            ),
             SizedBox(width: AppSize.w8),
             Text(
               'Improvement Tips',
@@ -630,14 +686,14 @@ class _ImprovementTipsCard extends StatelessWidget {
 
 class _TipData {
   const _TipData({
-    required this.icon,
+    required this.iconAsset,
     required this.iconColor,
     required this.title,
     required this.description,
     required this.badge,
     required this.badgeColor,
   });
-  final IconData icon;
+  final SvgGenImage iconAsset;
   final Color iconColor;
   final String title;
   final String description;
@@ -666,13 +722,15 @@ class _TipCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: AppSize.w50,
-            height: AppSize.h50,
             decoration: BoxDecoration(
               color: tip.iconColor.withValues(alpha: 0.10),
               shape: BoxShape.circle,
             ),
-            child: Icon(tip.icon, color: tip.iconColor, size: AppSize.sp24),
+            child: tip.iconAsset.svg(
+              width: AppSize.sp20,
+              height: AppSize.sp20,
+              colorFilter: ColorFilter.mode(tip.iconColor, BlendMode.srcIn),
+            ),
           ),
           SizedBox(width: AppSize.w12),
           Expanded(
@@ -723,32 +781,6 @@ class _TipCard extends StatelessWidget {
   }
 }
 
-// ─── Ad Banner ─────────────────────────────────────────────────────────────
-
-class _AdBanner extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: AppSize.h80,
-      decoration: BoxDecoration(
-        color: const Color(0xFFF1F5F9),
-        borderRadius: BorderRadius.circular(AppSize.r12),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-      ),
-      child: Center(
-        child: Text(
-          'AD',
-          style: context.textTheme.bodyMedium?.copyWith(
-            color: const Color(0xFFCBD5E1),
-            fontWeight: FontWeight.w600,
-            letterSpacing: 2,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 // ─── Disclaimer ────────────────────────────────────────────────────────────
 
 class _DisclaimerText extends StatelessWidget {
@@ -791,7 +823,11 @@ class _BottomButtons extends StatelessWidget {
               AppButton(
                 text: 'Recalculate Score',
                 onPressed: onRecalculate,
-                prefixIcon: const Icon(Icons.person_search_rounded, color: Colors.white, size: 18),
+                prefixIcon: Assets.personalLoanIcons.icRecalculateScore.svg(
+                  width: 18,
+                  height: 18,
+                  colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                ),
               ),
                AppButton(
                 text: 'View More Financial Tips',

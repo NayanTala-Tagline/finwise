@@ -185,6 +185,7 @@ class _SettingGroup extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppSize.r16),
+        border: Border.all(color: Color(0xffE2E8F0)),
         boxShadow: const [
           BoxShadow(color: Color(0x0A000000), blurRadius: 8, offset: Offset(0, 2)),
         ],
@@ -290,6 +291,7 @@ class _AppVersionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppSize.r16),
+        border: Border.all(color: Color(0xffE2E8F0)),
         boxShadow: const [
           BoxShadow(color: Color(0x0A000000), blurRadius: 8, offset: Offset(0, 2)),
         ],
@@ -319,24 +321,7 @@ class _AppVersionCard extends StatelessWidget {
               ],
             ),
           ),
-          GestureDetector(
-            onTap: () {},
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: AppSize.w14, vertical: AppSize.h8),
-              decoration: BoxDecoration(
-                color: context.themeColors.primary.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(AppSize.r20),
-              ),
-              child: Text(
-                'Check for updates',
-                style: context.textTheme.bodySmall?.copyWith(
-                  fontSize: AppSize.sp12,
-                  fontWeight: FontWeight.w600,
-                  color: context.themeColors.primary,
-                ),
-              ),
-            ),
-          ),
+
         ],
       ),
     );

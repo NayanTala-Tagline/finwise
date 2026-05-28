@@ -146,14 +146,6 @@ class RemoteConfigService {
 
   AdData get onboardingInter5 => _getAdData('onboarding_inter5');
 
-  AdData get bottomNavBanner1 => _getAdData('bottom_nav_banner_1');
-
-  AdData get bottomNavBanner2 => _getAdData('bottom_nav_banner_2');
-
-  AdData get bottomNavBanner3 => _getAdData('bottom_nav_banner_3');
-
-  AdData get bottomNavBanner4 => _getAdData('bottom_nav_banner_4');
-
   AdData get appNative => _getAdData('app_native');
 
   AdData get appInter => _getAdData('app_inter');
@@ -192,13 +184,47 @@ class RemoteConfigService {
 
   AdData get step7Inter => _getAdData('step7_inter');
 
+  AdData get creditCardStep1Native => _getAdData('credit_card_step1_native');
+
+  AdData get creditCardStep2Native => _getAdData('credit_card_step2_native');
+
+  AdData get creditCardStep3Native => _getAdData('credit_card_step3_native');
+
+  AdData get creditCardStep4Native => _getAdData('credit_card_step4_native');
+
+  AdData get creditCardStep5Native => _getAdData('credit_card_step5_native');
+
+  AdData get creditCardStep6Native => _getAdData('credit_card_step6_native');
+
+  AdData get creditCardStep1Inter => _getAdData('credit_card_step1_inter');
+
+  AdData get creditCardStep2Inter => _getAdData('credit_card_step2_inter');
+
+  AdData get creditCardStep3Inter => _getAdData('credit_card_step3_inter');
+
+  AdData get creditCardStep4Inter => _getAdData('credit_card_step4_inter');
+
+  AdData get creditCardStep5Inter => _getAdData('credit_card_step5_inter');
+
+  AdData get creditCardStep6Inter => _getAdData('credit_card_step6_inter');
+
   AdData get recommendationNative => _getAdData('recommendation_native');
+
+  AdData get creditScoreResultNative => _getAdData('credit_score_result_native');
 
   AdData get loanNative => _getAdData('loan_native');
 
   AdData get fixedDepositNative => _getAdData('fixed_deposit_native');
 
+  AdData get fixedDepositCalculatorNative => _getAdData('fixed_deposit_calculator_native');
+
+  AdData get fixedDepositResultNative => _getAdData('fixed_deposit_result_native');
+
   AdData get recurringDepositNative => _getAdData('recurring_deposit_native');
+
+  AdData get recurringDepositCalculatorNative => _getAdData('recurring_deposit_calculator_native');
+
+  AdData get recurringDepositResultNative => _getAdData('recurring_deposit_result_native');
 
   AdData get documentsNative => _getAdData('documents_native');
 
@@ -215,6 +241,12 @@ class RemoteConfigService {
   AdData get languageNative => _getAdData('language_native');
 
   AdData get contactNative => _getAdData('contact_native');
+
+  AdData get currencyNative => _getAdData('currency_native');
+
+  AdData get loanCalculatorNative => _getAdData('loan_calculator_native');
+
+  AdData get loanCalculatorResultNative => _getAdData('loan_calculator_result_native');
 
   AdData get bottomHome => _getAdData('bottom_home');
   AdData get bottomTool => _getAdData('bottom_tool');
@@ -234,6 +266,13 @@ class RemoteConfigService {
   bool get step5ButtonBottom => _get('step_5_button_bottom', false);
   bool get step6ButtonBottom => _get('step_6_button_bottom', false);
   bool get step7ButtonBottom => _get('step_7_button_bottom', false);
+
+  bool get csStep1ButtonBottom => _get('cs_step_1_button_bottom', false);
+  bool get csStep2ButtonBottom => _get('cs_step_2_button_bottom', false);
+  bool get csStep3ButtonBottom => _get('cs_step_3_button_bottom', false);
+  bool get csStep4ButtonBottom => _get('cs_step_4_button_bottom', false);
+  bool get csStep5ButtonBottom => _get('cs_step_5_button_bottom', false);
+  bool get csStep6ButtonBottom => _get('cs_step_6_button_bottom', false);
 
 
   AdData get appReward => _getAdData('app_reward');

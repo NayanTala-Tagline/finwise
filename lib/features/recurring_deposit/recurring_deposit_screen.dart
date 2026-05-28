@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:ad_manager/ad_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -6,6 +9,8 @@ import '../../extension/ext_context.dart';
 import '../../gen/assets.gen.dart';
 import '../../utils/app_size.dart';
 import '../../utils/navigation_helper.dart';
+import '../../utils/remote_config.dart';
+import '../../widgets/ad_slot.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/app_summary_background.dart';
 import 'provider/recurring_deposit_provider.dart';
@@ -36,6 +41,8 @@ class _RdDetailViewState extends State<_RdDetailView> {
 
   static const Color _green = Color(0xFF06B6D4);
   static const Color _greenDark = Color(0xFF099AB2);
+
+  InlineAdManager? _inlineAd;
   // static const Color _green = Color(0xFF059669);
   // static const Color _greenDark = Color(0xFF047857);
 
@@ -77,6 +84,25 @@ class _RdDetailViewState extends State<_RdDetailView> {
     (title: 'Regular Deposits', subtitle: 'Amount auto-debited monthly from linked account'),
     (title: 'Maturity Payout', subtitle: 'Receive corpus with accumulated interest'),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadInline();
+  }
+
+  void _loadInline() {
+    final data = RemoteConfigService.instance.recurringDepositNative;
+    if (!data.enabled || data.adId.isEmpty) return;
+    _inlineAd = InlineAdManager(adData: data);
+    unawaited(_inlineAd!.load());
+  }
+
+  @override
+  void dispose() {
+    unawaited(_inlineAd?.dispose());
+    super.dispose();
+  }
 
   void _openCalculator(BuildContext context) {
     final provider = context.read<RecurringDepositProvider>();
@@ -217,6 +243,9 @@ class _RdDetailViewState extends State<_RdDetailView> {
                 ),
               ),
             ),
+
+            // ── Inline Ad ───────────────────────────────────────────────────
+            AdSlot(ad: _inlineAd, safeAreaBottom: false),
 
             // ── Bottom Buttons ───────────────────────────────────────────────
             Container(

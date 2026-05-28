@@ -52,7 +52,7 @@ class _CompareViewState extends State<_CompareView> {
         children: [
           // ── Header ─────────────────────────────────────────────────────────
           AppSummaryBackground(
-            gradientColors: const [Color(0xFF1A3C8F), Color(0xFF2D5BE3)],
+            gradientColors: [context.themeColors.primary, const Color(0xFF153885)],
             borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(AppSize.r24),
               bottomRight: Radius.circular(AppSize.r24),

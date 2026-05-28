@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:ad_manager/ad_manager.dart';
 import 'package:finwise/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -5,6 +8,8 @@ import 'package:flutter/services.dart';
 import '../../../extension/ext_context.dart';
 import '../../../utils/app_size.dart';
 import '../../../utils/navigation_helper.dart';
+import '../../../utils/remote_config.dart';
+import '../../../widgets/ad_slot.dart';
 import '../../../widgets/app_button.dart';
 import '../../../widgets/app_summary_background.dart';
 import '../../../widgets/app_textfield.dart';
@@ -27,6 +32,8 @@ class _MassConvertScreenState extends State<MassConvertScreen> {
   double? _inputValue;
   double? _result;
 
+  InlineAdManager? _inlineAd;
+
   static const _units = ['g', 'kg', 'lb', 'oz', 't'];
   static const _gradient = [Color(0xFFAD46FF), Color(0xFFF6339A)];
 
@@ -41,6 +48,7 @@ class _MassConvertScreenState extends State<MassConvertScreen> {
   @override
   void initState() {
     super.initState();
+    _loadInline();
     _controller.addListener(() {
       final has = _controller.text.trim().isNotEmpty;
       if (has != _hasInput) setState(() => _hasInput = has);
@@ -121,8 +129,16 @@ class _MassConvertScreenState extends State<MassConvertScreen> {
     });
   }
 
+  void _loadInline() {
+    final data = RemoteConfigService.instance.massNative;
+    if (!data.enabled || data.adId.isEmpty) return;
+    _inlineAd = InlineAdManager(adData: data);
+    unawaited(_inlineAd!.load());
+  }
+
   @override
   void dispose() {
+    unawaited(_inlineAd?.dispose());
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -208,6 +224,7 @@ class _MassConvertScreenState extends State<MassConvertScreen> {
                 ),
               ),
             ),
+            AdSlot(ad: _inlineAd, safeAreaBottom: false),
           ],
         ),
         bottomNavigationBar: Container(

@@ -215,7 +215,7 @@ class _LoanFinderLayoutState extends State<LoanFinderLayout> {
         ),
       ),
       bottomNavigationBar: SafeArea(
-        bottom: false,
+        bottom: true,
         child: Builder(builder: (_) {
           final buttonBelowAd = widget.resolveButtonBottom();
           return Column(
@@ -250,16 +250,16 @@ class _LoanFinderLayoutState extends State<LoanFinderLayout> {
           AppSize.w20,
           AppSize.h8,
           AppSize.w20,
-          AppSize.h15,
+          AppSize.h8,
         ),
         child: AppButton(
           text: widget.nextButtonText ?? 'Continue',
           isLoading: widget.isLoading,
           onPressed: widget.onNextPressed,
-          suffixIcon: const Icon(
+          suffixIcon:   Icon(
             Icons.arrow_forward_ios_sharp,
             color: Colors.white,
-            size: 18,
+            size: AppSize.sp18
           ),
         )
             .animate()

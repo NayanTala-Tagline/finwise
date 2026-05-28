@@ -54,13 +54,10 @@ class _AdSlotState extends State<AdSlot> {
       );
     }
 
-    return Padding(
-      padding: EdgeInsets.only(top: AppSize.h10),
-      child: SafeArea(
-        top: widget.safeAreaTop ?? false,
-        bottom: widget.safeAreaBottom ?? true,
-        child: ad.adWidget(),
-      ),
+    return SafeArea(
+      top: widget.safeAreaTop ?? false,
+      bottom: widget.safeAreaBottom ?? true,
+      child: ad.adWidget(),
     );
   }
 }

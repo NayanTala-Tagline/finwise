@@ -1,3 +1,8 @@
+import 'dart:async';
+
+import 'package:ad_manager/ad_manager.dart';
+import 'package:finwise/utils/remote_config.dart';
+import 'package:finwise/widgets/ad_slot.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,11 +23,27 @@ class CurrencyScreen extends StatefulWidget {
 
 class _CurrencyScreenState extends State<CurrencyScreen> {
   late CurrencyItem _pending;
+  InlineAdManager? _inlineAd;
 
   @override
   void initState() {
     super.initState();
     _pending = context.read<CurrencyProvider>().selected;
+    _loadInline();
+  }
+
+  void _loadInline() {
+    final data = RemoteConfigService.instance.contactNative;
+    if (!data.enabled || data.adId.isEmpty) return;
+    _inlineAd = InlineAdManager(adData: data);
+    unawaited(_inlineAd!.load());
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    unawaited(_inlineAd?.dispose());
+    super.dispose();
   }
 
   @override
@@ -48,9 +69,13 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-
             Padding(
-              padding: EdgeInsets.fromLTRB(AppSize.w16, AppSize.h16, AppSize.w16, AppSize.h8),
+              padding: EdgeInsets.fromLTRB(
+                AppSize.w16,
+                AppSize.h16,
+                AppSize.w16,
+                AppSize.h8,
+              ),
               child: Text(
                 'Currency List',
                 style: context.textTheme.titleMedium?.copyWith(
@@ -92,7 +117,7 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
                                 : const Color(0xFFE2E8F0),
                             width: isSelected ? 1.5 : 1,
                           ),
-                          boxShadow:   [
+                          boxShadow: [
                             BoxShadow(
                               color: Color(0xff000000).withValues(alpha: 0.04),
                               blurRadius: 8,
@@ -111,20 +136,23 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
                                 color: isSelected
                                     ? colors.primary.withValues(alpha: 0.1)
                                     : const Color(0xFFF1F5F9),
-                                borderRadius: BorderRadius.circular(AppSize.r10),
+                                borderRadius: BorderRadius.circular(
+                                  AppSize.r10,
+                                ),
                               ),
                               child: Center(
                                 child: Text(
                                   item.symbol,
-                                  style: context.textTheme.titleMedium?.copyWith(
-                                    fontSize: item.symbol.length > 2
-                                        ? AppSize.sp11
-                                        : AppSize.sp15,
-                                    fontWeight: FontWeight.w700,
-                                    color: isSelected
-                                        ? colors.primary
-                                        : textColors.textColor,
-                                  ),
+                                  style: context.textTheme.titleMedium
+                                      ?.copyWith(
+                                        fontSize: item.symbol.length > 2
+                                            ? AppSize.sp11
+                                            : AppSize.sp15,
+                                        fontWeight: FontWeight.w700,
+                                        color: isSelected
+                                            ? colors.primary
+                                            : textColors.textColor,
+                                      ),
                                 ),
                               ),
                             ),
@@ -136,19 +164,21 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
                                 children: [
                                   Text(
                                     item.country,
-                                    style: context.textTheme.bodyLarge?.copyWith(
-                                      fontSize: AppSize.sp14,
-                                      fontWeight: FontWeight.w600,
-                                      color: textColors.textColor,
-                                    ),
+                                    style: context.textTheme.bodyLarge
+                                        ?.copyWith(
+                                          fontSize: AppSize.sp14,
+                                          fontWeight: FontWeight.w600,
+                                          color: textColors.textColor,
+                                        ),
                                   ),
                                   SizedBox(height: AppSize.h2),
                                   Text(
                                     item.code,
-                                    style: context.textTheme.bodySmall?.copyWith(
-                                      fontSize: AppSize.sp12,
-                                      color: textColors.descriptionColor,
-                                    ),
+                                    style: context.textTheme.bodySmall
+                                        ?.copyWith(
+                                          fontSize: AppSize.sp12,
+                                          color: textColors.descriptionColor,
+                                        ),
                                   ),
                                 ],
                               ),
@@ -162,27 +192,26 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
                                       padding: EdgeInsets.all(AppSize.sp3),
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        border: Border.all(color: colors.primary,
-                                        )
-                                       ),
+                                        border: Border.all(
+                                          color: colors.primary,
+                                        ),
+                                      ),
                                       child: Container(
                                         width: AppSize.w10,
                                         height: AppSize.h10,
                                         decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: colors.primary,
-
+                                          shape: BoxShape.circle,
+                                          color: colors.primary,
                                         ),
-                                      )
+                                      ),
                                     )
                                   : Container(
                                       key: const ValueKey('unselected'),
-                                padding: EdgeInsets.all(AppSize.sp7),
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(color: Colors.black,
-                                    )
-                                ),
+                                      padding: EdgeInsets.all(AppSize.sp7),
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(color: Colors.black),
+                                      ),
                                     ),
                             ),
                           ],
@@ -193,7 +222,7 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
                 },
               ),
             ),
-
+            AdSlot(ad: _inlineAd,safeAreaBottom: false,),
             // Save button
             Container(
               decoration: const BoxDecoration(
