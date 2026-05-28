@@ -137,3 +137,15 @@ flutter_gen:
     integrations: { flutter_svg: true, lottie: true },
     fonts: { enabled: true, outputs: { class_name: FontFamily }, },
   }
+
+flutter_native_splash:
+  color: '#95BBF9'
+  image: 'assets/images/logo.png'
+
+  android_12:
+    image: 'assets/images/logo.png'
+    color: '#95BBF9'
+
+  ios: true
+  android: true
+  web: false
