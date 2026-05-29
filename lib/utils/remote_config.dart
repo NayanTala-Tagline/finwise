@@ -118,9 +118,9 @@ class RemoteConfigService {
   // ---------------------------------------------------------------------------
 
 
-  AdData get languageNative1 => _getAdData('language_native_1');
-
-  AdData get languageNative2 => _getAdData('language_native_2');
+  // AdData get languageNative1 => _getAdData('language_native_1');
+  //
+  // AdData get languageNative2 => _getAdData('language_native_2');
 
   AdData get welcomeNative => _getAdData('welcome_native');
 
@@ -284,6 +284,8 @@ class RemoteConfigService {
   String get termsAndConditions => _get('terms_and_conditions', '');
 
   bool get showMultipleOnboarding => _get('show_multiple_onboarding', false);
+
+  bool get showOnboardingOrganicInstall => _get('show_onboarding_organic_install', false);
 
   bool get skipOnBoarding => _get('skip_onboarding', false);
 

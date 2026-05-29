@@ -50,7 +50,7 @@ void main() async {
   // _iZootoInitialise();
   await NotificationHelper.initializeNotification();
   OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
-  OneSignal.initialize("0f5903ef-d2b4-4091-91c8-c7d42bb53dfe");
+  OneSignal.initialize("4d4d573c-2d4e-4a37-be5b-01f6e75024dd");
   OneSignal.Notifications.requestPermission(false);
   await AnalyticsManager.instance.initMetaSdk();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -60,8 +60,7 @@ void main() async {
           ChangeNotifierProvider(create: (_) => LocaleProvider()),
           ChangeNotifierProvider(create: (_) => CurrencyProvider()),
         ],
-        child:
-        MyApp(),
+        child: MyApp(),
       )
   );
 }

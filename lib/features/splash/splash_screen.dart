@@ -253,7 +253,6 @@ class _SplashScreenState extends State<SplashScreen> {
       unawaited(_welcomeNative?.dispose());
       _welcomeNative = null;
       context.goNamed(AppRoutes.home);
-
       return;
     }
 
@@ -265,18 +264,30 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   /// Routing decision after the splash flow:
-  ///   • Organic install (Play `utm_medium=organic`) → home, skip onboarding.
+  ///   • Organic install (Play `utm_medium=organic`) → check `show_onboarding_organic_install` RC flag
+  ///     - If true → onboarding
+  ///     - If false → home, skip onboarding
   ///   • `skip_onboarding` (RC)   → home (always, even on first launch).
   ///   • `show_multiple_onboarding` (RC) → onboarding (ignore prior completion).
   ///   • otherwise → home if the user has completed onboarding before, else onboarding.
   bool _shouldGoHome() {
-    final rc = RemoteConfigService.instance;
-    if (rc.showMultipleOnboarding) return false;
     final db = Injector.instance<AppDB>();
-    if (db.isOrganicInstall) return true;
+    final rc = RemoteConfigService.instance;
+    
+    // Check if organic install
+    if (db.isOrganicInstall) {
+      // Use remote config to decide whether to show onboarding for organic installs
+      if (!rc.showOnboardingOrganicInstall) {
+        return true; // Skip onboarding for organic installs
+      }
+      // If showOnboardingOrganicInstall is true, continue to check other conditions
+    }
+    
     if (rc.skipOnBoarding) return true;
+    if (rc.showMultipleOnboarding) return false;
     return db.isOnboardingCompleted ?? false;
   }
+
 
   @override
   Widget build(BuildContext context) {
