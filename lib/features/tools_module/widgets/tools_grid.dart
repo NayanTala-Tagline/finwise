@@ -240,12 +240,15 @@ class _HowToUseCard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: AppSize.w8),
-                Text(
-                  steps[i],
-                  style: context.textTheme.titleSmall?.copyWith(
-                    fontSize: AppSize.sp13,
-                    color: context.themeTextColors.descriptionColor,
-                   ),
+                Flexible(
+                  child: Text(
+                    steps[i],
+                    style: context.textTheme.titleSmall?.copyWith(
+                      fontSize: AppSize.sp13,
+                      color: context.themeTextColors.descriptionColor,
+                     ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
             ),

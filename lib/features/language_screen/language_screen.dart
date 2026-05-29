@@ -37,6 +37,10 @@ class _LanguageScreenState extends State<LanguageScreen> {
     {'name': 'Filipino', 'code': 'fil', 'symbol': '🇵🇭'},
     {'name': 'Spanish', 'code': 'es', 'symbol': '🇪🇸'},
     {'name': 'Dutch', 'code': 'nl', 'symbol': '🇳🇱'},
+    {'name': 'Marathi', 'code': 'mr', 'symbol': '🇮🇳'},
+    {'name': 'Telugu', 'code': 'te', 'symbol': '🇮🇳'},
+    {'name': 'Tamil', 'code': 'ta', 'symbol': '🇮🇳'},
+    {'name': 'Bengali', 'code': 'bn', 'symbol': '🇮🇳'},
   ];
 
   @override

@@ -29,6 +29,10 @@ class LocaleProvider with ChangeNotifier {
     Locale('fil'),
     Locale('es'),
     Locale('nl'),
+    Locale('mr'),
+    Locale('te'),
+    Locale('ta'),
+    Locale('bn'),
   ];
 
   /// Optional: for UI selection

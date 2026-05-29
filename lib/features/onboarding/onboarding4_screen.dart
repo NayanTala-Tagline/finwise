@@ -13,6 +13,7 @@ import '../../utils/anaytics_manager.dart';
 import '../../utils/app_size.dart';
 import '../../utils/navigation_helper.dart';
 import '../../widgets/ad_slot.dart';
+import '../language_screen/provider/locale_provider.dart';
 import 'provider/onboarding_provider.dart';
 import 'widgets/onboarding_layout.dart';
 
@@ -26,12 +27,48 @@ class Onboarding4Screen extends StatefulWidget {
 }
 
 class _Onboarding4ScreenState extends State<Onboarding4Screen> {
-  String selectedLanguage = 'English';
+  String selectedLanguageCode = 'en';
+  int selectedLanguageIndex = 0;
+  bool _initialized = false;
 
   @override
   void initState() {
     super.initState();
     AnalyticsManager.instance.logScreenView(screenName: 'onboarding4_screen');
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      _initializeSelectedLanguage();
+      _initialized = true;
+    }
+  }
+
+  void _initializeSelectedLanguage() {
+    final languageProvider = context.read<LocaleProvider>();
+    selectedLanguageCode = languageProvider.getCurrentLocaleCode() ?? 'en';
+    
+    final languages = _getLanguages();
+    selectedLanguageIndex = languages.indexWhere(
+      (lang) => lang.code == selectedLanguageCode,
+    );
+    if (selectedLanguageIndex == -1) {
+      selectedLanguageCode = 'en';
+      selectedLanguageIndex = 0;
+    }
+  }
+
+  List<_Language> _getLanguages() {
+    return [
+      _Language('en', context.l10n.languageEnglish, 'English'),
+      _Language('hi', context.l10n.languageHindi, 'हिंदी'),
+      _Language('mr', context.l10n.languageMarathi, 'मराठी'),
+      _Language('ta', context.l10n.languageTamil, 'தமிழ்'),
+      _Language('te', context.l10n.languageTelugu, 'తెలుగు'),
+      _Language('bn', context.l10n.languageBengali, 'বাংলা'),
+    ];
   }
 
   @override
@@ -41,10 +78,19 @@ class _Onboarding4ScreenState extends State<Onboarding4Screen> {
   }
 
   Future<void> _handleStart(OnboardingProvider provider) async {
+    final languageProvider = context.read<LocaleProvider>();
+    await languageProvider.setLocale(
+      Locale(selectedLanguageCode),
+      selectedLanguageIndex,
+      true,
+    );
+
     AnalyticsManager.instance.logEvent(
       name: 'onboarding_next',
-      parameters: {'language': selectedLanguage, 'step': 4},
+      parameters: {'language': selectedLanguageCode, 'step': 4},
     );
+    
+    if (!mounted) return;
     provider.nextTo5(context);
   }
 
@@ -70,10 +116,12 @@ class _Onboarding4ScreenState extends State<Onboarding4Screen> {
             },
             adSlot: AdSlot(ad: widget.inlineAd, safeAreaBottom: false),
             child: _LanguageSelectionContent(
-              selectedLanguage: selectedLanguage,
-              onLanguageSelected: (language) {
+              selectedLanguageCode: selectedLanguageCode,
+              languages: _getLanguages(),
+              onLanguageSelected: (code, index) {
                 setState(() {
-                  selectedLanguage = language;
+                  selectedLanguageCode = code;
+                  selectedLanguageIndex = index;
                 });
               },
             ),
@@ -85,11 +133,13 @@ class _Onboarding4ScreenState extends State<Onboarding4Screen> {
 }
 
 class _LanguageSelectionContent extends StatelessWidget {
-  final String selectedLanguage;
-  final Function(String) onLanguageSelected;
+  final String selectedLanguageCode;
+  final List<_Language> languages;
+  final Function(String, int) onLanguageSelected;
 
   const _LanguageSelectionContent({
-    required this.selectedLanguage,
+    required this.selectedLanguageCode,
+    required this.languages,
     required this.onLanguageSelected,
   });
 
@@ -127,7 +177,8 @@ class _LanguageSelectionContent extends StatelessWidget {
           ),
           SizedBox(height: AppSize.h40),
           _LanguageGrid(
-            selectedLanguage: selectedLanguage,
+            selectedLanguageCode: selectedLanguageCode,
+            languages: languages,
             onLanguageSelected: onLanguageSelected,
           ),
           SizedBox(height: AppSize.h24),
@@ -138,25 +189,18 @@ class _LanguageSelectionContent extends StatelessWidget {
 }
 
 class _LanguageGrid extends StatelessWidget {
-  final String selectedLanguage;
-  final Function(String) onLanguageSelected;
+  final String selectedLanguageCode;
+  final List<_Language> languages;
+  final Function(String, int) onLanguageSelected;
 
   const _LanguageGrid({
-    required this.selectedLanguage,
+    required this.selectedLanguageCode,
+    required this.languages,
     required this.onLanguageSelected,
   });
 
   @override
   Widget build(BuildContext context) {
-    final languages = [
-      _Language('English', 'English'),
-      _Language('Hindi', 'हिंदी'),
-      _Language('Marathi', 'मराठी'),
-      _Language('Tamil', 'தமிழ்'),
-      _Language('Telugu', 'తెలుగు'),
-      _Language('Bengali', 'বাংলা'),
-    ];
-
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -170,8 +214,8 @@ class _LanguageGrid extends StatelessWidget {
       itemBuilder: (context, index) {
         return _LanguageCard(
           language: languages[index],
-          isSelected: selectedLanguage == languages[index].name,
-          onTap: () => onLanguageSelected(languages[index].name),
+          isSelected: selectedLanguageCode == languages[index].code,
+          onTap: () => onLanguageSelected(languages[index].code, index),
         );
       },
     );
@@ -179,10 +223,11 @@ class _LanguageGrid extends StatelessWidget {
 }
 
 class _Language {
+  final String code;
   final String name;
   final String nativeName;
 
-  _Language(this.name, this.nativeName);
+  _Language(this.code, this.name, this.nativeName);
 }
 
 class _LanguageCard extends StatelessWidget {

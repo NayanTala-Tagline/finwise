@@ -5,6 +5,7 @@ import 'package:ad_manager/ad_manager.dart';
 import 'package:finwise/features/currency_screen/provider/currency_provider.dart';
 import 'package:finwise/features/language_screen/provider/locale_provider.dart';
 import 'package:finwise/firebase_option.dart';
+import 'package:finwise/notification_service/notification_helper.dart';
 import 'package:finwise/utils/anaytics_manager.dart';
 import 'package:finwise/utils/install_referrer_service.dart';
 import 'package:finwise/utils/remote_config.dart';
@@ -14,6 +15,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive_ce_flutter/adapters.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 
 import 'db/app_db.dart';
@@ -46,11 +48,11 @@ void main() async {
 
   // 🔒 Lock orientation (portrait only)
   // _iZootoInitialise();
-  // await NotificationHelper.initializeNotification();
-  // OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
-  // OneSignal.initialize("0f5903ef-d2b4-4091-91c8-c7d42bb53dfe");
-  // OneSignal.Notifications.requestPermission(false);
-  // await AnalyticsManager.instance.initMetaSdk();
+  await NotificationHelper.initializeNotification();
+  OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+  OneSignal.initialize("0f5903ef-d2b4-4091-91c8-c7d42bb53dfe");
+  OneSignal.Notifications.requestPermission(false);
+  await AnalyticsManager.instance.initMetaSdk();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(
       MultiProvider(

@@ -44,7 +44,8 @@ class _SettingScreenState extends State<SettingScreen> {
     const codeToName = {
       'en': 'English', 'de': 'German', 'fr': 'French', 'sw': 'Swahili',
       'ar': 'Arabic', 'hi': 'Hindi', 'ms': 'Malay', 'fil': 'Filipino',
-      'es': 'Spanish', 'nl': 'Dutch',
+      'es': 'Spanish', 'nl': 'Dutch', 'mr': 'Marathi', 'te': 'Telugu',
+      'ta': 'Tamil', 'bn': 'Bengali',
     };
     final languageName = codeToName[localeCode] ?? 'English';
 
@@ -95,7 +96,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         icon: Assets.requiredDocuments.icFile.svg(width: AppSize.w20, height: AppSize.h20, colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn)),
                         title: context.l10n.settingsTermsOfService,
                         onTap: () async {
-                          final url = Uri.tryParse(RemoteConfigService.instance.privacyPolicyUrl);
+                          final url = Uri.tryParse(RemoteConfigService.instance.termsAndConditions);
                           if (url != null) await launchUrl(url, mode: LaunchMode.externalApplication);
                         },
                       ),

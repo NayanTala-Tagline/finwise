@@ -438,10 +438,12 @@ class _DocTypeCard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: AppSize.w10),
-                Text(
-                  doc.title,
-                  style: context.textTheme.titleMedium?.copyWith(
-                    fontSize: AppSize.sp15,
+                Flexible(
+                  child: Text(
+                    doc.title,
+                    style: context.textTheme.titleMedium?.copyWith(
+                      fontSize: AppSize.sp15,
+                    ),
                   ),
                 ),
               ],

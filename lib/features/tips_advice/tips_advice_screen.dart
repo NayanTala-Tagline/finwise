@@ -1447,11 +1447,13 @@ class _InvestDebtSection extends StatelessWidget {
                 colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
               ),
               SizedBox(width: AppSize.w8),
-              Text(
-                title,
-                style: context.textTheme.titleMedium?.copyWith(
-                  fontSize: AppSize.sp14,
-                  ),
+              Flexible(
+                child: Text(
+                  title,
+                  style: context.textTheme.titleMedium?.copyWith(
+                    fontSize: AppSize.sp14,
+                    ),
+                ),
               ),
             ],
           ),

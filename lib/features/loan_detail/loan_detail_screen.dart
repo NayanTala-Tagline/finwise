@@ -273,6 +273,7 @@ class _FeatureCard extends StatelessWidget {
               color: context.themeTextColors.descriptionColor,
               height: 1.4,
             ),
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),

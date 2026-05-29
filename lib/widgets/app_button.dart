@@ -286,14 +286,14 @@ class _AppButtonState extends State<AppButton> {
         spacing: AppSize.w8,
         children: [
           if (widget.prefixIcon != null) widget.prefixIcon!,
-          textWidget,
+          Flexible(child: textWidget),
           if (widget.suffixIcon != null) widget.suffixIcon!,
         ],
       );
     } else if (widget.icon != null) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        spacing: AppSize.w6,
+        spacing: AppSize.w4,
         children: [widget.icon!, textWidget],
       );
     } else {
