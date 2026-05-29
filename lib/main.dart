@@ -5,7 +5,7 @@ import 'package:ad_manager/ad_manager.dart';
 import 'package:finwise/features/currency_screen/provider/currency_provider.dart';
 import 'package:finwise/features/language_screen/provider/locale_provider.dart';
 import 'package:finwise/firebase_option.dart';
-import 'package:finwise/notification_service/notification_helper.dart';
+import 'package:finwise/utils/anaytics_manager.dart';
 import 'package:finwise/utils/install_referrer_service.dart';
 import 'package:finwise/utils/remote_config.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -46,7 +46,7 @@ void main() async {
 
   // 🔒 Lock orientation (portrait only)
   // _iZootoInitialise();
-  await NotificationHelper.initializeNotification();
+  // await NotificationHelper.initializeNotification();
   // OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
   // OneSignal.initialize("0f5903ef-d2b4-4091-91c8-c7d42bb53dfe");
   // OneSignal.Notifications.requestPermission(false);
