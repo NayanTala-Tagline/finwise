@@ -58,8 +58,8 @@ class _LoanAmountScreenState extends State<LoanAmountScreen> {
     final adProvider = context.watch<LoanFinderAdProvider>();
     return LoanFinderLayout(
       stepIndex: 1,
-      title: 'How much loan do you need?',
-      subtitle: 'Choose an amount that fits your needs',
+      title: context.l10n.loanAmountTitle,
+      subtitle: context.l10n.loanAmountSubtitle,
       isLoading: adProvider.busy,
       adSlot: AdSlot(ad: widget.inlineAd),
       onNextPressed: () {

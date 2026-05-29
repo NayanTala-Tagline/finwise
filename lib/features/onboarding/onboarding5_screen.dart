@@ -74,7 +74,7 @@ class _Onboarding5ScreenState extends State<Onboarding5Screen> {
         builder: (context, provider, _) {
           return OnboardingLayout(
             stepIndex: 5,
-            buttonText: "Let's Go",
+            buttonText: context.l10n.onboarding5LetsGo,
             isLoading: provider.busy,
             onButtonPressed: () => _handleStart(provider),
             onBackPressed: () {
@@ -126,7 +126,7 @@ class _CurrencySelectionContent extends StatelessWidget {
           ),
           SizedBox(height: AppSize.h32),
           Text(
-            'Select Currency',
+            context.l10n.onboarding5Title,
             style: context.textTheme.titleMedium?.copyWith(
               fontSize: AppSize.sp30,
             ),
@@ -134,7 +134,7 @@ class _CurrencySelectionContent extends StatelessWidget {
           ),
           SizedBox(height: AppSize.h12),
           Text(
-            'Choose your preferred currency for\ncalculations',
+            context.l10n.onboarding5Subtitle,
             style: context.textTheme.bodyLarge?.copyWith(
               fontSize: AppSize.sp15,
               color: context.themeTextColors.descriptionColor,
@@ -165,10 +165,10 @@ class _CurrencyList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currencies = [
-      _Currency('INR', 'Indian Rupee', '₹'),
-      _Currency('USD', 'US Dollar', '\$'),
-      _Currency('EUR', 'Euro', '€'),
-      _Currency('GBP', 'British Pound', '£'),
+      _Currency('INR', context.l10n.currencyIndianRupee, '₹'),
+      _Currency('USD', context.l10n.currencyUsDollar, '\$'),
+      _Currency('EUR', context.l10n.currencyEuro, '€'),
+      _Currency('GBP', context.l10n.currencyBritishPound, '£'),
     ];
 
     return ListView.separated(

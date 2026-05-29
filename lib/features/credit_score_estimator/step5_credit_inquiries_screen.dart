@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../../extension/ext_context.dart';
 import '../../routes/app_router.dart';
+import '../../utils/anaytics_manager.dart';
 import '../../utils/app_size.dart';
 import '../../widgets/ad_slot.dart';
 import 'provider/credit_score_ad_provider.dart';
@@ -23,12 +24,12 @@ class Step5CreditInquiriesScreen extends StatefulWidget {
 }
 
 class _Step5CreditInquiriesScreenState extends State<Step5CreditInquiriesScreen> {
-  static const _labels = ['None', 'One', 'Times', 'Times', 'Times', 'Times'];
   static const _values = [0, 1, 2, 3, 4, 5];
 
   @override
   void initState() {
     super.initState();
+    AnalyticsManager.instance.logScreenView(screenName: 'credit_score_step5_screen');
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       context.read<CreditScoreAdProvider>().preloadAfterStep(4);
@@ -43,14 +44,23 @@ class _Step5CreditInquiriesScreenState extends State<Step5CreditInquiriesScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final labels = [
+      l10n.creditScoreStep5InquiryNone,
+      l10n.creditScoreStep5InquiryOne,
+      l10n.creditScoreStep5InquiryTimes,
+      l10n.creditScoreStep5InquiryTimes,
+      l10n.creditScoreStep5InquiryTimes,
+      l10n.creditScoreStep5InquiryTimes,
+    ];
     final provider = context.watch<CreditScoreEstimatorProvider>();
     final adProvider = context.watch<CreditScoreAdProvider>();
     final selected = provider.creditInquiries;
 
     return CreditScoreLayout(
       stepIndex: 4,
-      title: 'Credit Inquiries',
-      subtitle: 'How many times have you applied for credit in the last 6 months?',
+      title: l10n.creditScoreStep5Title,
+      subtitle: l10n.creditScoreStep5Question,
       isLoading: adProvider.busy,
       adSlot: AdSlot(ad: widget.inlineAd),
       onNextPressed: () => context.read<CreditScoreAdProvider>().next(context, AppRoutes.creditScoreStep6),
@@ -97,7 +107,7 @@ class _Step5CreditInquiriesScreenState extends State<Step5CreditInquiriesScreen>
                           ),
                         ),
                         Text(
-                          _labels[i],
+                          labels[i],
                           style: context.textTheme.titleMedium?.copyWith(
                             fontSize: AppSize.sp12,
                             color: context.themeTextColors.descriptionColor,
@@ -129,7 +139,7 @@ class _Step5CreditInquiriesScreenState extends State<Step5CreditInquiriesScreen>
                   SizedBox(width: AppSize.w8),
                   Expanded(
                     child: Text(
-                      'Multiple inquiries in a short time can lower your score. Try to limit applications.',
+                      l10n.creditScoreStep5Tip,
                       style: context.textTheme.titleSmall?.copyWith(
                         fontSize: AppSize.sp12,
                         color: context.themeTextColors.descriptionColor,

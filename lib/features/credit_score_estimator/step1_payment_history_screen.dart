@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 
+import '../../extension/ext_context.dart';
 import '../../routes/app_router.dart';
+import '../../utils/anaytics_manager.dart';
 import '../../utils/app_size.dart';
 import '../../widgets/ad_slot.dart';
 import 'provider/credit_score_ad_provider.dart';
@@ -21,19 +23,12 @@ class Step1PaymentHistoryScreen extends StatefulWidget {
 }
 
 class _Step1PaymentHistoryScreenState extends State<Step1PaymentHistoryScreen> {
-  static const _options = [
-    (PaymentHistory.never, 'Never had a negative item', 'Perfect payment history'),
-    (PaymentHistory.moreThan5Years, 'More than 5 years ago', 'Older negative marks'),
-    (PaymentHistory.twoToFiveYears, '2-5 years ago', 'Some time has passed'),
-    (PaymentHistory.oneToTwoYears, '1-2 years ago', 'Recent history'),
-    (PaymentHistory.withinLastYear, 'Within the last year', 'Very recent'),
-  ];
-
   InlineAdManager? _inlineAd;
 
   @override
   void initState() {
     super.initState();
+    AnalyticsManager.instance.logScreenView(screenName: 'credit_score_step1_screen');
     _loadOwnInline();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -58,7 +53,7 @@ class _Step1PaymentHistoryScreenState extends State<Step1PaymentHistoryScreen> {
     final provider = context.read<CreditScoreEstimatorProvider>();
     if (provider.paymentHistory == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a payment history option')),
+        SnackBar(content: Text(context.l10n.creditScoreStep1Validation)),
       );
       return;
     }
@@ -67,22 +62,30 @@ class _Step1PaymentHistoryScreenState extends State<Step1PaymentHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final provider = context.watch<CreditScoreEstimatorProvider>();
     final adProvider = context.watch<CreditScoreAdProvider>();
+    final options = [
+      (PaymentHistory.never, l10n.creditScoreStep1Option1Label, l10n.creditScoreStep1Option1Subtitle),
+      (PaymentHistory.moreThan5Years, l10n.creditScoreStep1Option2Label, l10n.creditScoreStep1Option2Subtitle),
+      (PaymentHistory.twoToFiveYears, l10n.creditScoreStep1Option3Label, l10n.creditScoreStep1Option3Subtitle),
+      (PaymentHistory.oneToTwoYears, l10n.creditScoreStep1Option4Label, l10n.creditScoreStep1Option4Subtitle),
+      (PaymentHistory.withinLastYear, l10n.creditScoreStep1Option5Label, l10n.creditScoreStep1Option5Subtitle),
+    ];
 
     return CreditScoreLayout(
       stepIndex: 0,
-      title: 'Payment History',
-      subtitle: 'When was the last negative item on your credit report?',
+      title: l10n.creditScoreStep1Title,
+      subtitle: l10n.creditScoreStep1Question,
       isLoading: adProvider.busy,
       adSlot: AdSlot(ad: _inlineAd),
       onNextPressed: _next,
       child: ListView.separated(
         padding: EdgeInsets.symmetric(horizontal: AppSize.w20, vertical: AppSize.h4),
-        itemCount: _options.length,
+        itemCount: options.length,
         separatorBuilder: (_, _) => SizedBox(height: AppSize.h10),
         itemBuilder: (_, i) {
-          final (value, label, subtitle) = _options[i];
+          final (value, label, subtitle) = options[i];
           final selected = provider.paymentHistory == value;
           return CreditScoreOptionTile(
             label: label,

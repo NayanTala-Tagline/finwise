@@ -15,11 +15,8 @@ class RecurringDepositProvider with ChangeNotifier {
   DateTime get startDate => _startDate;
   bool get isCalculated => _isCalculated;
 
-  String get tenureUnitLabel =>
-      _tenureUnit == RdTenureUnit.month ? 'Month' : 'Year';
-
-  void setTenureUnit(String unit) {
-    _tenureUnit = unit == 'Year' ? RdTenureUnit.year : RdTenureUnit.month;
+  void setTenureUnit(RdTenureUnit unit) {
+    _tenureUnit = unit;
     _isCalculated = false;
     notifyListeners();
   }

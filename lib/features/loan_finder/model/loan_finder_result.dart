@@ -44,24 +44,24 @@ class LoanFinderResult {
     );
   }
   
-  String get existingLoansDisplay {
-    if (!hasExistingLoans) return 'No';
+  String existingLoansDisplay(AppLocalizations l10n) {
+    if (!hasExistingLoans) return l10n.existingLoansNo;
     if (numberOfLoans != null && totalEmi != null) {
-      return 'Yes ($numberOfLoans loans, ₹${totalEmi!.toInt()} EMI)';
+      return l10n.existingLoansYesWithCount(numberOfLoans!, totalEmi!.toInt());
     }
-    return 'Yes';
+    return l10n.existingLoansYes;
   }
 }
 
 extension LoanPurposeLabel on LoanPurpose {
   String label(AppLocalizations l10n) => switch (this) {
-        LoanPurpose.personalExpenses => 'Personal Expenses',
-        LoanPurpose.homePurchase => 'Home Purchase',
-        LoanPurpose.vehiclePurchase => 'Vehicle Purchase',
-        LoanPurpose.education => 'Education',
-        LoanPurpose.business => 'Business',
-        LoanPurpose.debit => 'Debt Consolidation',
-        LoanPurpose.other => 'Other',
+        LoanPurpose.personalExpenses => l10n.loanPurposePersonalExpenses,
+        LoanPurpose.homePurchase => l10n.loanPurposeHomePurchase,
+        LoanPurpose.vehiclePurchase => l10n.loanPurposeVehiclePurchase,
+        LoanPurpose.education => l10n.onboarding1Education,
+        LoanPurpose.business => l10n.onboarding1Business,
+        LoanPurpose.debit => l10n.loanPurposeDebtConsolidation,
+        LoanPurpose.other => l10n.loanPurposeOther,
       };
 
   // SvgGenImage get icon => switch (this) {
@@ -77,12 +77,12 @@ extension LoanPurposeLabel on LoanPurpose {
 
 extension EmploymentStatusLabel on EmploymentStatus {
   String label(AppLocalizations l10n) => switch (this) {
-        EmploymentStatus.salaried => 'Salaried',
-        EmploymentStatus.selfEmployed => 'Self-Employed',
-        EmploymentStatus.businessOwner => 'Business Owner',
-        EmploymentStatus.professional => 'Professional',
-        EmploymentStatus.retired => 'Retired',
-        EmploymentStatus.other => 'Other',
+        EmploymentStatus.salaried => l10n.employmentSalaried,
+        EmploymentStatus.selfEmployed => l10n.employmentSelfEmployed,
+        EmploymentStatus.businessOwner => l10n.employmentBusinessOwner,
+        EmploymentStatus.professional => l10n.employmentProfessional,
+        EmploymentStatus.retired => l10n.employmentRetired,
+        EmploymentStatus.other => l10n.loanPurposeOther,
       };
 
   // SvgGenImage get icon => switch (this) {
@@ -97,30 +97,30 @@ extension EmploymentStatusLabel on EmploymentStatus {
 
 extension CreditScoreLabel on CreditScoreRange {
   String label(AppLocalizations l10n) => switch (this) {
-        CreditScoreRange.excellent => 'Excellent (750+)',
-        CreditScoreRange.good => 'Good (700-750)',
-        CreditScoreRange.fair => 'Fair (650-700)',
-        CreditScoreRange.poor => 'Poor (Below 650)',
-        CreditScoreRange.dontKnow => 'Don\'t Know',
+        CreditScoreRange.excellent => l10n.creditRangeExcellentFull,
+        CreditScoreRange.good => l10n.creditRangeGoodFull,
+        CreditScoreRange.fair => l10n.creditRangeFairFull,
+        CreditScoreRange.poor => l10n.creditRangePoorFull,
+        CreditScoreRange.dontKnow => l10n.creditScoreDontKnow,
       };
 }
 
 extension ExistingLoanLabel on ExistingLoan {
   String label(AppLocalizations l10n) => switch (this) {
-        ExistingLoan.personal => 'Personal Loan',
-        ExistingLoan.home => 'Home Loan',
-        ExistingLoan.car => 'Car Loan',
-        ExistingLoan.creditCard => 'Credit Card',
-        ExistingLoan.none => 'None',
+        ExistingLoan.personal => l10n.homeLoanPersonal,
+        ExistingLoan.home => l10n.homeLoanHome,
+        ExistingLoan.car => l10n.homeLoanCar,
+        ExistingLoan.creditCard => l10n.homeLoanCreditCard,
+        ExistingLoan.none => l10n.creditScoreStep5InquiryNone,
       };
 }
 
 extension LoanUrgencyLabel on LoanUrgency {
   String label(AppLocalizations l10n) => switch (this) {
-        LoanUrgency.immediately => 'Immediately (1-3 days)',
-        LoanUrgency.withinWeek => 'Within a week',
-        LoanUrgency.withinMonth => 'Within a month',
-        LoanUrgency.flexible => 'Flexible',
+        LoanUrgency.immediately => l10n.loanUrgencyImmediatelyFull,
+        LoanUrgency.withinWeek => l10n.loanUrgencyImmediatelyDesc,
+        LoanUrgency.withinMonth => l10n.loanUrgencyWithinMonth,
+        LoanUrgency.flexible => l10n.loanUrgencyFlexible,
       };
 }
 

@@ -34,7 +34,7 @@ class CreditScoreAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
               ),
               Text(
-                'Credit Score Estimator',
+                context.l10n.creditScoreEstimatorTitle,
                 style: context.textTheme.titleSmall?.copyWith(fontSize: AppSize.sp18),
               ),
             ],

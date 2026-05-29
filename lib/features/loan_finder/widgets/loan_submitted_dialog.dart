@@ -72,12 +72,12 @@ class _LoanSubmittedDialogState extends State<LoanSubmittedDialog> {
               children: [
                 _AnimatedBadge(
                   primary: colors.primary,
-                  secondary: colors.secondary,
+                  secondary: Color(0xFF153885),
                   whiteColor: colors.whiteColor,
                 ),
                 SizedBox(height: AppSize.h16),
                 Text(
-                  'Congratulation',
+                  context.l10n.loanSubmittedTitle,
                   style: context.textTheme.titleLarge?.copyWith(
                     color: textColors.textColor,
                     fontWeight: FontWeight.w700,
@@ -88,7 +88,7 @@ class _LoanSubmittedDialogState extends State<LoanSubmittedDialog> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: AppSize.w8),
                   child: Text(
-                    'Thank you for watching. your loan tips are now available',
+                    context.l10n.loanSubmittedMessage,
                     textAlign: TextAlign.center,
                     style: context.textTheme.bodyMedium?.copyWith(
                       color: textColors.descriptionColor,
@@ -100,7 +100,7 @@ class _LoanSubmittedDialogState extends State<LoanSubmittedDialog> {
                 ),
                 SizedBox(height: AppSize.h20),
                 AppButton(
-                  text: 'OK',
+                  text: context.l10n.loanSubmittedOk,
                   onPressed: () {
                     context.pop();
                     widget.onOk?.call();
@@ -125,8 +125,8 @@ class _LoanSubmittedDialogState extends State<LoanSubmittedDialog> {
               shouldLoop: false,
               colors: [
                 colors.primary,
-                colors.secondary,
-                colors.secondary2,
+                Color(0xFF153885),
+                Color(0xFF153885).withValues(alpha: 0.5),
                 colors.whiteColor,
               ],
             ),

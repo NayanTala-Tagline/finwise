@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../extension/ext_context.dart';
 import '../../routes/app_router.dart';
+import '../../utils/anaytics_manager.dart';
 import '../../utils/app_size.dart';
 import '../../utils/navigation_helper.dart';
 import '../../utils/remote_config.dart';
@@ -31,6 +32,7 @@ class _LoanDetailScreenState extends State<LoanDetailScreen> {
   @override
   void initState() {
     super.initState();
+    AnalyticsManager.instance.logScreenView(screenName: 'loan_detail_screen');
     _loadInline();
   }
 
@@ -49,7 +51,7 @@ class _LoanDetailScreenState extends State<LoanDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final data = LoanDetailData.forType(widget.loanType);
+    final data = LoanDetailData.forType(widget.loanType, context.l10n);
 
     return PopScope(
       canPop: false,
@@ -74,15 +76,15 @@ class _LoanDetailScreenState extends State<LoanDetailScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _SectionHeader(icon: Assets.personalLoanIcons.icInstantApproval.svg(), title: 'Key Features'),
+                    _SectionHeader(icon: Assets.personalLoanIcons.icInstantApproval.svg(), title: context.l10n.fdKeyFeatures),
                     SizedBox(height: AppSize.h12),
                     _FeaturesGrid(features: data.features, themeColor: data.themeColor),
                     SizedBox(height: AppSize.h20),
-                    _SectionHeader(icon: Assets.homeIcons.icDocuments.svg(), title: 'Common Use Cases'),
+                    _SectionHeader(icon: Assets.homeIcons.icDocuments.svg(), title: context.l10n.fdCommonUseCases),
                     SizedBox(height: AppSize.h12),
                     _UseCasesCard(useCases: data.useCases),
                     SizedBox(height: AppSize.h20),
-                    _SectionHeader(icon:Assets.personalLoanIcons.icClock.svg(), title: 'Application Process'),
+                    _SectionHeader(icon:Assets.personalLoanIcons.icClock.svg(), title: context.l10n.fdApplicationProcess),
                     SizedBox(height: AppSize.h12),
                     _StepsCard(steps: data.steps, themeColor: data.themeColor),
                     SizedBox(height: AppSize.h16),
@@ -429,12 +431,12 @@ class _TrustBadgeCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Secure & Trusted',
+                  context.l10n.fdSecureTrusted,
                   style: context.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 SizedBox(height: AppSize.h4),
                 Text(
-                  'Your data is protected with bank-level encryption. We never share your information without consent.',
+                  context.l10n.fdSecureTrustedDesc,
                   style: context.textTheme.bodySmall?.copyWith(
                     fontSize: AppSize.sp12,
                     color: context.themeTextColors.descriptionColor,
@@ -479,7 +481,7 @@ class _BottomButtons extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
                AppButton(
-                text: 'Calculate',
+                text: context.l10n.fdCalculateButton,
                 backgroundColor: const Color(0xFF2563EB),
                  suffixIcon:   Icon(Icons.arrow_forward_ios, color: Colors.white, size: AppSize.sp18),
                 onPressed: () {

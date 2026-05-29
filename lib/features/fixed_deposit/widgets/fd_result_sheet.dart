@@ -53,7 +53,7 @@ class _FdResultSheetState extends State<FdResultSheet> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F6FA),
       appBar: CommonAppBar(
-        titleText: 'FD Result',
+        titleText: context.l10n.fdResultTitle,
         onBackPress: () => Navigator.of(context).pop(),
       ),
       body: Column(
@@ -94,12 +94,12 @@ class _FdResultSheetState extends State<FdResultSheet> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     AppButton(
-                      text: 'View Application Steps',
+                      text: context.l10n.fdViewStepsButton,
                       borderRadius: AppSize.r50,
                       onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst || route.settings.name == '/FixedDepositScreen'),
                     ),
-                     AppButton(
-                      text: 'Reset',
+                    AppButton(
+                      text: context.l10n.fdReset,
                       isOutlined: true,
                       borderRadius: AppSize.r50,
                       onPressed: () {
@@ -168,7 +168,7 @@ class _SummaryCard extends StatelessWidget {
                             color: Colors.white.withValues(alpha: 0.2)
                         ),
                         child: Text(
-                          'Result',
+                          context.l10n.fdResult,
                           style: context.textTheme.labelSmall?.copyWith(color: Colors.white, fontWeight: FontWeight.w500),
                         ),
                       ),
@@ -184,7 +184,7 @@ class _SummaryCard extends StatelessWidget {
                   ),
                   SizedBox(height: AppSize.h16),
                   Text(
-                    'Maturity Amount',
+                    context.l10n.fdResultMaturityAmount,
                     style: context.textTheme.bodySmall?.copyWith(color: Colors.white.withValues(alpha: 0.85), fontSize: AppSize.sp13),
                   ),
                   SizedBox(height: AppSize.h4),
@@ -194,7 +194,7 @@ class _SummaryCard extends StatelessWidget {
                   ),
                   SizedBox(height: AppSize.h4),
                   Text(
-                    'at maturity',
+                    context.l10n.fdResultAtMaturity,
                     style: context.textTheme.bodySmall?.copyWith(color: Colors.white.withValues(alpha: 0.7)),
                   ),
                 ],
@@ -213,7 +213,7 @@ class _SummaryCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Principal Amount', style: context.textTheme.bodyLarge?.copyWith(color: context.themeTextColors.descriptionColor,  fontSize: AppSize.sp12)),
+                        Text(context.l10n.fdResultPrincipalAmount, style: context.textTheme.bodyLarge?.copyWith(color: context.themeTextColors.descriptionColor,  fontSize: AppSize.sp12)),
                         SizedBox(height: AppSize.h4),
                         Text(_fmtAmt(result.principal, sym), style: context.textTheme.titleSmall?.copyWith( fontSize: AppSize.sp16)),
                       ],
@@ -231,7 +231,7 @@ class _SummaryCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Total Interest', style: context.textTheme.bodyLarge?.copyWith(color: context.themeTextColors.descriptionColor, fontSize: AppSize.sp12)),
+                        Text(context.l10n.fdResultTotalInterest, style: context.textTheme.bodyLarge?.copyWith(color: context.themeTextColors.descriptionColor, fontSize: AppSize.sp12)),
                         SizedBox(height: AppSize.h4),
                         Text(_fmtAmt(result.totalInterestValue, sym), style: context.textTheme.titleSmall?.copyWith(color: primary,  fontSize: AppSize.sp16)),
                       ],
@@ -285,7 +285,7 @@ class _PaymentBreakdownCard extends StatelessWidget {
                 ),
               ),
               SizedBox(width: AppSize.w8),
-              Text('Payment Breakdown', style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700, fontSize: AppSize.sp15)),
+              Text(context.l10n.fdResultPaymentBreakdown, style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700, fontSize: AppSize.sp15)),
             ],
           ),
           SizedBox(height: AppSize.h16),
@@ -305,9 +305,9 @@ class _PaymentBreakdownCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _LegendItem(color: primary, label: 'Investment', value: _fmtAmt(principal, sym)),
+              _LegendItem(color: primary, label: context.l10n.fdResultInvestmentLegend, value: _fmtAmt(principal, sym)),
               SizedBox(width: AppSize.w24),
-              _LegendItem(color: interestColor, label: 'Interest', value: _fmtAmt(interest, sym)),
+              _LegendItem(color: interestColor, label: context.l10n.loanResultInterest, value: _fmtAmt(interest, sym)),
             ],
           ),
         ],
@@ -384,13 +384,14 @@ class _GrowthTimelineCard extends StatelessWidget {
         return result.principal + result.principal * result.annualRate / 100 * m / 12;
       });
 
-  List<String> get _xLabels {
-    final labels = <String>['Start'];
+  List<String> _xLabels(BuildContext context) {
+    final l10n = context.l10n;
+    final labels = <String>[l10n.fdResultTimelineStart];
     for (int i = 1; i < _pts - 1; i++) {
       final m = (result.tenureMonths * i / (_pts - 1)).round();
       labels.add(result.tenureMonths > 24 ? 'Y${(m / 12).round()}' : 'M$m');
     }
-    labels.add('End');
+    labels.add(l10n.fdResultTimelineEnd);
     return labels;
   }
 
@@ -413,7 +414,7 @@ class _GrowthTimelineCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final vals = _values;
-    final labels = _xLabels;
+    final labels = _xLabels(context);
     final maxY = _niceMax;
     final yTicks = List.generate(5, (i) => maxY * (4 - i) / 4);
     final primary = context.themeColors.primary;
@@ -442,7 +443,7 @@ class _GrowthTimelineCard extends StatelessWidget {
                 ),
               ),
               SizedBox(width: AppSize.w8),
-              Text('Growth Timeline', style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700, fontSize: AppSize.sp15)),
+              Text(context.l10n.fdResultGrowthTimeline, style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700, fontSize: AppSize.sp15)),
             ],
           ),
           SizedBox(height: AppSize.h16),

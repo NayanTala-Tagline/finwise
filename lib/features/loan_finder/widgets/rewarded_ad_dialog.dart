@@ -53,7 +53,7 @@ class RewardedAdDialog extends StatelessWidget {
             height: AppSize.h64,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: colors.primary.withValues(alpha: 0.18),
+              color: colors.primary.withValues(alpha: 0.5),
             ),
           )
               .animate(onPlay: (c) => c.repeat())
@@ -72,7 +72,7 @@ class RewardedAdDialog extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [colors.primary, colors.secondary],
+                colors: [colors.primary, Color(0xFF153885)],
               ),
               shape: BoxShape.circle,
               boxShadow: [
@@ -119,7 +119,7 @@ class RewardedAdDialog extends StatelessWidget {
             animatedIcon,
             SizedBox(height: AppSize.h18),
             Text(
-              'Get Loan EMI',
+              context.l10n.rewardedAdTitle,
               textAlign: TextAlign.center,
               style: context.textTheme.titleLarge?.copyWith(
                 color: textColors.textColor,
@@ -129,7 +129,7 @@ class RewardedAdDialog extends StatelessWidget {
             ),
             SizedBox(height: AppSize.h10),
             Text(
-              'Watch a quick video and unlock useful loan tips designed to help you plan better.',
+              context.l10n.rewardedAdMessage,
               textAlign: TextAlign.center,
               style: context.textTheme.bodyMedium?.copyWith(
                 color: textColors.descriptionColor,
@@ -143,7 +143,7 @@ class RewardedAdDialog extends StatelessWidget {
               children: [
                 Expanded(
                   child: AppButton(
-                    text: 'Watch AD',
+                    text: context.l10n.rewardedAdWatch,
                     onPressed: () {
                       Navigator.of(context).pop();
                       onWatchAd();
@@ -170,7 +170,7 @@ class RewardedAdDialog extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        'Cancel',
+                        context.l10n.rewardedAdCancel,
                         style: context.textTheme.titleSmall?.copyWith(
                           color: textColors.textColor,
                           fontWeight: FontWeight.w600,

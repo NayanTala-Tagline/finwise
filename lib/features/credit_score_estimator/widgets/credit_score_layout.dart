@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../extension/ext_context.dart';
 import '../../../utils/app_size.dart';
+import '../../../utils/navigation_helper.dart';
 import '../../../utils/remote_config.dart';
 import '../../../widgets/app_button.dart';
 import 'credit_score_app_bar.dart';
@@ -82,9 +82,7 @@ class _CreditScoreLayoutState extends State<CreditScoreLayout> {
     return Scaffold(
       backgroundColor: context.themeColors.backgroundColor,
       appBar: CreditScoreAppBar(
-        onBack: () {
-          if (context.canPop()) context.pop();
-        },
+        onBack: () => NavigationHelper().handleBackPress(context),
       ),
       body: SafeArea(
         top: false,
@@ -164,7 +162,7 @@ class _CreditScoreLayoutState extends State<CreditScoreLayout> {
         padding: EdgeInsets.fromLTRB(AppSize.w20, AppSize.h10, AppSize.w20, AppSize.h10),
         child: widget.stepIndex == 0
             ? AppButton(
-                text: widget.nextButtonText ?? 'Continue',
+                text: widget.nextButtonText ?? context.l10n.onboarding1Continue,
                 isLoading: widget.isLoading,
                 onPressed: widget.onNextPressed,
                 suffixIcon: Icon(Icons.arrow_forward_ios_sharp, color: Colors.white, size: AppSize.sp18),
@@ -173,17 +171,15 @@ class _CreditScoreLayoutState extends State<CreditScoreLayout> {
                 children: [
                   Expanded(
                     child: AppButton(
-                      text: 'Previous',
-                      onPressed: () {
-                        if (context.canPop()) context.pop();
-                      },
+                      text: context.l10n.creditScoreLayoutPrevious,
+                      onPressed: () => NavigationHelper().handleBackPress(context),
                       isOutlined: true,
                       prefixIcon: Icon(Icons.arrow_back_ios_sharp, color: Colors.black, size: AppSize.sp18),
                     ),
                   ),
                   Expanded(
                     child: AppButton(
-                      text: widget.nextButtonText ?? (widget.isLastStep ? 'Calculate' : 'Continue'),
+                      text: widget.nextButtonText ?? (widget.isLastStep ? context.l10n.fdCalculateButton : context.l10n.onboarding1Continue),
                       isLoading: widget.isLoading,
                       onPressed: widget.onNextPressed,
                       suffixIcon: Icon(

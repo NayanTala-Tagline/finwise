@@ -45,7 +45,7 @@ class _Onboarding3ScreenState extends State<Onboarding3Screen> {
         builder: (context, provider, _) {
           return OnboardingLayout(
             stepIndex: 3,
-            buttonText: 'Continue',
+            buttonText: context.l10n.onboarding1Continue,
             isLoading: provider.busy,
             onButtonPressed: () {
               AnalyticsManager.instance.logEvent(
@@ -88,7 +88,7 @@ class _ReadyToStartContent extends StatelessWidget {
           ),
           SizedBox(height: AppSize.h32),
           Text(
-            'Ready to Get Started?',
+            context.l10n.onboarding3Title,
             style: context.textTheme.titleMedium?.copyWith(
               fontSize: AppSize.sp30,
             ),
@@ -96,7 +96,7 @@ class _ReadyToStartContent extends StatelessWidget {
           ),
           SizedBox(height: AppSize.h12),
           Text(
-            'Your financial data is protected with bank-\nlevel encryption and we never share your\ninformation',
+            context.l10n.onboarding3Subtitle,
             style: context.textTheme.bodyLarge?.copyWith(
               fontSize: AppSize.sp15,
               color: context.themeTextColors.descriptionColor,
@@ -118,7 +118,7 @@ class _ReadyToStartContent extends StatelessWidget {
                 SizedBox(width: AppSize.w10),
                 Flexible(
                   child: Text(
-                    '256-bit Encryption',
+                    context.l10n.onboarding3Encryption,
                     style: context.textTheme.bodyLarge?.copyWith(
                       fontSize: AppSize.sp14,
                       color: Color(0xff059669),

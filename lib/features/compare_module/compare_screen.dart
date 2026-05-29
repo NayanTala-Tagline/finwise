@@ -35,6 +35,12 @@ class _CompareViewState extends State<_CompareView> {
   final GlobalKey _resultKey = GlobalKey();
 
   @override
+  void initState() {
+    super.initState();
+    AnalyticsManager.instance.logScreenView(screenName: 'compare_screen');
+  }
+
+  @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
@@ -43,6 +49,7 @@ class _CompareViewState extends State<_CompareView> {
 @override
   Widget build(BuildContext context) {
     final provider = context.watch<CompareProvider>();
+    final l10n = context.l10n;
     final topPadding = MediaQuery.paddingOf(context).top;
 
     return Scaffold(
@@ -70,7 +77,7 @@ class _CompareViewState extends State<_CompareView> {
 
 
                   Text(
-                    'Compare Loans',
+                    l10n.compareTitle,
                     style: context.textTheme.titleLarge?.copyWith(
                       fontSize: AppSize.sp24,
                        color: Colors.white,
@@ -78,7 +85,7 @@ class _CompareViewState extends State<_CompareView> {
                   ),
                   SizedBox(height: AppSize.h8),
                   Text(
-                    'Find the best loan for your needs',
+                    l10n.compareSubtitle,
                     style: context.textTheme.bodyMedium?.copyWith(
                       fontSize: AppSize.sp13,
                       color: Colors.white.withValues(alpha: 0.8),
@@ -154,7 +161,7 @@ class _CompareViewState extends State<_CompareView> {
                                 ),
                                 SizedBox(width: AppSize.w8),
                                 Text(
-                                  'Add Another Loan',
+                                  l10n.compareAddAnotherLoan,
                                   style: context.textTheme.titleSmall?.copyWith(
                                     fontSize: AppSize.sp14,
                                     color: context.themeTextColors.descriptionColor,
@@ -173,7 +180,7 @@ class _CompareViewState extends State<_CompareView> {
                       children: [
                         Expanded(
                           child: AppButton(
-                            text: 'Reset',
+                            text: l10n.fdReset,
                             isOutlined: true,
                             onPressed: () {
                               FocusManager.instance.primaryFocus?.unfocus();
@@ -184,7 +191,7 @@ class _CompareViewState extends State<_CompareView> {
                         ),
                          Expanded(
                           child: AppButton(
-                            text: 'Compare',
+                            text: l10n.bottomNavCompare,
                             onPressed: () {
                               FocusManager.instance.primaryFocus?.unfocus();
                               if (!provider.isInputValid) {
@@ -192,8 +199,8 @@ class _CompareViewState extends State<_CompareView> {
                                   name: 'compare_validation_failed',
                                 );
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Please fill at least 2 loans with valid values.'),
+                                  SnackBar(
+                                    content: Text(l10n.compareValidation),
                                     behavior: SnackBarBehavior.floating,
                                   ),
                                 );
@@ -221,7 +228,7 @@ class _CompareViewState extends State<_CompareView> {
 
                     // Start New
                     AppButton(
-                      text: 'Start New',
+                      text: l10n.compareStartNew,
                       onPressed: () {
                         FocusManager.instance.primaryFocus?.unfocus();
                         AnalyticsManager.instance.logEvent(name: 'compare_refresh');

@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../../extension/ext_context.dart';
 import '../../routes/app_router.dart';
+import '../../utils/anaytics_manager.dart';
 import '../../utils/app_size.dart';
 import '../../widgets/ad_slot.dart';
 import 'provider/credit_score_ad_provider.dart';
@@ -24,18 +25,10 @@ class Step6HistoryLengthScreen extends StatefulWidget {
 }
 
 class _Step6HistoryLengthScreenState extends State<Step6HistoryLengthScreen> {
-  static const _options = [
-    (CreditHistoryLength.moreThan20Years, 'More than 20 years ago', 'Extensive history'),
-    (CreditHistoryLength.tenTo20Years, '10-20 years ago', 'Long history'),
-    (CreditHistoryLength.fiveTo10Years, '5-10 years ago', 'Established history'),
-    (CreditHistoryLength.twoToFiveYears, '2-5 years ago', 'Building history'),
-    (CreditHistoryLength.oneToTwoYears, '1-2 years ago', 'Short history'),
-    (CreditHistoryLength.lessThan1Year, 'Less than 1 year ago', 'New to credit'),
-  ];
-
   @override
   void initState() {
     super.initState();
+    AnalyticsManager.instance.logScreenView(screenName: 'credit_score_step6_screen');
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       context.read<CreditScoreAdProvider>().preloadAfterStep(5);
@@ -49,10 +42,11 @@ class _Step6HistoryLengthScreenState extends State<Step6HistoryLengthScreen> {
   }
 
   void _next() {
+    final l10n = context.l10n;
     final provider = context.read<CreditScoreEstimatorProvider>();
     if (provider.creditHistoryLength == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select your credit history length')),
+        SnackBar(content: Text(l10n.creditScoreStep6Validation)),
       );
       return;
     }
@@ -66,13 +60,22 @@ class _Step6HistoryLengthScreenState extends State<Step6HistoryLengthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final provider = context.watch<CreditScoreEstimatorProvider>();
     final adProvider = context.watch<CreditScoreAdProvider>();
+    final options = [
+      (CreditHistoryLength.moreThan20Years, l10n.creditScoreStep6Option1Label, l10n.creditScoreStep6Option1Subtitle),
+      (CreditHistoryLength.tenTo20Years, l10n.creditScoreStep6Option2Label, l10n.creditScoreStep6Option2Subtitle),
+      (CreditHistoryLength.fiveTo10Years, l10n.creditScoreStep6Option3Label, l10n.creditScoreStep6Option3Subtitle),
+      (CreditHistoryLength.twoToFiveYears, l10n.creditScoreStep1Option3Label, l10n.creditScoreStep6Option4Subtitle),
+      (CreditHistoryLength.oneToTwoYears, l10n.creditScoreStep1Option4Label, l10n.creditScoreStep6Option5Subtitle),
+      (CreditHistoryLength.lessThan1Year, l10n.creditScoreStep6Option6Label, l10n.creditScoreStep6Option6Subtitle),
+    ];
 
     return CreditScoreLayout(
       stepIndex: 5,
-      title: 'Credit History Length',
-      subtitle: 'When did you first open your oldest active credit or loan account?',
+      title: l10n.creditScoreStep6Title,
+      subtitle: l10n.creditScoreStep6Question,
       isLastStep: true,
       isLoading: adProvider.busy,
       adSlot: AdSlot(ad: widget.inlineAd),
@@ -82,10 +85,10 @@ class _Step6HistoryLengthScreenState extends State<Step6HistoryLengthScreen> {
           Expanded(
             child: ListView.separated(
               padding: EdgeInsets.symmetric(horizontal: AppSize.w20),
-              itemCount: _options.length,
+              itemCount: options.length,
               separatorBuilder: (_, _) => SizedBox(height: AppSize.h10),
               itemBuilder: (_, i) {
-                final (value, label, subtitle) = _options[i];
+                final (value, label, subtitle) = options[i];
                 final selected = provider.creditHistoryLength == value;
                 return CreditScoreOptionTile(
                   label: label,
@@ -116,7 +119,7 @@ class _Step6HistoryLengthScreenState extends State<Step6HistoryLengthScreen> {
                 SizedBox(width: AppSize.w8),
                 Expanded(
                   child: Text(
-                    'Keep your oldest accounts open even if you don\'t use them often to maintain a longer credit history.',
+                    l10n.creditScoreStep6Tip,
                     style: context.textTheme.bodySmall?.copyWith(
                       fontSize: AppSize.sp11,
                       color: const Color(0xFF15803D),

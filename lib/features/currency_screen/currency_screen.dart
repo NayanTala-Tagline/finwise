@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../extension/ext_context.dart';
+import '../../utils/anaytics_manager.dart';
 import '../../utils/app_size.dart';
 import '../../utils/navigation_helper.dart';
 import '../../widgets/app_button.dart';
@@ -28,6 +29,7 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
   @override
   void initState() {
     super.initState();
+    AnalyticsManager.instance.logScreenView(screenName: 'currency_screen');
     _pending = context.read<CurrencyProvider>().selected;
     _loadInline();
   }
@@ -60,7 +62,7 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
       child: Scaffold(
         backgroundColor: colors.backgroundColor,
         appBar: CommonAppBar(
-          titleText: 'Currency',
+          titleText: context.l10n.settingsCurrency,
           titleTextStyle: context.textTheme.bodyMedium?.copyWith(
             fontSize: AppSize.sp18,
             fontWeight: FontWeight.w700,
@@ -77,7 +79,7 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
                 AppSize.h8,
               ),
               child: Text(
-                'Currency List',
+                context.l10n.currencyListTitle,
                 style: context.textTheme.titleMedium?.copyWith(
                   fontSize: AppSize.sp16,
                   fontWeight: FontWeight.w700,
@@ -245,7 +247,7 @@ class _CurrencyScreenState extends State<CurrencyScreen> {
                     AppSize.h0,
                   ),
                   child: AppButton(
-                    text: 'Save',
+                    text: context.l10n.currencySaveButton,
                     backgroundColor: colors.primary,
                     borderRadius: AppSize.r50,
                     onPressed: () {

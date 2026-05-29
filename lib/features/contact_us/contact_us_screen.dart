@@ -72,14 +72,14 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
       });
       AnalyticsManager.instance.logEvent(name: 'contact_us_submit_success');
       if (!mounted) return;
-      'Message sent successfully!'.showSuccessAlert();
+      context.l10n.contactUsSuccessMessage.showSuccessAlert();
       NavigationHelper().handleBackPress(context);
     } catch (e) {
       AnalyticsManager.instance.logEvent(
         name: 'contact_us_submit_failed',
         parameters: {'error': e.toString()},
       );
-      'Failed to send message. Please try again.'.showErrorAlert();
+      context.l10n.contactUsFailedMessage.showErrorAlert();
       print(e);
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
@@ -89,6 +89,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = context.themeColors;
+    final l10n = context.l10n;
 
     return PopScope(
       canPop: false,
@@ -100,7 +101,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
         backgroundColor: colors.backgroundColor,
         bottomNavigationBar: AdSlot(ad: _inlineAd),
         appBar: CommonAppBar(
-          titleText: 'Contact Us',
+          titleText: l10n.contactUsTitle,
           titleTextStyle: context.textTheme.bodyMedium?.copyWith(
             fontSize: AppSize.sp18,
             fontWeight: FontWeight.w700,
@@ -120,35 +121,35 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       AppTextFormField(
-                        title: 'Name',
+                        title: l10n.contactUsNameLabel,
                         controller: _nameController,
                         keyboardType: TextInputType.name,
-                        hintText: 'Enter your name',
+                        hintText: l10n.contactUsNameHint,
                         onChanged: (_) {},
                         validator: (value) {
-                          if (value == null || value.trim().isEmpty) return 'Name is required';
+                          if (value == null || value.trim().isEmpty) return l10n.contactUsNameValidation;
                           return null;
                         },
                       ),
                       SizedBox(height: AppSize.h16),
                       AppTextFormField(
-                        title: 'Email',
+                        title: l10n.contactUsEmailLabel,
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
-                        hintText: 'Enter your email',
+                        hintText: l10n.contactUsEmailHint,
                         onChanged: (_) {},
                         validator: (value) {
-                          if (value == null || value.trim().isEmpty) return 'Email is required';
+                          if (value == null || value.trim().isEmpty) return l10n.contactUsEmailValidation;
                           final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
-                          if (!emailRegex.hasMatch(value.trim())) return 'Please enter a valid email';
+                          if (!emailRegex.hasMatch(value.trim())) return l10n.contactUsEmailInvalidValidation;
                           return null;
                         },
                       ),
                       SizedBox(height: AppSize.h16),
                       AppTextFormField(
-                        title: 'Message',
+                        title: l10n.contactUsMessageLabel,
                         controller: _descriptionController,
-                        hintText: 'Write your message here...',
+                        hintText: l10n.contactUsMessageHint,
                         keyboardType: TextInputType.multiline,
                         minLine: 5,
                         maxLine: 8,
@@ -156,7 +157,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                         textAlignVertical: TextAlignVertical.top,
                         onChanged: (_) {},
                         validator: (value) {
-                          if (value == null || value.trim().isEmpty) return 'Message is required';
+                          if (value == null || value.trim().isEmpty) return l10n.contactUsMessageValidation;
                           return null;
                         },
                       ),
@@ -187,7 +188,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                     AppSize.h16,
                   ),
                   child: AppButton(
-                    text: 'Submit',
+                    text: l10n.contactUsSubmitButton,
                     backgroundColor: colors.primary,
                     borderRadius: AppSize.r50,
                     isLoading: _isSubmitting,

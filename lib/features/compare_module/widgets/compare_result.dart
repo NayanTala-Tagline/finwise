@@ -32,6 +32,7 @@ class CompareResult extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<CompareProvider>();
+    final l10n = context.l10n;
     final bestIdx = provider.bestLoanIndex();
     final results = List.generate(provider.loanCount, provider.resultOf);
     final hasValid = results.any((r) => r.emi > 0);
@@ -48,7 +49,7 @@ class CompareResult extends StatelessWidget {
 
         // ── Monthly Payment Comparison ─────────────────────────────────────
         _WhiteCard(
-          title: 'Monthly Payment Comparison',
+          title: l10n.compareMonthlyPaymentComparison,
           child: _VerticalBarChart(results: results),
         ),
         SizedBox(height: AppSize.h16),
@@ -57,7 +58,7 @@ class CompareResult extends StatelessWidget {
 
         // ── Detailed Breakdown ─────────────────────────────────────────────
         Text(
-          'Detailed Breakdown',
+          l10n.compareDetailedBreakdown,
           style: context.textTheme.titleMedium?.copyWith(
             fontSize: AppSize.sp15,
             fontWeight: FontWeight.w600,
@@ -79,13 +80,13 @@ class CompareResult extends StatelessWidget {
 
         // ── Interest Distribution ──────────────────────────────────────────
         _WhiteCard(
-          title: 'Interest Distribution',
+          title: l10n.compareInterestDistribution,
           child: _PieChartSection(results: results),
         ),
         SizedBox(height: AppSize.h16),
 
         Text(
-          'Key Insights',
+          l10n.compareKeyInsights,
           style: context.textTheme.titleMedium?.copyWith(
             fontSize: AppSize.sp15,
             fontWeight: FontWeight.w600,
@@ -150,7 +151,7 @@ class _BestLoanCard extends StatelessWidget {
                     SizedBox(width: AppSize.w10),
                     Expanded(
                       child: Text(
-                        'Loan ${index + 1}',
+                        context.l10n.compareLoanLabel(index + 1),
                         style: context.textTheme.titleMedium?.copyWith(
                           fontSize: AppSize.sp16,
                           fontWeight: FontWeight.w700,
@@ -168,7 +169,7 @@ class _BestLoanCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(AppSize.r5),
                       ),
                       child: Text(
-                        'Best Value',
+                        context.l10n.compareBestValueBadge,
                         style: context.textTheme.titleSmall?.copyWith(
                           fontSize: AppSize.sp11,
                           fontWeight: FontWeight.w700,
@@ -184,15 +185,15 @@ class _BestLoanCard extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: _StatChip(label: 'Monthly\nEMI', value: _fmtRs(result.emi)),
+                      child: _StatChip(label: context.l10n.compareStatChipMonthlyEmi, value: _fmtRs(result.emi)),
                     ),
                     SizedBox(width: AppSize.w8),
                     Expanded(
-                      child: _StatChip(label: 'Total\nInterest', value: _fmtRs(result.totalInterest)),
+                      child: _StatChip(label: context.l10n.compareStatChipTotalInterest, value: _fmtRs(result.totalInterest)),
                     ),
                     SizedBox(width: AppSize.w8),
                     Expanded(
-                      child: _StatChip(label: 'Duration', value: '${result.months.round()}m'),
+                      child: _StatChip(label: context.l10n.fdCalculatorDurationHint, value: context.l10n.compareDurationShort(result.months.round())),
                     ),
                   ],
                 ),
@@ -218,7 +219,7 @@ class _BestLoanCard extends StatelessWidget {
           ),
           child: Center(
             child:  Text(
-              'This loan has the lowest total payable amount of ${_fmtRs(result.totalPayment)}',
+              context.l10n.compareLowestPayableDesc(_fmtRs(result.totalPayment)),
               style: context.textTheme.titleSmall?.copyWith(
                 fontSize: AppSize.sp12,
                 color: context.themeTextColors.descriptionColor,
@@ -404,7 +405,7 @@ class _VerticalBarChart extends StatelessWidget {
                   children: List.generate(results.length, (i) {
                     if (results[i].emi == 0) return const SizedBox.shrink();
                     return Text(
-                      'Loan ${i + 1}',
+                      context.l10n.compareLoanLabel(i + 1),
                       style: context.textTheme.titleSmall?.copyWith(
                         fontSize: AppSize.sp11,
                         color: context.themeTextColors.descriptionColor,
@@ -537,7 +538,7 @@ class _LoanBreakdownCard extends StatelessWidget {
               SizedBox(width: AppSize.w10),
               Expanded(
                 child: Text(
-                  'Loan ${index + 1}',
+                  context.l10n.compareLoanLabel(index + 1),
                   style: context.textTheme.titleMedium?.copyWith(
                     fontSize: AppSize.sp15,
                     fontWeight: FontWeight.w600,
@@ -556,7 +557,7 @@ class _LoanBreakdownCard extends StatelessWidget {
 
                   ),
                   child: Text(
-                    'Best Value',
+                    context.l10n.compareBestValueBadge,
                     style: context.textTheme.bodySmall?.copyWith(
                       fontSize: AppSize.sp12,
                       fontWeight: FontWeight.w600,
@@ -573,14 +574,14 @@ class _LoanBreakdownCard extends StatelessWidget {
             children: [
               Expanded(
                 child: _BreakdownCell(
-                  label: 'Monthly EMI',
+                  label: context.l10n.loanResultMonthlyEmi,
                   value: _fmtRs(result.emi),
                 ),
               ),
               SizedBox(width: AppSize.w10),
               Expanded(
                 child: _BreakdownCell(
-                  label: 'Total Interest',
+                  label: context.l10n.fdResultTotalInterest,
                   value: _fmtRs(result.totalInterest),
                   valueColor: const Color(0xFFD97706),
                 ),
@@ -592,15 +593,15 @@ class _LoanBreakdownCard extends StatelessWidget {
             children: [
               Expanded(
                 child: _BreakdownCell(
-                  label: 'Total Payable',
+                  label: context.l10n.loanResultTotalPayable,
                   value: _fmtRs(result.totalPayment),
                 ),
               ),
               SizedBox(width: AppSize.w10),
               Expanded(
                 child: _BreakdownCell(
-                  label: 'Duration',
-                  value: '${result.months.round()} months',
+                  label: context.l10n.fdCalculatorDurationHint,
+                  value: context.l10n.compareDurationLong(result.months.round()),
                 ),
               ),
             ],
@@ -693,7 +694,7 @@ class _PieChartSection extends StatelessWidget {
         final mid = angle + sweeps[i] / 2;
         final lx = cx + labelR * math.cos(mid);
         final ly = cy + labelR * math.sin(mid);
-        final label = 'Loan ${i + 1}: ${_fmtK(results[i].totalInterest)}';
+        final label = '${ctx.l10n.compareLoanLabel(i + 1)}: ${_fmtK(results[i].totalInterest)}';
 
         // Clamp so label stays inside the SizedBox
         final left = (lx - _labelWidth / 2).clamp(0.0, w - _labelWidth);
@@ -787,24 +788,25 @@ class _KeyInsightsList extends StatelessWidget {
       if (e.value.totalInterest < results[lowestInterestIdx].totalInterest) lowestInterestIdx = e.key;
     }
 
+    final l10n = context.l10n;
     final insights = [
       (
         color: const Color(0xFF2D5BE3),
         icon: Assets.onboardingIcons.icCurrency,
-        title: 'Lowest Monthly Payment',
-        desc: 'Loan ${lowestEmiIdx + 1} has the lowest EMI of ${_fmtRs(results[lowestEmiIdx].emi)} per month',
+        title: l10n.compareLowestMonthlyPayment,
+        desc: l10n.compareLowestEmiDesc(_fmtRs(results[lowestEmiIdx].emi), lowestEmiIdx + 1),
       ),
       (
         color: const Color(0xFF059669),
         icon: Assets.personalLoanIcons.icClock,
-        title: 'Shortest Duration',
-        desc: 'Loan ${shortestIdx + 1} has the shortest tenure of ${results[shortestIdx].months.round()} months',
+        title: l10n.compareShortestDuration,
+        desc: l10n.compareShortestDurationDesc(results[shortestIdx].months.round(), shortestIdx + 1),
       ),
       (
         color: const Color(0xFF10B981),
         icon: Assets.temperatureIcons.icLowest,
-        title: 'Lowest Total Interest',
-        desc: 'Loan ${lowestInterestIdx + 1} has the lowest interest of ${_fmtRs(results[lowestInterestIdx].totalInterest)}',
+        title: l10n.compareLowestTotalInterest,
+        desc: l10n.compareLowestInterestDesc(_fmtRs(results[lowestInterestIdx].totalInterest), lowestInterestIdx + 1),
       ),
     ];
 
@@ -886,15 +888,15 @@ class _RecommendationCard extends StatelessWidget {
   final int index;
   final LoanResult result;
 
-  static const _bullets = [
-    'Choose shorter tenure for less total interest',
-    'Choose longer tenure for lower monthly EMI',
-    'Consider prepayment options for flexibility',
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final colors = context.themeColors;
+    final bullets = [
+      l10n.compareBullet1,
+      l10n.compareBullet2,
+      l10n.compareBullet3,
+    ];
     return Container(
       decoration: BoxDecoration(
         color: colors.whiteColor,
@@ -926,7 +928,7 @@ class _RecommendationCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Our Recommendation',
+                  l10n.compareOurRecommendation,
                   style: context.textTheme.titleMedium?.copyWith(
                     fontSize: AppSize.sp14,
                     fontWeight: FontWeight.w700,
@@ -935,7 +937,7 @@ class _RecommendationCard extends StatelessWidget {
                 ),
                 SizedBox(height: AppSize.h8),
                 Text(
-                  'Based on your comparison, Loan ${index + 1} offers the best overall value with the lowest total payable amount. However, consider your monthly budget and preferred repayment timeline when making your final decision.',
+                  l10n.compareRecommendationDesc(index + 1),
                   style: context.textTheme.bodyMedium?.copyWith(
                     fontSize: AppSize.sp12,
                     color: context.themeTextColors.descriptionColor,
@@ -943,7 +945,7 @@ class _RecommendationCard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: AppSize.h10),
-                ..._bullets.map(
+                ...bullets.map(
                   (b) => Padding(
                     padding: EdgeInsets.only(bottom: AppSize.h6),
                     child: Row(

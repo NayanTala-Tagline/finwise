@@ -45,7 +45,7 @@ class _Onboarding2ScreenState extends State<Onboarding2Screen> {
         builder: (context, provider, _) {
           return OnboardingLayout(
             stepIndex: 2,
-            buttonText: 'Continue',
+            buttonText: context.l10n.onboarding1Continue,
             isLoading: provider.busy,
             onButtonPressed: () {
               AnalyticsManager.instance.logEvent(
@@ -90,7 +90,7 @@ class _SmartFinancialContent extends StatelessWidget {
             ),
             SizedBox(height: AppSize.h30),
             Text(
-              'Make Smart Financial\nDecisions',
+              context.l10n.onboarding2Title,
               style: context.textTheme.titleMedium?.copyWith(
                 fontSize: AppSize.sp30,
               ),
@@ -98,7 +98,7 @@ class _SmartFinancialContent extends StatelessWidget {
             ),
             SizedBox(height: AppSize.h12),
             Text(
-              'Get personalized insights, compare offers\nfrom top lenders, and choose the best\noption for your needs',
+              context.l10n.onboarding2Subtitle,
               style: context.textTheme.bodyLarge?.copyWith(
                 fontSize: AppSize.sp15,
                 color: context.themeTextColors.descriptionColor,
@@ -119,9 +119,9 @@ class _FeaturesList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final features = [
-      'Compare rates from 20+ lenders',
-      'Instant eligibility check',
-      'Expert guidance at every step',
+      context.l10n.onboarding2Feature1,
+      context.l10n.onboarding2Feature2,
+      context.l10n.onboarding2Feature3,
     ];
 
     return Column(

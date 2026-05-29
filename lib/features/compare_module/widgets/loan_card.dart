@@ -51,6 +51,7 @@ class _LoanCardState extends State<LoanCard> {
   @override
   Widget build(BuildContext context) {
     final colors = context.themeColors;
+    final l10n = context.l10n;
     final provider = context.watch<CompareProvider>();
     _syncFromProvider(provider);
 
@@ -96,7 +97,7 @@ class _LoanCardState extends State<LoanCard> {
                 SizedBox(width: AppSize.w10),
                 Expanded(
                   child: Text(
-                    'Loan $num',
+                    l10n.compareLoanLabel(num),
                     style: context.textTheme.titleMedium?.copyWith(
                       fontSize: AppSize.sp15,
                       fontWeight: FontWeight.w600,
@@ -123,7 +124,7 @@ class _LoanCardState extends State<LoanCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Loan Amount',
+                  l10n.loanCalculatorLoanAmount,
                   style: context.textTheme.titleMedium?.copyWith(
                     fontSize: AppSize.sp13,
                    ),
@@ -131,7 +132,7 @@ class _LoanCardState extends State<LoanCard> {
                 SizedBox(height: AppSize.h6),
                 AppTextFormField(
                   controller: _amountController,
-                  hintText: 'Enter loan amount',
+                  hintText: l10n.compareCardLoanAmountHint,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     onChanged: (v) => provider.setAmount(widget.index, v ?? ''),
@@ -147,7 +148,7 @@ class _LoanCardState extends State<LoanCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Loan Term',
+                  l10n.loanCalculatorLoanTerm,
                   style: context.textTheme.titleMedium?.copyWith(
                     fontSize: AppSize.sp13,
                   ),
@@ -158,7 +159,7 @@ class _LoanCardState extends State<LoanCard> {
                     Expanded(
                        child: AppTextFormField(
                         controller: _tenureController,
-                        hintText: 'Enter duration',
+                        hintText: l10n.compareCardDurationHint,
                         keyboardType: TextInputType.number,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         onChanged: (v) => provider.setTenure(widget.index, v ?? ''),
@@ -166,13 +167,13 @@ class _LoanCardState extends State<LoanCard> {
                     ),
                      Expanded(
                         child: AppTextFormField(
-                          dropdownItems: const ['Month', 'Year'],
+                          dropdownItems: [l10n.compareCardMonth, l10n.compareCardYear],
                            contentHeight: AppSize.h12,
-                          dropdownValue: tenureUnit == TenureUnit.month ? 'Month' : 'Year',
+                          dropdownValue: tenureUnit == TenureUnit.month ? l10n.compareCardMonth : l10n.compareCardYear,
                             onDropdownChanged: (v) {
                             provider.setTenureUnit(
                               widget.index,
-                              v == 'Year' ? TenureUnit.year : TenureUnit.month,
+                              v == l10n.compareCardYear ? TenureUnit.year : TenureUnit.month,
                             );
                           },
                         ),
@@ -193,7 +194,7 @@ class _LoanCardState extends State<LoanCard> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Interest Rate',
+                      l10n.fdCalculatorInterestRate,
                       style: context.textTheme.titleMedium?.copyWith(
                         fontSize: AppSize.sp13,
                        ),

@@ -21,19 +21,19 @@ class BottomNavView extends StatelessWidget {
     final items = <_BottomNavItemData>[
       _BottomNavItemData(
         icon: Assets.botombarIcons.icHome,
-        label: 'Home',
+        label: l10n.bottomNavHome,
       ),
       _BottomNavItemData(
         icon: Assets.botombarIcons.icTools,
-        label: 'Tools',
+        label: l10n.bottomNavTools,
       ),
       _BottomNavItemData(
         icon: Assets.botombarIcons.icCompare,
-        label: 'Compare',
+        label: l10n.bottomNavCompare,
       ),
       _BottomNavItemData(
         icon: Assets.botombarIcons.icSettings,
-        label: 'Setting',
+        label: l10n.bottomNavSettings,
       ),
     ];
 

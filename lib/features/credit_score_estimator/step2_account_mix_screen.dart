@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 
+import '../../extension/ext_context.dart';
 import '../../routes/app_router.dart';
+import '../../utils/anaytics_manager.dart';
 import '../../utils/app_size.dart';
 import '../../widgets/ad_slot.dart';
 import 'provider/credit_score_ad_provider.dart';
@@ -23,18 +25,10 @@ class Step2AccountMixScreen extends StatefulWidget {
 }
 
 class _Step2AccountMixScreenState extends State<Step2AccountMixScreen> {
-  static const _items = [
-    ('creditCards', 'Credit Cards'),
-    ('mortgages', 'Mortgages'),
-    ('retailAccounts', 'Retail Accounts'),
-    ('autoLoans', 'Auto Loans'),
-    ('studentLoans', 'Student Loans'),
-    ('otherLoans', 'Other Loans'),
-  ];
-
   @override
   void initState() {
     super.initState();
+    AnalyticsManager.instance.logScreenView(screenName: 'credit_score_step2_screen');
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       context.read<CreditScoreAdProvider>().preloadAfterStep(1);
@@ -59,22 +53,31 @@ class _Step2AccountMixScreenState extends State<Step2AccountMixScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final provider = context.watch<CreditScoreEstimatorProvider>();
     final adProvider = context.watch<CreditScoreAdProvider>();
+    final items = [
+      ('creditCards', l10n.creditScoreStep2CreditCards),
+      ('mortgages', l10n.creditScoreStep2Mortgages),
+      ('retailAccounts', l10n.creditScoreStep2RetailAccounts),
+      ('autoLoans', l10n.creditScoreStep2AutoLoans),
+      ('studentLoans', l10n.creditScoreStep2StudentLoans),
+      ('otherLoans', l10n.creditScoreStep2OtherLoans),
+    ];
 
     return CreditScoreLayout(
       stepIndex: 1,
-      title: 'Account Mix',
-      subtitle: 'How many of these accounts do you have listed?',
+      title: l10n.creditScoreStep2Title,
+      subtitle: l10n.creditScoreStep2Question,
       isLoading: adProvider.busy,
       adSlot: AdSlot(ad: widget.inlineAd),
       onNextPressed: () => context.read<CreditScoreAdProvider>().next(context, AppRoutes.creditScoreStep3),
       child: ListView.separated(
         padding: EdgeInsets.symmetric(horizontal: AppSize.w30, vertical: AppSize.h4),
-        itemCount: _items.length,
+        itemCount: items.length,
         separatorBuilder: (_, _) => SizedBox(height: AppSize.h10),
         itemBuilder: (_, i) {
-          final (key, label) = _items[i];
+          final (key, label) = items[i];
           final count = _countFor(provider, key);
           return Padding(
             padding: EdgeInsets.only(bottom: AppSize.h10),

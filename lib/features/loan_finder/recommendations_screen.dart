@@ -7,6 +7,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 
 import '../../extension/ext_context.dart';
+import '../../l10n/app_localizations.dart';
 import '../../features/currency_screen/provider/currency_provider.dart';
 import '../../gen/assets.gen.dart';
 import '../../notification_service/loan_status_notification.dart';
@@ -230,7 +231,7 @@ class _RecommendationsScreenState extends State<RecommendationsScreen> {
                 AppSize.h12,
               ),
               child: AppButton(
-                text: 'Get Recommendations',
+                text: context.l10n.recommendationsGetButton,
                 onPressed: () {
                   AnalyticsManager.instance.logEvent(
                     name: 'recommendations_get_pressed',
@@ -302,9 +303,10 @@ class _ApplicationSummaryCard extends StatelessWidget {
     final textColors = context.themeTextColors;
     
     // Calculate eligibility score
+    final l10n = context.l10n;
     final eligibilityScore = _calculateEligibilityScore();
     final scoreColor = _getScoreColor(eligibilityScore);
-    final scoreLabel = _getScoreLabel(eligibilityScore);
+    final scoreLabel = _getScoreLabel(eligibilityScore, l10n);
 
     return AppSummaryBackground(
       backgroundColor: colors.primary,
@@ -340,7 +342,7 @@ class _ApplicationSummaryCard extends StatelessWidget {
                 ),
                 Flexible(
                   child: Text(
-                    'Application Summary',
+                    context.l10n.recommendationsAppSummary,
                     style: context.textTheme.titleMedium?.copyWith(
                       color: Colors.white,
                       fontSize: AppSize.sp16,
@@ -369,7 +371,7 @@ class _ApplicationSummaryCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Eligibility Score',
+                            context.l10n.recommendationsEligibilityScore,
                             style: context.textTheme.titleSmall?.copyWith(
                               color: textColors.descriptionColor,
                               fontSize: AppSize.sp13,
@@ -461,10 +463,10 @@ class _ApplicationSummaryCard extends StatelessWidget {
     return const Color(0xFFEF4444);
   }
 
-  String _getScoreLabel(double score) {
-    if (score >= 70) return 'High';
-    if (score >= 40) return 'Medium';
-    return 'Low';
+  String _getScoreLabel(double score, AppLocalizations l10n) {
+    if (score >= 70) return l10n.tipsSeverityHigh;
+    if (score >= 40) return l10n.tipsSeverityMedium;
+    return l10n.recommendationsLow;
   }
 }
 
@@ -506,7 +508,7 @@ class _EstimatedCostsCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Estimated Costs',
+            context.l10n.recommendationsEstimatedCosts,
             style: context.textTheme.titleMedium?.copyWith(
               fontSize: AppSize.sp15,
               fontWeight: FontWeight.w600,
@@ -514,20 +516,20 @@ class _EstimatedCostsCard extends StatelessWidget {
           ),
           SizedBox(height: AppSize.h16),
           _CostRow(
-            label: 'Loan Amount',
+            label: context.l10n.loanCalculatorLoanAmount,
             value: '$sym${loanAmount.toInt()}',
             textColors: textColors,
           ),
           Divider(height: AppSize.h20, thickness: 1, color: Color(0xffE2E8F0)),
           _CostRow(
-            label: 'Processing Fee',
+            label: context.l10n.recommendationsProcessingFee,
             value: '$sym$processingFee',
             textColors: textColors,
           ),
           SizedBox(height: AppSize.h12),
           Divider(height: AppSize.h0, thickness: 1, color: Color(0xffE2E8F0)),
           _CostRow(
-            label: 'Total Amount',
+            label: context.l10n.recommendationsTotalAmount,
             value: '$sym${totalAmount.toInt()}',
             textColors: textColors,
             isTotal: true,
@@ -640,7 +642,7 @@ class _SummaryHeader extends StatelessWidget {
                     SizedBox(width: AppSize.w6),
                     Expanded(
                       child: Text(
-                        'Your Information Summary',
+                        context.l10n.recommendationsInfoSummary,
                         style: context.textTheme.titleSmall?.copyWith(
                           color: textColors.textColor,
                           fontWeight: FontWeight.w700,
@@ -653,7 +655,7 @@ class _SummaryHeader extends StatelessWidget {
                 ),
                 SizedBox(height: AppSize.h6),
                 Text(
-                  'Here is a quick overview of the details you have shared with us.',
+                  context.l10n.recommendationsInfoSummaryDesc,
                   style: context.textTheme.bodySmall?.copyWith(
                     color: textColors.descriptionColor,
                     fontSize: AppSize.sp10,
@@ -685,28 +687,28 @@ class _DetailsCard extends StatelessWidget {
 
     final rows = <_DetailRow>[
       _DetailRow(
-        label: 'Loan Purpose',
+        label: l10n.recommendationsLoanPurpose,
         value: result.purpose.label(l10n),
         isFirst: true,
       ),
       _DetailRow(
-        label: 'Loan Amount',
+        label: l10n.loanCalculatorLoanAmount,
         value: '$sym${result.loanAmount.toInt()}',
       ),
       _DetailRow(
-        label: 'Monthly Income',
+        label: l10n.recommendationsMonthlyIncome,
         value: '$sym${result.monthlyIncome.toInt()}',
       ),
       _DetailRow(
-        label: 'Employment',
+        label: l10n.recommendationsEmployment,
         value: result.employmentStatus.label(l10n),
       ),
-      _DetailRow(label: 'Credit Score', value: result.creditScore.label(l10n)),
+      _DetailRow(label: l10n.recommendationsCreditScore, value: result.creditScore.label(l10n)),
       _DetailRow(
-        label: 'Existing Loans',
-        value: result.existingLoansDisplay,
+        label: l10n.recommendationsExistingLoans,
+        value: result.existingLoansDisplay(l10n),
       ),
-      _DetailRow(label: 'Urgency', value: result.urgency.label(l10n)),
+      _DetailRow(label: l10n.recommendationsUrgency, value: result.urgency.label(l10n)),
       // _DetailRow(
       //    label: 'Processing Fee',
       //   value: '00',
@@ -733,7 +735,7 @@ class _DetailsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Your Information',style: context.textTheme.titleMedium?.copyWith(fontSize: AppSize.sp15),),
+          Text(context.l10n.recommendationsYourInfo,style: context.textTheme.titleMedium?.copyWith(fontSize: AppSize.sp15),),
           for (var i = 0; i < rows.length; i++) ...[
             rows[i],
             if (i != rows.length - 1)
@@ -847,12 +849,11 @@ class _DisclaimerCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
              children: [
-               Text('What Happens Next?',style: context.textTheme.titleMedium?.copyWith(fontSize: AppSize.sp15),),
+               Text(context.l10n.recommendationsWhatNext,style: context.textTheme.titleMedium?.copyWith(fontSize: AppSize.sp15),),
                SizedBox(height: AppSize.h10),
 
                _DisclaimerLine(
-                text:
-                    'View personalized loan offers from top lenders',
+                text: context.l10n.recommendationsNextStep1,
               icon: Assets.temperatureIcons.icLowest.svg(colorFilter: ColorFilter.mode(context.themeColors.primary,  BlendMode.srcIn,)),
                 iconBgColor: context.themeColors.primary.withValues(alpha: 0.1),
               ),
@@ -860,14 +861,12 @@ class _DisclaimerCard extends StatelessWidget {
               _DisclaimerLine(
                 icon: Assets.personalLoanIcons.icClock.svg(colorFilter: ColorFilter.mode(Color(0xff0D9488),  BlendMode.srcIn,)),
                 iconBgColor: context.themeColors.primary.withValues(alpha: 0.1),
-                text:
-                    'Get instant eligibility check results',
+                text: context.l10n.recommendationsNextStep2,
               ),SizedBox(height: AppSize.h10),
               _DisclaimerLine(
                 icon: Assets.onboardingIcons.icVerification.svg(colorFilter: ColorFilter.mode(Color(0xff059669),  BlendMode.srcIn,),width: AppSize.w14,height: AppSize.h18),
                 iconBgColor: context.themeColors.primary.withValues(alpha: 0.1),
-                text:
-                    'Secure application with bank-level encryption',
+                text: context.l10n.recommendationsNextStep3,
               ),
             ],
           ),

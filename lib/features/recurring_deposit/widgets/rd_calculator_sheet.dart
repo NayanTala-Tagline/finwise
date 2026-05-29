@@ -24,7 +24,6 @@ class RdCalculatorSheet extends StatefulWidget {
 }
 
 class _RdCalculatorSheetState extends State<RdCalculatorSheet> {
-  static const List<String> _tenureUnits = ['Month', 'Year'];
 
   InlineAdManager? _inlineAd;
 
@@ -75,8 +74,8 @@ class _RdCalculatorSheetState extends State<RdCalculatorSheet> {
     final provider = context.read<RecurringDepositProvider>();
     if (!provider.isInputValid) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter valid values greater than zero.'),
+        SnackBar(
+          content: Text(context.l10n.fdCalculatorValidation),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -102,7 +101,7 @@ class _RdCalculatorSheetState extends State<RdCalculatorSheet> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
       appBar: CommonAppBar(
-        titleText: 'RD Calculator',
+        titleText: context.l10n.homeRdCalculator,
         onBackPress: () => Navigator.of(context).pop(),
       ),
       body: Column(
@@ -117,9 +116,9 @@ class _RdCalculatorSheetState extends State<RdCalculatorSheet> {
 
                   // Monthly Deposit
                   AppTextFormField(
-                    title: 'Monthly Deposit',
+                    title: context.l10n.rdCalculatorMonthlyDeposit,
                     controller: provider.depositController,
-                    hintText: 'Enter monthly deposit amount',
+                    hintText: context.l10n.rdCalculatorMonthlyDepositHint,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
                     onChanged: (_) {},
@@ -133,9 +132,9 @@ class _RdCalculatorSheetState extends State<RdCalculatorSheet> {
 
                   // Interest Rate
                   AppTextFormField(
-                    title: 'Interest Rate',
+                    title: context.l10n.fdCalculatorInterestRate,
                     controller: provider.rateController,
-                    hintText: 'Enter interest rate',
+                    hintText: context.l10n.fdCalculatorInterestRateHint,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
                     onChanged: (_) {},
@@ -148,12 +147,12 @@ class _RdCalculatorSheetState extends State<RdCalculatorSheet> {
                   SizedBox(height: AppSize.h20),
 
                   // Tenure
-                  _TenureRow(tenureUnits: _tenureUnits, provider: provider),
+                  _TenureRow(provider: provider),
                   SizedBox(height: AppSize.h20),
 
                   // Start Date
                   AppTextFormField(
-                    title: 'Start Date',
+                    title: context.l10n.fdCalculatorStartDate,
                     controller: TextEditingController(text: dateLabel),
                     hintText: dateLabel,
                     readOnly: true,
@@ -187,9 +186,9 @@ class _RdCalculatorSheetState extends State<RdCalculatorSheet> {
               child: Padding(
                 padding: EdgeInsets.fromLTRB(AppSize.w16, AppSize.h8, AppSize.w16, AppSize.h0),
                 child: AppButton(
-                  text: 'Calculate',
+                  text: context.l10n.fdCalculateButton,
                   borderRadius: AppSize.r50,
-                  suffixIcon:   Icon(Icons.arrow_forward_ios, color: Colors.white, size: AppSize.sp18),
+                  suffixIcon: Icon(Icons.arrow_forward_ios, color: Colors.white, size: AppSize.sp18),
                   onPressed: () => _calculate(context),
                 ),
               ),
@@ -202,20 +201,21 @@ class _RdCalculatorSheetState extends State<RdCalculatorSheet> {
 }
 
 class _TenureRow extends StatelessWidget {
-  const _TenureRow({required this.tenureUnits, required this.provider});
+  const _TenureRow({required this.provider});
 
-  final List<String> tenureUnits;
   final RecurringDepositProvider provider;
 
   @override
   Widget build(BuildContext context) {
+    final monthLabel = context.l10n.compareCardMonth;
+    final yearLabel = context.l10n.compareCardYear;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: EdgeInsets.only(left: AppSize.w6),
           child: Text(
-            'Tenure',
+            context.l10n.fdCalculatorTenure,
             style: context.textTheme.titleSmall?.copyWith(
               fontSize: AppSize.sp17,
               overflow: TextOverflow.ellipsis,
@@ -228,7 +228,7 @@ class _TenureRow extends StatelessWidget {
             Expanded(
               child: AppTextFormField(
                 controller: provider.tenureController,
-                hintText: 'Duration',
+                hintText: context.l10n.fdCalculatorDurationHint,
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))],
                 onChanged: (_) {},
@@ -237,10 +237,14 @@ class _TenureRow extends StatelessWidget {
             SizedBox(
               width: AppSize.w130,
               child: AppTextFormField(
-                dropdownItems: tenureUnits,
-                dropdownValue: provider.tenureUnitLabel,
+                dropdownItems: [monthLabel, yearLabel],
+                dropdownValue: provider.tenureUnit == RdTenureUnit.month ? monthLabel : yearLabel,
                 onDropdownChanged: (v) {
-                  if (v != null) provider.setTenureUnit(v);
+                  if (v != null) {
+                    provider.setTenureUnit(
+                      v == monthLabel ? RdTenureUnit.month : RdTenureUnit.year,
+                    );
+                  }
                 },
               ),
             ),

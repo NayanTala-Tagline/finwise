@@ -63,7 +63,7 @@ class LoanFinderAppBar extends StatelessWidget implements PreferredSizeWidget {
                       curve: Curves.easeOutCubic,
                     ),
               Text(
-                titleText ?? 'Find Your Perfect Loan',
+                titleText ?? context.l10n.homeFindPerfectLoan,
                 style: context.textTheme.titleLarge?.copyWith(
 
                    fontSize: AppSize.sp18,

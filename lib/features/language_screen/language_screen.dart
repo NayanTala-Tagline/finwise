@@ -88,7 +88,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
       child: Scaffold(
         backgroundColor: colors.backgroundColor,
         appBar: CommonAppBar(
-          titleText: 'Language',
+          titleText: context.l10n.settingsLanguage,
           titleTextStyle: context.textTheme.bodyMedium?.copyWith(
             fontSize: AppSize.sp18,
             fontWeight: FontWeight.w700,
@@ -100,7 +100,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
             Padding(
               padding: EdgeInsets.fromLTRB(AppSize.w16, AppSize.h16, AppSize.w16, AppSize.h8),
               child: Text(
-                'Language List',
+                context.l10n.languageListTitle,
                 style: context.textTheme.titleMedium?.copyWith(
                   fontSize: AppSize.sp16,
                   fontWeight: FontWeight.w700,
@@ -259,7 +259,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
                     AppSize.h0,
                   ),
                   child: AppButton(
-                    text: 'Save',
+                    text: context.l10n.currencySaveButton,
                     backgroundColor: colors.primary,
                     borderRadius: AppSize.r50,
                     onPressed: () async {

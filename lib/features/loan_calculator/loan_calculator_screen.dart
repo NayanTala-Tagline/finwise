@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import '../../extension/ext_context.dart';
 import '../../extension/ext_string_alert.dart';
 import '../../gen/assets.gen.dart';
+import '../../utils/anaytics_manager.dart';
 import '../../utils/app_size.dart';
 import '../../utils/navigation_helper.dart';
 import '../../widgets/app_button.dart';
@@ -44,7 +45,7 @@ class _LoanCalculatorViewState extends State<_LoanCalculatorView> {
     FocusManager.instance.primaryFocus?.unfocus();
     final provider = context.read<LoanCalculatorProvider>();
     if (!provider.isInputValid) {
-      'Please enter valid values.'.showErrorAlert();
+      context.l10n.loanCalculatorValidation.showErrorAlert();
       return;
     }
     provider.calculate();
@@ -74,6 +75,7 @@ class _LoanCalculatorViewState extends State<_LoanCalculatorView> {
   @override
   void initState() {
     super.initState();
+    AnalyticsManager.instance.logScreenView(screenName: 'loan_calculator_screen');
     _loadAd();
   }
 
@@ -104,7 +106,7 @@ class _LoanCalculatorViewState extends State<_LoanCalculatorView> {
       child: Scaffold(
         backgroundColor: const Color(0xFFF0F2F5),
         appBar: CommonAppBar(
-          titleText: 'Loan Calculator',
+          titleText: context.l10n.loanCalculatorTitle,
           titleTextStyle: context.textTheme.bodyMedium?.copyWith(
             fontSize: AppSize.sp18,
             fontWeight: FontWeight.w700,
@@ -164,11 +166,11 @@ class _FormView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _FieldLabel(label: 'Loan Amount'),
+          _FieldLabel(label: context.l10n.loanCalculatorLoanAmount),
           SizedBox(height: AppSize.h8),
           AppTextFormField(
             controller: provider.loanAmountController,
-            hintText: 'Enter Loan Amount',
+            hintText: context.l10n.loanCalculatorLoanAmountHint,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
             onChanged: (_) {},
@@ -188,7 +190,7 @@ class _FormView extends StatelessWidget {
           SizedBox(height: AppSize.h20),
           _InterestRateCard(rate: provider.interestRate, onChanged: provider.setInterestRate),
           SizedBox(height: AppSize.h20),
-          _FieldLabel(label: 'Loan Term'),
+          _FieldLabel(label: context.l10n.loanCalculatorLoanTerm),
           SizedBox(height: AppSize.h8),
           Row(
             children: [
@@ -196,7 +198,7 @@ class _FormView extends StatelessWidget {
                 flex: 3,
                 child: AppTextFormField(
                   controller: provider.loanTermController,
-                  hintText: 'Enter Loan Term',
+                  hintText: context.l10n.loanCalculatorLoanTermHint,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))],
                   onChanged: (_) {},
@@ -206,17 +208,17 @@ class _FormView extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: AppTextFormField(
-                  hintText: 'Months',
-                  dropdownItems: const ['Months', 'Years'],
-                  dropdownValue: provider.termUnit,
-                  onDropdownChanged: (v) => provider.setTermUnit(v ?? 'Months'),
+                  hintText: context.l10n.loanCalculatorMonths,
+                  dropdownItems: [context.l10n.loanCalculatorMonths, context.l10n.loanCalculatorYears],
+                  dropdownValue: provider.isMonths ? context.l10n.loanCalculatorMonths : context.l10n.loanCalculatorYears,
+                  onDropdownChanged: (v) => provider.setIsMonths(v == context.l10n.loanCalculatorMonths),
                   onChanged: (_) {},
                 ),
               ),
             ],
           ),
           SizedBox(height: AppSize.h20),
-          _FieldLabel(label: 'Loan Start Date'),
+          _FieldLabel(label: context.l10n.loanCalculatorStartDate),
           SizedBox(height: AppSize.h8),
           GestureDetector(
             onTap: onPickDate,
@@ -257,7 +259,7 @@ class _FormBottomBar extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.fromLTRB(AppSize.w20, AppSize.h12, AppSize.w20, AppSize.h0),
           child: AppButton(
-            text: 'Calculate Now',
+            text: context.l10n.loanCalculatorButton,
             backgroundColor: const Color(0xFF2563EB),
             borderRadius: AppSize.r50,
             onPressed: onCalculate,
@@ -308,7 +310,7 @@ class _InterestRateCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Interest Rate',
+                context.l10n.fdCalculatorInterestRate,
                 style: context.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.w700,
                   fontSize: AppSize.sp16,

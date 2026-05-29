@@ -9,7 +9,9 @@ import '../../features/currency_screen/provider/currency_provider.dart';
 import '../../features/language_screen/provider/locale_provider.dart';
 import '../../gen/assets.gen.dart';
 import '../../routes/app_router.dart';
+import '../../utils/anaytics_manager.dart';
 import '../../utils/app_size.dart';
+import '../../utils/navigation_helper.dart';
 import '../../utils/remote_config.dart';
 import '../../widgets/app_summary_background.dart';
 
@@ -26,6 +28,7 @@ class _SettingScreenState extends State<SettingScreen> {
   @override
   void initState() {
     super.initState();
+    AnalyticsManager.instance.logScreenView(screenName: 'settings_screen');
     _loadVersion();
   }
 
@@ -57,32 +60,32 @@ class _SettingScreenState extends State<SettingScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                  children: [
-                  _SectionTitle('Preferences'),
+                  _SectionTitle(context.l10n.settingsPreferences),
                   SizedBox(height: AppSize.h10),
                   _SettingGroup(
                     tiles: [
                       _SettingTile(
                         icon: Assets.onboardingIcons.icLanguage.svg(width: AppSize.w20, height: AppSize.h20, colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn)),
-                        title: 'Language',
+                        title: context.l10n.settingsLanguage,
                         badgeText: languageName,
-                        onTap: () => context.pushNamed(AppRoutes.language),
+                        onTap: () => NavigationHelper().navigateWithAdCheck(context, () => context.pushNamed(AppRoutes.language)),
                       ),
                       _SettingTile(
                         icon: Assets.onboardingIcons.icCurrency.svg(width: AppSize.w20, height: AppSize.h20, colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn)),
-                        title: 'Currency',
+                        title: context.l10n.settingsCurrency,
                         badgeText: currencyCode,
-                        onTap: () => context.pushNamed(AppRoutes.currencyUnit),
+                        onTap: () => NavigationHelper().navigateWithAdCheck(context, () => context.pushNamed(AppRoutes.currencyUnit)),
                       ),
                     ],
                   ),
                   SizedBox(height: AppSize.h20),
-                  _SectionTitle('Security & Privacy'),
+                  _SectionTitle(context.l10n.settingsSecurityPrivacy),
                   SizedBox(height: AppSize.h10),
                   _SettingGroup(
                     tiles: [
                       _SettingTile(
                         icon: Assets.requiredDocuments.icFile.svg(width: AppSize.w20, height: AppSize.h20, colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn)),
-                        title: 'Privacy Policy',
+                        title: context.l10n.settingsPrivacyPolicy,
                         onTap: () async {
                           final url = Uri.tryParse(RemoteConfigService.instance.privacyPolicyUrl);
                           if (url != null) await launchUrl(url, mode: LaunchMode.externalApplication);
@@ -90,7 +93,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       ),
                       _SettingTile(
                         icon: Assets.requiredDocuments.icFile.svg(width: AppSize.w20, height: AppSize.h20, colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn)),
-                        title: 'Terms of Service',
+                        title: context.l10n.settingsTermsOfService,
                         onTap: () async {
                           final url = Uri.tryParse(RemoteConfigService.instance.privacyPolicyUrl);
                           if (url != null) await launchUrl(url, mode: LaunchMode.externalApplication);
@@ -99,14 +102,14 @@ class _SettingScreenState extends State<SettingScreen> {
                     ],
                   ),
                   SizedBox(height: AppSize.h20),
-                  _SectionTitle('Support'),
+                  _SectionTitle(context.l10n.settingsSupport),
                   SizedBox(height: AppSize.h10),
                   _SettingGroup(
                     tiles: [
                       _SettingTile(
                         icon: Assets.temperatureIcons.icHelpCenter.svg(width: AppSize.w20, height: AppSize.h20, colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn)),
-                        title: 'Help Center',
-                        onTap: () => context.pushNamed(AppRoutes.contactUs),
+                        title: context.l10n.settingsHelpCenter,
+                        onTap: () => NavigationHelper().navigateWithAdCheck(context, () => context.pushNamed(AppRoutes.contactUs)),
                       ),
                     ],
                   ),
@@ -138,7 +141,7 @@ class _SettingsHeader extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.fromLTRB(AppSize.w20, AppSize.h16, AppSize.w20, AppSize.h24),
           child: Text(
-            'Settings',
+            context.l10n.settingsTitle,
             style: context.textTheme.titleLarge?.copyWith(
               fontSize: AppSize.sp26,
               fontWeight: FontWeight.w700,
@@ -303,7 +306,7 @@ class _AppVersionCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'App Version',
+                  context.l10n.settingsAppVersion,
                   style: context.textTheme.titleSmall?.copyWith(
                     fontSize: AppSize.sp15,
                     fontWeight: FontWeight.w600,
@@ -312,7 +315,7 @@ class _AppVersionCard extends StatelessWidget {
                 ),
                 SizedBox(height: AppSize.h2),
                 Text(
-                  version.isNotEmpty ? 'Version $version' : 'Version —',
+                  context.l10n.settingsVersion(version.isNotEmpty ? version : '—'),
                   style: context.textTheme.bodySmall?.copyWith(
                     fontSize: AppSize.sp12,
                     color: context.themeTextColors.descriptionColor,

@@ -180,7 +180,7 @@ class _SpinnerWithBadge extends StatelessWidget {
     final gradient = LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      colors: [colors.primary, colors.secondary],
+      colors: [colors.primary, Color(0xFF153885)],
     );
 
     return SizedBox.square(
@@ -207,7 +207,7 @@ class _SpinnerWithBadge extends StatelessWidget {
                   begin: Alignment.bottomRight,
                   end: Alignment.topLeft,
                   colors: [
-                    colors.secondary.withValues(alpha: 0.85),
+                    Color(0xFF153885).withValues(alpha: 0.85),
                     colors.primary.withValues(alpha: 0.4),
                   ],
                 ),

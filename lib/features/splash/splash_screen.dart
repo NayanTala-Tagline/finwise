@@ -8,6 +8,7 @@ import 'package:finwise/extension/ext_context.dart';
 import 'package:finwise/gen/assets.gen.dart';
 import 'package:finwise/routes/app_router.dart';
 import 'package:finwise/utils/ad_repository.dart';
+import 'package:finwise/utils/anaytics_manager.dart';
 import 'package:finwise/utils/app_size.dart';
 import 'package:finwise/utils/install_referrer_service.dart';
 import 'package:finwise/utils/logger.dart';
@@ -56,6 +57,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    AnalyticsManager.instance.logScreenView(screenName: 'splash_screen');
     AdRepository.showConsentUMP();
     unawaited(_bootstrap());
   }
@@ -96,7 +98,11 @@ class _SplashScreenState extends State<SplashScreen> {
 
   /// Kicks off the load for [WelcomeScreen]'s native so it's ready (or in
   /// flight) by the time the user lands there. Handed off in [_goNext].
+  ///
+  /// Skipped when the user is going straight to home — loading and immediately
+  /// discarding the native wastes bandwidth on every re-launch.
   void _preloadWelcomeNative() {
+    if (_shouldGoHome()) return;
     final data = RemoteConfigService.instance.welcomeNative;
     if (!data.enabled || data.adId.isEmpty) return;
     _welcomeNative = InlineAdManager(adData: data);
@@ -429,7 +435,7 @@ class _NoInternetView extends StatelessWidget {
                 ),
                 SizedBox(height: AppSize.h20),
                 Text(
-                  'No Internet Connection',
+                  context.l10n.splashNoInternetTitle,
                   textAlign: TextAlign.center,
                   style: context.textTheme.titleMedium?.copyWith(
                     color: textColors.textColor,
@@ -439,7 +445,7 @@ class _NoInternetView extends StatelessWidget {
                 ),
                 SizedBox(height: AppSize.h8),
                 Text(
-                  'Please check your connection and try again.',
+                  context.l10n.splashNoInternetDesc,
                   textAlign: TextAlign.center,
                   style: context.textTheme.bodySmall?.copyWith(
                     color: textColors.hintTextColor,
@@ -448,7 +454,7 @@ class _NoInternetView extends StatelessWidget {
                 ),
                 SizedBox(height: AppSize.h24),
                 AppButton(
-                  text: retrying ? 'Checking...' : 'Retry',
+                  text: retrying ? context.l10n.splashCheckingText : context.l10n.splashRetryText,
                   isLoading: retrying,
                   onPressed: onRetry,
                 ),

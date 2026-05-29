@@ -63,7 +63,7 @@ class _LoanPurposeScreenState extends State<LoanPurposeScreen> {
         name: 'loan_finder_validation_failed',
         parameters: const {'step': 1, 'field': 'purpose'},
       );
-      'Please select a loan purpose'.showErrorAlert();
+      context.l10n.loanPurposeValidation.showErrorAlert();
       return;
     }
     AnalyticsManager.instance.logEvent(
@@ -82,13 +82,13 @@ class _LoanPurposeScreenState extends State<LoanPurposeScreen> {
     final formProvider = context.watch<LoanFinderProvider>();
     final adProvider = context.watch<LoanFinderAdProvider>();
     final options = [
-      _PurposeOption(LoanPurpose.homePurchase, 'Home Purchase', Assets.onboardingIcons.icHome),
-      _PurposeOption(LoanPurpose.vehiclePurchase, 'Vehicle', Assets.onboardingIcons.icVehicle),
-      _PurposeOption(LoanPurpose.education, 'Education', Assets.onboardingIcons.icEducation),
-      _PurposeOption(LoanPurpose.business, 'Business', Assets.onboardingIcons.icBusiness),
-      _PurposeOption(LoanPurpose.personalExpenses, 'Personal Needs', Assets.homeIcons.icUser),
-      _PurposeOption(LoanPurpose.debit, 'Debt Consolidation', Assets.homeIcons.icCreditCard),
-      _PurposeOption(LoanPurpose.other, 'Other', Assets.homeIcons.icCreditCard),
+      _PurposeOption(LoanPurpose.homePurchase, l10n.loanPurposeHomePurchase, Assets.onboardingIcons.icHome),
+      _PurposeOption(LoanPurpose.vehiclePurchase, l10n.loanPurposeVehicle, Assets.onboardingIcons.icVehicle),
+      _PurposeOption(LoanPurpose.education, l10n.onboarding1Education, Assets.onboardingIcons.icEducation),
+      _PurposeOption(LoanPurpose.business, l10n.onboarding1Business, Assets.onboardingIcons.icBusiness),
+      _PurposeOption(LoanPurpose.personalExpenses, l10n.loanPurposePersonalNeeds, Assets.homeIcons.icUser),
+      _PurposeOption(LoanPurpose.debit, l10n.loanPurposeDebtConsolidation, Assets.homeIcons.icCreditCard),
+      _PurposeOption(LoanPurpose.other, l10n.loanPurposeOther, Assets.homeIcons.icCreditCard),
     ];
 
     final showDownPayment = formProvider.purpose == LoanPurpose.other;
@@ -171,8 +171,8 @@ class _LoanPurposeScreenState extends State<LoanPurposeScreen> {
 
     return LoanFinderLayout(
       stepIndex: 0,
-      title: 'What do you need a loan for?',
-      subtitle: 'Select the primary purpose',
+      title: l10n.loanPurposeTitle,
+      subtitle: l10n.loanPurposeSubtitle,
       isLoading: adProvider.busy,
       adSlot: AdSlot(ad: _inlineAd),
       onNextPressed: _next,
@@ -209,10 +209,10 @@ class _LoanPurposeScreenState extends State<LoanPurposeScreen> {
             if (showDownPayment) ...[
               SizedBox(height: AppSize.h12),
               AppTextFormField(
-                title: 'Down Payment',
+                title: l10n.loanPurposeDownPayment,
                 controller: _downPaymentController,
                 keyboardType: TextInputType.number,
-                hintText: 'Enter down payment amount',
+                hintText: l10n.loanPurposeDownPaymentHint,
               )
                   .animate()
                   .fadeIn(duration: 300.ms)

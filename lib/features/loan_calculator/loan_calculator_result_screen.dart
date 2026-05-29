@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import '../../extension/ext_context.dart';
 import '../../gen/assets.gen.dart';
 import '../../routes/app_router.dart';
+import '../../utils/anaytics_manager.dart';
 import '../../utils/app_size.dart';
 import '../../utils/navigation_helper.dart';
 import '../../utils/remote_config.dart';
@@ -32,6 +33,7 @@ class _LoanCalculatorResultScreenState extends State<LoanCalculatorResultScreen>
   @override
   void initState() {
     super.initState();
+    AnalyticsManager.instance.logScreenView(screenName: 'loan_calculator_result_screen');
     _loadAd();
   }
 
@@ -56,7 +58,7 @@ class _LoanCalculatorResultScreenState extends State<LoanCalculatorResultScreen>
     return Scaffold(
       backgroundColor: const Color(0xFFF0F2F5),
       appBar: CommonAppBar(
-        titleText: 'Loan Calculator Result',
+        titleText: context.l10n.loanResultTitle,
         titleTextStyle: context.textTheme.bodyMedium?.copyWith(
           fontSize: AppSize.sp18,
           fontWeight: FontWeight.w700,
@@ -150,7 +152,7 @@ class _ResultBottomBar extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               AppButton(
-                text: 'Loan Application Steps',
+                text: context.l10n.loanResultApplicationSteps,
                 backgroundColor: const Color(0xFF2563EB),
                 borderRadius: AppSize.r50,
                 suffixIcon: const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 18),
@@ -161,7 +163,7 @@ class _ResultBottomBar extends StatelessWidget {
                 },
               ),
               AppButton(
-                text: 'Reset',
+                text: context.l10n.fdReset,
                 isOutlined: true,
                 borderRadius: AppSize.r50,
                 onPressed: onReset,
@@ -214,7 +216,7 @@ class _HeroEmiCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(AppSize.r6),
                       ),
                       child: Text(
-                        'Result',
+                        context.l10n.fdResult,
                         style: context.textTheme.titleSmall?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.w700,
@@ -234,7 +236,7 @@ class _HeroEmiCard extends StatelessWidget {
                 ),
                 const Spacer(),
                 Text(
-                  'Monthly EMI',
+                  context.l10n.loanResultMonthlyEmi,
                   style: context.textTheme.titleSmall?.copyWith(
                     color: Colors.white.withValues(alpha: 0.85),
                     fontSize: AppSize.sp14,
@@ -252,7 +254,7 @@ class _HeroEmiCard extends StatelessWidget {
                 ),
                 SizedBox(height: AppSize.h2),
                 Text(
-                  'per month',
+                  context.l10n.loanResultPerMonth,
                   style: context.textTheme.titleSmall?.copyWith(
                     color: Colors.white.withValues(alpha: 0.75),
                     fontSize: AppSize.sp12,
@@ -304,7 +306,7 @@ class _SummaryCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(AppSize.r18),
                     ),
                     child: _SummaryItem(
-                      label: 'Principal Amount',
+                      label: context.l10n.fdResultPrincipalAmount,
                       value: '₹${_fmtRupee(result.principal)}',
                       valueColor: context.themeTextColors.textColor,
                     ),
@@ -322,7 +324,7 @@ class _SummaryCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(AppSize.r18),
                     ),
                     child: _SummaryItem(
-                      label: 'Total Interest',
+                      label: context.l10n.fdResultTotalInterest,
                       value: '₹${_fmtRupee(result.totalInterest)}',
                       valueColor: const Color(0xFF059669),
                     ),
@@ -343,7 +345,7 @@ class _SummaryCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Total Payable',
+                  context.l10n.loanResultTotalPayable,
                   style: context.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 Text(
@@ -419,7 +421,7 @@ class _PaymentBreakdownCard extends StatelessWidget {
               Assets.personalLoanIcons.icPaymentBreakdown.svg(),
               SizedBox(width: AppSize.w8),
               Text(
-                'Payment Breakdown',
+                context.l10n.fdResultPaymentBreakdown,
                 style: context.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w700,
                   fontSize: AppSize.sp16,
@@ -446,13 +448,13 @@ class _PaymentBreakdownCard extends StatelessWidget {
             children: [
               _LegendDot(
                 color: const Color(0xFF2563EB),
-                label: 'Principal',
+                label: context.l10n.loanResultPrincipal,
                 value: '₹${_fmtRupee(result.principal)}',
               ),
               SizedBox(width: AppSize.w24),
               _LegendDot(
                 color: const Color(0xFFFFA726),
-                label: 'Interest',
+                label: context.l10n.loanResultInterest,
                 value: '₹${_fmtRupee(result.totalInterest)}',
               ),
             ],
@@ -564,7 +566,7 @@ class _GrowthTimelineCard extends StatelessWidget {
 
     final milestones = _buildMilestones(totalMonths);
     final points = milestones.map((m) => (m * emi) / totalPay).toList();
-    final xLabels = milestones.map((m) => m == totalMonths ? 'End' : 'M$m').toList();
+    final xLabels = milestones.map((m) => m == totalMonths ? context.l10n.fdResultTimelineEnd : 'M$m').toList();
 
     final maxVal = totalPay;
     final yLabels = List.generate(5, (i) => maxVal * (i + 1) / 5);
@@ -582,7 +584,7 @@ class _GrowthTimelineCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Growth Timeline',
+            context.l10n.fdResultGrowthTimeline,
             style: context.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w700,
               fontSize: AppSize.sp16,

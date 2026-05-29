@@ -26,8 +26,19 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class _HomeScreenView extends StatelessWidget {
+class _HomeScreenView extends StatefulWidget {
   const _HomeScreenView();
+
+  @override
+  State<_HomeScreenView> createState() => _HomeScreenViewState();
+}
+
+class _HomeScreenViewState extends State<_HomeScreenView> {
+  @override
+  void initState() {
+    super.initState();
+    AnalyticsManager.instance.logScreenView(screenName: 'home_screen');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +46,7 @@ class _HomeScreenView extends StatelessWidget {
       backgroundColor: context.themeColors.backgroundColor,
       body: Column(
         children: [
-          const _HomeHeader(),
+          const _HomeHeader(), // l10n applied inside _HomeHeader.build()
           Expanded(
             child: SingleChildScrollView(
               physics: const ClampingScrollPhysics(),
@@ -49,29 +60,29 @@ class _HomeScreenView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const _SectionTitle(
-                    title: 'Loan Tools',
-                    subtitle: 'Calculate EMI and compare loan options',
+                  _SectionTitle(
+                    title: context.l10n.homeSectionLoanTools,
+                    subtitle: context.l10n.homeSectionLoanToolsSubtitle,
                   ),
                   SizedBox(height: AppSize.h16),
                   const _LoanTypesGrid(),
                   SizedBox(height: AppSize.h20),
-                  const _SectionTitle(
-                    title: 'Investment Tools',
-                    subtitle: 'Plan your savings and investments',
+                  _SectionTitle(
+                    title: context.l10n.homeSectionInvestmentTools,
+                    subtitle: context.l10n.homeSectionInvestmentToolsSubtitle,
                   ),
                   SizedBox(height: AppSize.h16),
                   const _InvestmentRow(),
                   SizedBox(height: AppSize.h20),
-                  const _SectionTitle(
-                    title: 'Helpful Resources',
-                    subtitle: 'Everything you need to know',
+                  _SectionTitle(
+                    title: context.l10n.homeSectionHelpfulResources,
+                    subtitle: context.l10n.homeSectionHelpfulResourcesSubtitle,
                   ),
                   SizedBox(height: AppSize.h16),
                   _ResourceTile(
                     icon: Assets.homeIcons.icDocuments,
-                    title: 'Documents Required',
-                    subtitle: 'Complete checklist for loans',
+                    title: context.l10n.homeDocumentsRequired,
+                    subtitle: context.l10n.homeDocumentsSubtitle,
                     iconBgColor: const Color(0xFF2563EB).withValues(alpha: 0.08),
                     iconColor: const Color(0xFF2563EB),
                     onTap: () {
@@ -87,8 +98,8 @@ class _HomeScreenView extends StatelessWidget {
                   SizedBox(height: AppSize.h12),
                   _ResourceTile(
                     icon: Assets.onboardingIcons.icMakeSmart,
-                    title: 'Tips & Advice',
-                    subtitle: 'Expert financial guidance',
+                    title: context.l10n.homeTipsAdvice,
+                    subtitle: context.l10n.homeTipsSubtitle,
                     iconBgColor: const Color(0xFFF59E0B).withValues(alpha: 0.08),
                     iconColor: const Color(0xFFF59E0B),
                     onTap: () {
@@ -149,14 +160,14 @@ class _HomeHeader extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Welcome back to,',
+                          context.l10n.homeHeaderWelcomeBack,
                           style: context.textTheme.bodyMedium?.copyWith(
                             color: Colors.white.withValues(alpha: 0.85),
                             fontSize: AppSize.sp13,
                           ),
                         ),
                         Text(
-                          'FinWise',
+                          context.l10n.homeHeaderAppName,
                           style: context.textTheme.titleLarge?.copyWith(
                             color: Colors.white,
                             fontSize: AppSize.sp28,
@@ -189,14 +200,14 @@ class _HomeHeader extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Quick Action',
+                              context.l10n.homeQuickAction,
                               style: context.textTheme.titleSmall?.copyWith(
                                 color: context.themeTextColors.descriptionColor,
                                 fontSize: AppSize.sp12,
                               ),
                             ),
                             Text(
-                              'Find Your Perfect Loan',
+                              context.l10n.homeFindPerfectLoan,
                               style: context.textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.w700,
                                 fontSize: AppSize.sp16,
@@ -220,7 +231,7 @@ class _HomeHeader extends StatelessWidget {
 
                     SizedBox(height: AppSize.h12),
                     AppButton(
-                      text: 'Start Smart Match',
+                      text: context.l10n.homeStartSmartMatch,
                       backgroundColor: const Color(0xFF2563EB),
                       borderRadius: AppSize.r50,
                       suffixIcon: const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.white),
@@ -308,23 +319,24 @@ class _LoanTypesGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final loans = [
-      _LoanTypeItem('Personal Loan', 'Quick loans for any need',
+      _LoanTypeItem(l10n.homeLoanPersonal, l10n.homeLoanPersonalDesc,
           Assets.homeIcons.icUser, LoanType.personalLoan,
           const Color(0xFFEEF2FF), const Color(0xFF2563EB)),
-      _LoanTypeItem('Home Loan', 'Finance your dream home',
+      _LoanTypeItem(l10n.homeLoanHome, l10n.homeLoanHomeDesc,
           Assets.onboardingIcons.icHome, LoanType.homeLoan,
           const Color(0xFF0D9488).withValues(alpha: 0.08), const Color(0xFF0D9488)),
-      _LoanTypeItem('Car Loan', 'Drive your dream vehicle',
+      _LoanTypeItem(l10n.homeLoanCar, l10n.homeLoanCarDesc,
           Assets.onboardingIcons.icVehicle, LoanType.carLoan,
           const Color(0xFF0D9488).withValues(alpha: 0.08), const Color(0xFF0D9488)),
-      _LoanTypeItem('Education Loan', 'Invest in your future',
+      _LoanTypeItem(l10n.homeLoanEducation, l10n.homeLoanEducationDesc,
           Assets.onboardingIcons.icEducation, LoanType.educationLoan,
           const Color(0xFFD97706).withValues(alpha: 0.08), const Color(0xFFD97706)),
-      _LoanTypeItem('Business Loan', 'Grow your enterprise',
+      _LoanTypeItem(l10n.homeLoanBusiness, l10n.homeLoanBusinessDesc,
           Assets.onboardingIcons.icBusiness, LoanType.businessLoan,
           const Color(0xFF7C3AED).withValues(alpha: 0.08), const Color(0xFF7C3AED)),
-      _LoanTypeItem('Credit Card', 'Compare best cards',
+      _LoanTypeItem(l10n.homeLoanCreditCard, l10n.homeLoanCreditCardDesc,
           Assets.homeIcons.icCreditCard, LoanType.creditCard,
           const Color(0xFFDC2626).withValues(alpha: 0.08), const Color(0xFFDC2626)),
     ];
@@ -430,11 +442,12 @@ class _InvestmentRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final items = [
-      _InvestmentItem('FD Calculator', 'Calculate deposit returns',
+      _InvestmentItem(l10n.homeFdCalculator, l10n.homeFdCalculatorDesc,
           Assets.homeIcons.icFdCalculator, AppRoutes.fixedDeposit,
           const Color(0xFF10B981).withValues(alpha: 0.08), const Color(0xFF10B981)),
-      _InvestmentItem('RD Calculator', 'Plan recurring savings',
+      _InvestmentItem(l10n.homeRdCalculator, l10n.homeRdCalculatorDesc,
           Assets.homeIcons.icRdCalculator, AppRoutes.recurringDeposit,
           const Color(0xFF06B6D4).withValues(alpha: 0.08), const Color(0xFF06B6D4)),
     ];

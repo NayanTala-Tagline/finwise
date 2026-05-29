@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../extension/ext_context.dart';
+import '../../../utils/anaytics_manager.dart';
 import '../../../utils/app_size.dart';
 import '../../../utils/navigation_helper.dart';
 import '../../../utils/remote_config.dart';
@@ -49,6 +50,7 @@ class _SpeedConvertScreenState extends State<SpeedConvertScreen> {
   @override
   void initState() {
     super.initState();
+    AnalyticsManager.instance.logScreenView(screenName: 'speed_convert_screen');
     _loadInline();
     _controller.addListener(() {
       final has = _controller.text.trim().isNotEmpty;
@@ -69,37 +71,12 @@ class _SpeedConvertScreenState extends State<SpeedConvertScreen> {
     return v.toStringAsFixed(4).replaceFirst(RegExp(r'\.?0+$'), '');
   }
 
-  String _unitFullName(String unit) {
-    switch (unit) {
-      case 'km/h':
-        return 'Km per Hour (km/h)';
-      case 'mph':
-        return 'Miles per Hour (mph)';
-      case 'm/s':
-        return 'Meter per Second (m/s)';
-      case 'kn':
-        return 'Knot (kn)';
-      case 'ft/s':
-        return 'Foot per Second (ft/s)';
-      default:
-        return unit;
-    }
-  }
-
-  (String label, Color color) _speedCategory(double mps) {
-    if (mps < 0.5) return ('Still', const Color(0xFF8B5CF6));
-    if (mps < 5) return ('Slow', const Color(0xFF06B6D4));
-    if (mps < 30) return ('Moderate', const Color(0xFF10B981));
-    if (mps < 100) return ('Fast', const Color(0xFFF59E0B));
-    return ('Very Fast', const Color(0xFFEF4444));
-  }
-
   void _convert2() {
     FocusManager.instance.primaryFocus?.unfocus();
     final raw = double.tryParse(_controller.text.trim());
     if (raw == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid speed value')),
+        SnackBar(content: Text(context.l10n.speedValidation)),
       );
       return;
     }
@@ -174,7 +151,7 @@ class _SpeedConvertScreenState extends State<SpeedConvertScreen> {
                     _InputCard(controller: _controller),
                     SizedBox(height: AppSize.h14),
                     _UnitSection(
-                      label: 'From Unit',
+                      label: context.l10n.converterFromUnit,
                       selected: _fromUnit,
                       units: _units,
                       onSelect: (u) => setState(() {
@@ -188,7 +165,7 @@ class _SpeedConvertScreenState extends State<SpeedConvertScreen> {
                     ),
                     SizedBox(height: AppSize.h12),
                     _UnitSection(
-                      label: 'To Unit',
+                      label: context.l10n.converterToUnit,
                       selected: _toUnit,
                       units: _units,
                       onSelect: (u) => setState(() {
@@ -216,8 +193,6 @@ class _SpeedConvertScreenState extends State<SpeedConvertScreen> {
                           inputInMps:
                               _inputValue! * (_toMps[_fromUnit] ?? 1.0),
                           fmt: _fmt,
-                          unitFullName: _unitFullName,
-                          speedCategory: _speedCategory,
                         ),
                       ),
                     ],
@@ -252,7 +227,7 @@ class _SpeedConvertScreenState extends State<SpeedConvertScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             AppButton(
-                              text: 'Convert',
+                              text: context.l10n.converterButton,
                               suffixIcon: Icon(
                                 Icons.arrow_forward_ios,
                                 color: Colors.white,
@@ -261,7 +236,7 @@ class _SpeedConvertScreenState extends State<SpeedConvertScreen> {
                               onPressed: _convert2,
                             ),
                              AppButton(
-                              text: 'Reset',
+                              text: context.l10n.fdReset,
                               isOutlined: true,
                               onPressed: _reset,
                             ),
@@ -305,7 +280,7 @@ class _SpeedConvertScreenState extends State<SpeedConvertScreen> {
               ),
               SizedBox(height: AppSize.h14),
               Text(
-                'Speed Converter',
+                context.l10n.speedConverterTitle,
                 style: context.textTheme.titleLarge?.copyWith(
                   fontSize: AppSize.sp24,
                   fontWeight: FontWeight.w700,
@@ -314,7 +289,7 @@ class _SpeedConvertScreenState extends State<SpeedConvertScreen> {
               ),
               SizedBox(height: AppSize.h4),
               Text(
-                'Switch between speed units with ease',
+                context.l10n.speedConverterSubtitle,
                 style: context.textTheme.bodySmall?.copyWith(
                   fontSize: AppSize.sp13,
                   color: Colors.white.withValues(alpha: 0.85),
@@ -341,7 +316,7 @@ class _InputCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Speed Value',
+          context.l10n.speedValueLabel,
           style: context.textTheme.titleMedium?.copyWith(
             fontSize: AppSize.sp14,
             fontWeight: FontWeight.w600,
@@ -375,7 +350,7 @@ class _InputCard extends StatelessWidget {
         ),
         SizedBox(height: AppSize.h5),
         Text(
-          'Enter any speed value to convert',
+          context.l10n.speedValueHint,
           style: context.textTheme.bodySmall?.copyWith(
             fontSize: AppSize.sp12,
             color: context.themeTextColors.descriptionColor,
@@ -421,7 +396,7 @@ class _UnitSection extends StatelessWidget {
               onTap: onClear,
               behavior: HitTestBehavior.opaque,
               child: Text(
-                'Clear',
+                context.l10n.converterClear,
                 style: context.textTheme.titleMedium?.copyWith(
                   fontSize: AppSize.sp14,
                   color: context.themeColors.primary,
@@ -502,21 +477,20 @@ class _UnitChip extends StatelessWidget {
 class _QuickConversionGuideCard extends StatelessWidget {
   const _QuickConversionGuideCard();
 
-  static const _guides = [
-    (from: '1 km/h', to: '≈ 0.62 mph', note: 'Road speed'),
-    (from: '1 mph', to: '≈ 1.61 km/h', note: 'Imperial to Metric'),
-    (from: '1 m/s', to: '= 3.6 km/h', note: 'Scientific conversion'),
-    (from: '1 kn', to: '≈ 1.85 km/h', note: 'Maritime speed'),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final guides = [
+      (from: '1 km/h', to: '≈ 0.62 mph', note: context.l10n.speedGuideNoteRoad),
+      (from: '1 mph', to: '≈ 1.61 km/h', note: context.l10n.speedGuideNoteImperial),
+      (from: '1 m/s', to: '= 3.6 km/h', note: context.l10n.speedGuideNoteScientific),
+      (from: '1 kn', to: '≈ 1.85 km/h', note: context.l10n.speedGuideNoteMaritime),
+    ];
     return _Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Quick Conversion Guide',
+            context.l10n.converterQuickConversionGuide,
             style: context.textTheme.titleMedium?.copyWith(
               fontSize: AppSize.sp14,
               fontWeight: FontWeight.w600,
@@ -524,9 +498,9 @@ class _QuickConversionGuideCard extends StatelessWidget {
             ),
           ),
           SizedBox(height: AppSize.h12),
-          ...List.generate(_guides.length, (i) {
-            final g = _guides[i];
-            final isLast = i == _guides.length - 1;
+          ...List.generate(guides.length, (i) {
+            final g = guides[i];
+            final isLast = i == guides.length - 1;
             return Padding(
               padding: EdgeInsets.only(bottom: isLast ? 0 : AppSize.h10),
               child: Row(
@@ -578,20 +552,20 @@ class _WhenToUseCard extends StatelessWidget {
     final items = [
       (
         icon: Assets.onboardingIcons.icVehicle,
-        title: 'Road Travel',
-        desc: 'Convert driving speeds between km/h and mph',
+        title: context.l10n.speedWhenRoadTitle,
+        desc: context.l10n.speedWhenRoadDesc,
         color: const Color(0xFFF59E0B),
       ),
       (
         icon: Assets.temperatureIcons.icSpeedConvert,
-        title: 'Aviation & Maritime',
-        desc: 'Convert knots for flight and ship navigation',
+        title: context.l10n.speedWhenAviationTitle,
+        desc: context.l10n.speedWhenAviationDesc,
         color: const Color(0xFF0EA5E9),
       ),
       (
         icon: Assets.homeIcons.icStars,
-        title: 'Sports & Science',
-        desc: 'Measure wind speed, sprint times, and more',
+        title: context.l10n.speedWhenSportsTitle,
+        desc: context.l10n.speedWhenSportsDesc,
         color: const Color(0xFF8B5CF6),
       ),
     ];
@@ -601,7 +575,7 @@ class _WhenToUseCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'When to Use',
+            context.l10n.converterWhenToUse,
             style: context.textTheme.titleMedium?.copyWith(
               fontSize: AppSize.sp14,
               fontWeight: FontWeight.w600,
@@ -672,8 +646,6 @@ class _ResultCard extends StatelessWidget {
     required this.result,
     required this.inputInMps,
     required this.fmt,
-    required this.unitFullName,
-    required this.speedCategory,
   });
 
   final double inputValue;
@@ -682,12 +654,29 @@ class _ResultCard extends StatelessWidget {
   final double result;
   final double inputInMps;
   final String Function(double) fmt;
-  final String Function(String) unitFullName;
-  final (String, Color) Function(double) speedCategory;
+
+  String _unitFullName(String unit) {
+    switch (unit) {
+      case 'km/h': return 'Km per Hour (km/h)';
+      case 'mph': return 'Miles per Hour (mph)';
+      case 'm/s': return 'Meter per Second (m/s)';
+      case 'kn': return 'Knot (kn)';
+      case 'ft/s': return 'Foot per Second (ft/s)';
+      default: return unit;
+    }
+  }
+
+  (String, Color) _speedCategoryOf(BuildContext context, double mps) {
+    if (mps < 0.5) return (context.l10n.speedCategoryStill, const Color(0xFF8B5CF6));
+    if (mps < 5) return (context.l10n.speedCategorySlow, const Color(0xFF06B6D4));
+    if (mps < 30) return (context.l10n.speedCategoryModerate, const Color(0xFF10B981));
+    if (mps < 100) return (context.l10n.speedCategoryFast, const Color(0xFFF59E0B));
+    return (context.l10n.speedCategoryVeryFast, const Color(0xFFEF4444));
+  }
 
   @override
   Widget build(BuildContext context) {
-    final (categoryLabel, _) = speedCategory(inputInMps);
+    final (categoryLabel, _) = _speedCategoryOf(context, inputInMps);
     final ratio =
         (inputValue == 0 || result == 0) ? 1.0 : (result / inputValue).abs();
 
@@ -748,7 +737,7 @@ class _ResultCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  unitFullName(toUnit),
+                  _unitFullName(toUnit),
                   style: context.textTheme.titleMedium?.copyWith(
                     color: Colors.white,
                     fontSize: AppSize.sp18,
@@ -763,7 +752,7 @@ class _ResultCard extends StatelessWidget {
                     Column(
                       children: [
                         Text(
-                          'From',
+                          context.l10n.converterFromLabel,
                           style: context.textTheme.titleMedium?.copyWith(
                             color: Colors.white.withValues(alpha: 0.7),
                             fontSize: AppSize.sp12,
@@ -791,7 +780,7 @@ class _ResultCard extends StatelessWidget {
                     Column(
                       children: [
                         Text(
-                          'To',
+                          context.l10n.converterToLabel,
                           style: context.textTheme.titleMedium?.copyWith(
                             color: Colors.white.withValues(alpha: 0.7),
                             fontSize: AppSize.sp12,
@@ -834,7 +823,7 @@ class _ResultCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: _MiniValueCard(
-                      label: 'Source',
+                      label: context.l10n.converterSourceLabel,
                       value: fmt(inputValue),
                       unit: fromUnit,
                     ),
@@ -842,7 +831,7 @@ class _ResultCard extends StatelessWidget {
                   SizedBox(width: AppSize.w12),
                   Expanded(
                     child: _MiniValueCard(
-                      label: 'Converted',
+                      label: context.l10n.converterConvertedLabel,
                       value: fmt(result),
                       unit: toUnit,
                       isHighlighted: true,
@@ -932,10 +921,10 @@ class _RelativeScaleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final cappedProgress = (ratio > 10 ? 10.0 : ratio) / 10.0;
     final label = ratio > 1
-        ? '${ratio.toStringAsFixed(2)}x larger'
+        ? context.l10n.converterRatioLarger(ratio.toStringAsFixed(2))
         : ratio < 1
-            ? '${(1 / ratio).toStringAsFixed(2)}x smaller'
-            : 'Equal';
+            ? context.l10n.converterRatioSmaller((1 / ratio).toStringAsFixed(2))
+            : context.l10n.converterRatioEqual;
 
     return Container(
       padding: EdgeInsets.symmetric(
@@ -954,7 +943,7 @@ class _RelativeScaleCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Relative Scale',
+                  context.l10n.converterRelativeScale,
                   style: context.textTheme.titleMedium?.copyWith(
                     fontSize: AppSize.sp13,
                     fontWeight: FontWeight.w600,
@@ -995,28 +984,27 @@ class _RelativeScaleCard extends StatelessWidget {
 class _CommonReferencesCard extends StatelessWidget {
   const _CommonReferencesCard();
 
-  static const _refs = [
-    '1 km/h = 0.278 meters per second',
-    'Speed of sound ≈ 1235 km/h at sea level',
-    '1 mph = 1.609 kilometers per hour',
-    '1 knot = 1.852 kilometers per hour',
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final refs = [
+      context.l10n.speedRef1,
+      context.l10n.speedRef2,
+      context.l10n.speedRef3,
+      context.l10n.speedRef4,
+    ];
     return _Card(
       color: context.themeColors.primary.withValues(alpha: 0.01),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Common References',
+            context.l10n.converterCommonReferences,
             style: context.textTheme.titleMedium?.copyWith(
               fontSize: AppSize.sp14,
             ),
           ),
           SizedBox(height: AppSize.h10),
-          ..._refs.map(
+          ...refs.map(
             (ref) => Padding(
               padding: EdgeInsets.only(bottom: AppSize.h6),
               child: Row(

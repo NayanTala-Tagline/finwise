@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../../extension/ext_context.dart';
 import '../../gen/assets.gen.dart';
+import '../../utils/anaytics_manager.dart';
 import '../../utils/app_size.dart';
 import '../../utils/navigation_helper.dart';
 import '../../utils/remote_config.dart';
@@ -59,6 +60,7 @@ class _DocumentRequiredScreenState extends State<DocumentRequiredScreen> {
   @override
   void initState() {
     super.initState();
+    AnalyticsManager.instance.logScreenView(screenName: 'document_required_screen');
     _loadInline();
   }
 
@@ -77,6 +79,7 @@ class _DocumentRequiredScreenState extends State<DocumentRequiredScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
@@ -100,117 +103,116 @@ class _DocumentRequiredScreenState extends State<DocumentRequiredScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _SectionHeading(title: 'Why Documents Are Important'),
+                    _SectionHeading(title: l10n.docsWhyImportantTitle),
                     SizedBox(height: AppSize.h12),
                     _WhyImportantCard(),
                     SizedBox(height: AppSize.h20),
-                    _SectionHeading(title: 'Essential Document Checklist'),
+                    _SectionHeading(title: l10n.docsEssentialChecklistTitle),
                     SizedBox(height: AppSize.h12),
                     _DocTypeCard(
                       doc: _DocType(
-                        title: 'Identity Proof',
+                        title: l10n.docsIdentityProofTitle,
                         icon: Assets.homeIcons.icCreditCard,
                         iconColor: context.themeColors.primary,
                         bgColor: const Color(0xFFEEF2FF),
                         items: [
-                          'Aadhaar Card',
-                          'PAN Card',
-                          'Voter ID Card',
-                          'Driving Licence',
-                          'Passport (valid)',
+                          l10n.docsIdentityAadhaar,
+                          l10n.docsIdentityPan,
+                          l10n.docsIdentityVoterId,
+                          l10n.docsIdentityDrivingLicence,
+                          l10n.docsIdentityPassport,
                         ],
                       ),
                     ),
                     SizedBox(height: AppSize.h12),
                     _DocTypeCard(
                       doc: _DocType(
-                        title: 'Address Proof',
+                        title: l10n.docsAddressProofTitle,
                         icon: Assets.onboardingIcons.icHome,
                         iconColor: const Color(0xFF0D9488),
                         bgColor: const Color(0xFF0D9488).withValues(alpha: 0.08),
                         items: [
-                          'Bill not older than 3 months',
-                          'Rental / Lease Agreement',
-                          'Possession letter',
-                          'Bank statement with address',
+                          l10n.docsAddressBill,
+                          l10n.docsAddressRental,
+                          l10n.docsAddressPossession,
+                          l10n.docsAddressBankStatement,
                         ],
                       ),
                     ),
                     SizedBox(height: AppSize.h12),
                     _DocTypeCard(
                       doc: _DocType(
-                        title: 'Income Proof (Salaried)',
+                        title: l10n.docsIncomeSalariedTitle,
                         icon: Assets.homeIcons.icDocuments,
                         iconColor: const Color(0xFF10B981),
                         bgColor: const Color(0xFF10B981).withValues(alpha: 0.08),
                         items: [
-                          "Last 3 months' salary slips",
-                          'Last 2 ITR',
-                          '6 months bank statements',
-                          'Employment certificate',
+                          l10n.docsIncomeSalarySlips,
+                          l10n.docsIncomeItr,
+                          l10n.docsIncomeBankStatements,
+                          l10n.docsIncomeEmploymentCert,
                         ],
                       ),
                     ),
                     SizedBox(height: AppSize.h12),
                     _DocTypeCard(
                       doc: _DocType(
-                        title: 'Income Proof (Self-Employed)',
+                        title: l10n.docsIncomeSelfEmployedTitle,
                         icon: Assets.requiredDocuments.icIncomeProof,
                         iconColor: const Color(0xFF7C3AED),
                         bgColor: const Color(0xFF7C3AED).withValues(alpha: 0.08),
                         items: [
-                          'ITR last 2–3 years',
-                          '12 months bank statements',
-                          'GST if applicable',
-                          'Audited financial statements',
+                          l10n.docsIncomeSelfItr,
+                          l10n.docsIncomeSelfBankStatements,
+                          l10n.docsIncomeSelfGst,
+                          l10n.docsIncomeSelfAuditedStatements,
                         ],
                       ),
                     ),
                     SizedBox(height: AppSize.h20),
-                    _SectionHeading(title: 'Property Documents (Home Loan)'),
+                    _SectionHeading(title: l10n.docsPropertyTitle),
                     SizedBox(height: AppSize.h12),
                     _DocTypeCard1(
                       items: [
-                        'Sale deed / Agreement to Sale',
-                        'Property tax receipts',
-                        'Encumbrance Certificate',
-                        'Building plan approval',
-                        'NOC from builder/society',
-                        'Chain of title documents',
+                        l10n.docsPropertySaleDeed,
+                        l10n.docsPropertyTaxReceipts,
+                        l10n.docsPropertyEncumbrance,
+                        l10n.docsPropertyBuildingPlan,
+                        l10n.docsPropertyNoc,
+                        l10n.docsPropertyChainTitle,
                       ],
                     ),
                     SizedBox(height: AppSize.h20),
-                    _SectionHeading(title: 'Vehicle Documents (Car Loan)'),
+                    _SectionHeading(title: l10n.docsVehicleTitle),
                     SizedBox(height: AppSize.h12),
                     _DocTypeCard1(
                       items: [
-                        'Proforma invoice from dealer',
-                        'Insurance quotation',
-                        'Registration Certificate (for used cars)',
-                        'RC transfer documents',
-                        'Transfer quotation',
-                        'Road tax receipt',
+                        l10n.docsVehicleInvoice,
+                        l10n.docsVehicleInsurance,
+                        l10n.docsVehicleRc,
+                        l10n.docsVehicleRcTransfer,
+                        l10n.docsVehicleTransferQuotation,
+                        l10n.docsVehicleRoadTax,
                       ],
                     ),
-
                     SizedBox(height: AppSize.h20),
-                    _SectionHeading(title: 'Document Format Requirements'),
+                    _SectionHeading(title: l10n.docsFormatRequirementsTitle),
                     SizedBox(height: AppSize.h12),
                     _FormatRequirementsCard(),
                     SizedBox(height: AppSize.h20),
-                    _SectionHeading(title: 'Quality Requirements'),
+                    _SectionHeading(title: l10n.docsQualityTitle),
                     SizedBox(height: AppSize.h12),
                     _QualityRequirementsCard(),
                     SizedBox(height: AppSize.h20),
-                    _SectionHeading(title: 'Verification Process'),
+                    _SectionHeading(title: l10n.docsVerificationTitle),
                     SizedBox(height: AppSize.h12),
                     _VerificationProcessCard(),
                     SizedBox(height: AppSize.h20),
-                    _SectionHeading(title: 'Common Mistakes to Avoid'),
+                    _SectionHeading(title: l10n.docsMistakesTitle),
                     SizedBox(height: AppSize.h12),
                     _CommonMistakesCard(),
                     SizedBox(height: AppSize.h20),
-                    _SectionHeading(title: 'Tips for Faster Approval'),
+                    _SectionHeading(title: l10n.docsTipsTitle),
                     SizedBox(height: AppSize.h12),
                     _TipsCard(),
                   ],
@@ -237,9 +239,10 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return AppSummaryBackground(
       gradientColors: const [Color(0xFF059669), Color(0xFF0D9488)],
-      borderRadius:   BorderRadius.only(
+      borderRadius: BorderRadius.only(
         bottomLeft: Radius.circular(AppSize.r24),
         bottomRight: Radius.circular(AppSize.r24),
       ),
@@ -266,15 +269,15 @@ class _Header extends StatelessWidget {
               ),
               SizedBox(height: AppSize.h16),
               Text(
-                'Required Documents',
+                l10n.documentsRequiredTitle,
                 style: context.textTheme.titleLarge?.copyWith(
                   color: context.themeTextColors.secondaryTextColor,
-                    fontSize: AppSize.sp28,
+                  fontSize: AppSize.sp28,
                 ),
               ),
               SizedBox(height: AppSize.h6),
               Text(
-                'Everything you need for quick approval',
+                l10n.documentsRequiredSubtitle,
                 style: context.textTheme.bodySmall?.copyWith(
                   color: context.themeTextColors.secondaryTextColor,
                   fontSize: AppSize.sp13,
@@ -322,6 +325,7 @@ BoxDecoration _cardDeco() => BoxDecoration(
 class _WhyImportantCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Container(
       padding: EdgeInsets.all(AppSize.h16),
       decoration: _cardDeco(),
@@ -329,9 +333,8 @@ class _WhyImportantCard extends StatelessWidget {
         icon: Assets.personalLoanIcons.icSecure,
         color: context.themeColors.primary,
         bgColor: const Color(0xFFEEF2FF),
-        title: 'Verification & Trust',
-        description:
-            'Documents help lenders verify your identity, income, and repayment capacity. Complete and accurate documentation ensures faster processing and higher approval chances.',
+        title: l10n.docsWhyVerificationTitle,
+        description: l10n.docsWhyVerificationDesc,
       ),
     );
   }
@@ -422,8 +425,9 @@ class _DocTypeCard extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(AppSize.sp8),
                   decoration: BoxDecoration(
-                    color: doc.bgColor,shape: BoxShape.circle,
-                   ),
+                    color: doc.bgColor,
+                    shape: BoxShape.circle,
+                  ),
                   child: doc.icon.svg(
                     width: AppSize.w20,
                     height: AppSize.h20,
@@ -437,18 +441,18 @@ class _DocTypeCard extends StatelessWidget {
                 Text(
                   doc.title,
                   style: context.textTheme.titleMedium?.copyWith(
-                     fontSize: AppSize.sp15
+                    fontSize: AppSize.sp15,
                   ),
                 ),
               ],
             ),
           ),
-           ...List.generate(
+          ...List.generate(
             doc.items.length,
             (i) => Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: AppSize.w16,
-                vertical: AppSize.h5
+                vertical: AppSize.h5,
               ),
               child: Row(
                 children: [
@@ -463,7 +467,7 @@ class _DocTypeCard extends StatelessWidget {
                       doc.items[i],
                       style: context.textTheme.bodyLarge?.copyWith(
                         fontSize: AppSize.sp13,
-                        color: context.themeTextColors.descriptionColor
+                        color: context.themeTextColors.descriptionColor,
                       ),
                     ),
                   ),
@@ -479,10 +483,9 @@ class _DocTypeCard extends StatelessWidget {
 }
 
 class _DocTypeCard1 extends StatelessWidget {
-  const _DocTypeCard1({required this.items });
+  const _DocTypeCard1({required this.items});
 
   final List<String> items;
-
 
   @override
   Widget build(BuildContext context) {
@@ -491,7 +494,7 @@ class _DocTypeCard1 extends StatelessWidget {
       child: Column(
         children: [
           ...List.generate(
-         items.length,
+            items.length,
             (i) => Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: AppSize.w16,
@@ -499,11 +502,14 @@ class _DocTypeCard1 extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                   Container(
-                     padding: EdgeInsets.all(AppSize.sp2),
-                     decoration: BoxDecoration(shape: BoxShape.circle,color: Color(0xff059669).withValues(alpha: 0.08)),
-                     child: Icon(Icons.done,color: Color(0xff059669),size: AppSize.sp18,),
-                   ),
+                  Container(
+                    padding: EdgeInsets.all(AppSize.sp2),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: const Color(0xff059669).withValues(alpha: 0.08),
+                    ),
+                    child: Icon(Icons.done, color: const Color(0xff059669), size: AppSize.sp18),
+                  ),
                   SizedBox(width: AppSize.w10),
                   Expanded(
                     child: Text(
@@ -517,50 +523,59 @@ class _DocTypeCard1 extends StatelessWidget {
               ),
             ),
           ),
-
         ],
       ),
     );
   }
 }
 
-
-
 // ── Format requirements card ──────────────────────────────────────────────────
 
 class _FormatRequirementsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final items = [
-      _FormatItem(Assets.requiredDocuments.icFile, 'Accepted Formats', 'PDF, JPG, PNG'),
-      _FormatItem(Assets.requiredDocuments.icIncomeProof, 'File Size', 'Max 5MB per file'),
-      _FormatItem(Assets.tipsAdviceIcons.icClarity, 'Color Mode', 'Color or B&W'),
-      _FormatItem(Assets.onboardingIcons.icMakeSmart, 'Resolution', 'Min 300 DPI'),
-    ];
-
+    final l10n = context.l10n;
     return Column(
       children: [
         Row(
           children: [
-            Expanded(child: _FormatItemWidget(item: _FormatItem(Assets.requiredDocuments.icFile, 'Accepted Formats', 'PDF, JPG, PNG'),iconBgColor: Color(0xff10B981).withValues(alpha: 0.08),iconColor: Color(0xff10B981),)),
+            Expanded(
+              child: _FormatItemWidget(
+                item: _FormatItem(Assets.requiredDocuments.icFile, l10n.docsFormatAccepted, l10n.docsFormatAcceptedValue),
+                iconBgColor: const Color(0xff10B981).withValues(alpha: 0.08),
+                iconColor: const Color(0xff10B981),
+              ),
+            ),
             SizedBox(width: AppSize.w14),
             Expanded(
-              child: _FormatItemWidget(item: _FormatItem(Assets.requiredDocuments.icIncomeProof, 'File Size', 'Max 5MB per file',),iconBgColor: Color(0xff06B6D4).withValues(alpha: 0.08),iconColor: Color(0xff06B6D4)
+              child: _FormatItemWidget(
+                item: _FormatItem(Assets.requiredDocuments.icIncomeProof, l10n.docsFormatFileSize, l10n.docsFormatFileSizeValue),
+                iconBgColor: const Color(0xff06B6D4).withValues(alpha: 0.08),
+                iconColor: const Color(0xff06B6D4),
               ),
-            )
+            ),
           ],
         ),
         SizedBox(height: AppSize.w14),
         Row(
           children: [
-            Expanded(child: _FormatItemWidget(item:  _FormatItem(Assets.tipsAdviceIcons.icClarity, 'Color Mode', 'Color or B&W'),iconBgColor: Color(0xff8B5CF6).withValues(alpha: 0.08),iconColor: Color(0xff8B5CF6))),
+            Expanded(
+              child: _FormatItemWidget(
+                item: _FormatItem(Assets.tipsAdviceIcons.icClarity, l10n.docsFormatColorMode, l10n.docsFormatColorModeValue),
+                iconBgColor: const Color(0xff8B5CF6).withValues(alpha: 0.08),
+                iconColor: const Color(0xff8B5CF6),
+              ),
+            ),
             SizedBox(width: AppSize.w14),
             Expanded(
-              child: _FormatItemWidget(item: _FormatItem(Assets.onboardingIcons.icMakeSmart, 'Resolution', 'Min 300 DPI'),iconBgColor: Color(0xffF59E0B).withValues(alpha: 0.08),iconColor: Color(0xffF59E0B)
+              child: _FormatItemWidget(
+                item: _FormatItem(Assets.onboardingIcons.icMakeSmart, l10n.docsFormatResolution, l10n.docsFormatResolutionValue),
+                iconBgColor: const Color(0xffF59E0B).withValues(alpha: 0.08),
+                iconColor: const Color(0xffF59E0B),
               ),
-            )
+            ),
           ],
-        )
+        ),
       ],
     );
   }
@@ -577,7 +592,7 @@ class _FormatItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: AppSize.w14 ,
+        horizontal: AppSize.w14,
         vertical: AppSize.h12,
       ),
       decoration: BoxDecoration(
@@ -590,18 +605,18 @@ class _FormatItemWidget extends StatelessWidget {
         children: [
           Container(
             padding: EdgeInsets.all(AppSize.sp8),
-            decoration: BoxDecoration(shape: BoxShape.circle,color: iconBgColor),
+            decoration: BoxDecoration(shape: BoxShape.circle, color: iconBgColor),
             child: item.icon.svg(
               width: AppSize.sp20,
               height: AppSize.sp20,
-              colorFilter:   ColorFilter.mode(iconColor, BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
             ),
           ),
           SizedBox(height: AppSize.h10),
           Text(
             item.label,
             style: context.textTheme.titleSmall?.copyWith(
-               fontSize: AppSize.sp13,
+              fontSize: AppSize.sp13,
             ),
           ),
           SizedBox(height: AppSize.h3),
@@ -609,7 +624,7 @@ class _FormatItemWidget extends StatelessWidget {
             item.value,
             style: context.textTheme.bodyLarge?.copyWith(
               color: context.themeTextColors.descriptionColor,
-               fontSize: AppSize.sp12,
+              fontSize: AppSize.sp12,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -625,35 +640,35 @@ class _FormatItemWidget extends StatelessWidget {
 class _QualityRequirementsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    const items = [
-      _StepItem('Clear & Legible', 'Text should be readable without zooming'),
-      _StepItem(
-        'Complete Document',
-        'All information should be visible for multi-page',
-      ),
-      _StepItem('Proper Lighting', 'No shadows or glare on the document'),
-      _StepItem(
-        'Original or Certified',
-        'Only attested copies or originals as specified',
-      ),
+    final l10n = context.l10n;
+    final items = [
+      _StepItem(l10n.docsQualityClearLegible, l10n.docsQualityClearLegibleDesc),
+      _StepItem(l10n.docsQualityCompleteDoc, l10n.docsQualityCompleteDocDesc),
+      _StepItem(l10n.docsQualityProperLighting, l10n.docsQualityProperLightingDesc),
+      _StepItem(l10n.docsQualityOriginalCertified, l10n.docsQualityOriginalCertifiedDesc),
     ];
     return Container(
       padding: EdgeInsets.all(AppSize.h16),
       decoration: _cardDeco(),
       child: Column(
         children: items
+            .asMap()
+            .entries
             .map(
-              (item) => Padding(
+              (entry) => Padding(
                 padding: EdgeInsets.only(
-                  bottom: item != items.last ? AppSize.h12 : 0,
+                  bottom: entry.key < items.length - 1 ? AppSize.h12 : 0,
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
                       padding: EdgeInsets.all(AppSize.sp2),
-                      decoration: BoxDecoration(shape: BoxShape.circle,color: Color(0xff059669).withValues(alpha: 0.08)),
-                      child: Icon(Icons.done,color: Color(0xff059669),size: AppSize.sp18,),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: const Color(0xff059669).withValues(alpha: 0.08),
+                      ),
+                      child: Icon(Icons.done, color: const Color(0xff059669), size: AppSize.sp18),
                     ),
                     SizedBox(width: AppSize.w10),
                     Expanded(
@@ -661,13 +676,11 @@ class _QualityRequirementsCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            item.title,
-                            style: context.textTheme.titleMedium?.copyWith(
-                              fontSize: AppSize.sp14
-                             ),
+                            entry.value.title,
+                            style: context.textTheme.titleMedium?.copyWith(fontSize: AppSize.sp14),
                           ),
                           Text(
-                            item.description,
+                            entry.value.description,
                             style: context.textTheme.bodyLarge?.copyWith(
                               color: context.themeTextColors.descriptionColor,
                               fontSize: AppSize.sp12,
@@ -691,23 +704,12 @@ class _QualityRequirementsCard extends StatelessWidget {
 class _VerificationProcessCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    const steps = [
-      _StepItem(
-        'Document Upload',
-        'Upload scanned/photographed documents via app or web portal',
-      ),
-      _StepItem(
-        'Automated Check',
-        'AI verifies document type, quality, and basic information',
-      ),
-      _StepItem(
-        'Manual Review',
-        'Loan officer reviews details and cross-checks with database',
-      ),
-      _StepItem(
-        'Approval/Clarification',
-        'Get approval or request for additional documents if needed',
-      ),
+    final l10n = context.l10n;
+    final steps = [
+      _StepItem(l10n.docsVerificationStep1Title, l10n.docsVerificationStep1Desc),
+      _StepItem(l10n.docsVerificationStep2Title, l10n.docsVerificationStep2Desc),
+      _StepItem(l10n.docsVerificationStep3Title, l10n.docsVerificationStep3Desc),
+      _StepItem(l10n.docsVerificationStep4Title, l10n.docsVerificationStep4Desc),
     ];
     final icons = [
       Assets.homeIcons.icDocuments,
@@ -764,9 +766,7 @@ class _VerificationProcessCard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               step.title,
-                              style: context.textTheme.titleMedium?.copyWith(
-                                 fontSize: AppSize.sp15
-                              ),
+                              style: context.textTheme.titleMedium?.copyWith(fontSize: AppSize.sp15),
                             ),
                           ),
                         ],
@@ -797,45 +797,48 @@ class _VerificationProcessCard extends StatelessWidget {
 class _CommonMistakesCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    const mistakes = [
-      'Expired documents (check validity dates)',
-      'Blurry or unclear photocopies',
-      'Missing signatures or attestations',
-      'Incomplete address (missing required)',
-      'Mismatched names across documents',
-      'Old utility bills (>3 months)',
-      'Uploading wrong file format',
+    final l10n = context.l10n;
+    final mistakes = [
+      l10n.docsMistake1,
+      l10n.docsMistake2,
+      l10n.docsMistake3,
+      l10n.docsMistake4,
+      l10n.docsMistake5,
+      l10n.docsMistake6,
+      l10n.docsMistake7,
     ];
     return Container(
       padding: EdgeInsets.all(AppSize.h16),
       decoration: _cardDeco(),
       child: Column(
         children: mistakes
+            .asMap()
+            .entries
             .map(
-              (m) => Padding(
+              (entry) => Padding(
                 padding: EdgeInsets.only(
-                  bottom: m != mistakes.last ? AppSize.h10 : 0,
+                  bottom: entry.key < mistakes.length - 1 ? AppSize.h10 : 0,
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                       padding: EdgeInsets.all(AppSize.sp2),
+                      padding: EdgeInsets.all(AppSize.sp2),
                       decoration: const BoxDecoration(
                         color: Color(0xFFFEE2E2),
                         shape: BoxShape.circle,
                       ),
                       child: Center(
-                        child:  Icon(Icons.close,color: Colors.red,size: AppSize.sp18,)
+                        child: Icon(Icons.close, color: Colors.red, size: AppSize.sp18),
                       ),
                     ),
                     SizedBox(width: AppSize.w10),
                     Expanded(
                       child: Text(
-                        m,
+                        entry.value,
                         style: context.textTheme.titleMedium?.copyWith(
                           fontSize: AppSize.sp14,
-                          color: context.themeTextColors.descriptionColor
+                          color: context.themeTextColors.descriptionColor,
                         ),
                       ),
                     ),
@@ -872,41 +875,41 @@ class _TipItem {
 class _TipsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final tips = [
       _TipItem(
         icon: Assets.personalLoanIcons.icClock,
-        title: 'Submit Early',
-        description: 'Upload all documents at once rather than in multiple batches',
+        title: l10n.docsTip1Title,
+        description: l10n.docsTip1Desc,
         color: const Color(0xFF0D9488),
         bgColor: const Color(0xFF0D9488).withValues(alpha: 0.1),
       ),
       _TipItem(
         icon: Assets.requiredDocuments.icDocumentRight,
-        title: 'Double Check',
-        description: 'Review all documents before upload to avoid rejection',
+        title: l10n.docsTip2Title,
+        description: l10n.docsTip2Desc,
         color: const Color(0xFF2563EB),
         bgColor: const Color(0xFFEFF6FF),
         highlighted: true,
       ),
       _TipItem(
         icon: Assets.onboardingIcons.icStars,
-        title: 'Use Good Scanner',
-        description: 'High-quality scans reduce back-and-forth clarifications',
+        title: l10n.docsTip3Title,
+        description: l10n.docsTip3Desc,
         color: const Color(0xFF7C3AED),
         bgColor: const Color(0xFF7C3AED).withValues(alpha: 0.1),
       ),
       _TipItem(
         icon: Assets.personalLoanIcons.icRightCurcle,
-        title: 'Keep Originals Ready',
-        description: 'Physical verification may be required for final approval',
+        title: l10n.docsTip4Title,
+        description: l10n.docsTip4Desc,
         color: const Color(0xFFF59E0B),
         bgColor: const Color(0xFFF59E0B).withValues(alpha: 0.1),
       ),
       _TipItem(
         icon: Assets.requiredDocuments.icImportantNote,
-        title: 'Important Note',
-        description:
-            'Document requirements may vary by lender and loan type. Always check with your specific lender for their exact requirements. Keep multiple copies of all documents for your records.',
+        title: l10n.docsImportantNoteTitle,
+        description: l10n.docsImportantNoteDesc,
         color: const Color(0xFF2563EB),
         bgColor: const Color(0xFFEEF2FF),
       ),
@@ -924,7 +927,7 @@ class _TipsCard extends StatelessWidget {
                 ? BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(AppSize.r16),
-                     boxShadow: const [
+                    boxShadow: const [
                       BoxShadow(
                         color: Color(0x0D000000),
                         blurRadius: 10,

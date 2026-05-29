@@ -5,11 +5,16 @@ import 'package:flutter/material.dart';
 
 import '../../extension/ext_context.dart';
 import '../../gen/assets.gen.dart';
+import '../../utils/anaytics_manager.dart';
 import '../../utils/app_size.dart';
 import '../../utils/navigation_helper.dart';
 import '../../utils/remote_config.dart';
 import '../../widgets/ad_slot.dart';
 import '../../widgets/app_summary_background.dart';
+
+// ── Severity enum ──────────────────────────────────────────────────────────────
+
+enum _Severity { critical, high, medium }
 
 // ── Data models ────────────────────────────────────────────────────────────────
 
@@ -77,7 +82,7 @@ class _MistakeItem {
   final Color iconColor;
   final Color bgColor;
   final String title;
-  final String severity;
+  final _Severity severity;
   final String description;
 }
 
@@ -149,6 +154,7 @@ class _TipsAdviceScreenState extends State<TipsAdviceScreen> {
   @override
   void initState() {
     super.initState();
+    AnalyticsManager.instance.logScreenView(screenName: 'tips_advice_screen');
     _loadInline();
   }
 
@@ -172,41 +178,36 @@ class _TipsAdviceScreenState extends State<TipsAdviceScreen> {
         icon: Assets.personalLoanIcons.icRightCurcle,
         iconColor: const Color(0xFF10B981),
         bgColor: const Color(0xFF10B981).withValues(alpha: 0.08),
-        title: 'Assess Your Need',
-        description:
-            'Determine exactly why you need the loan and whether it\'s truly necessary. Consider alternatives like savings or family support.',
+        title: context.l10n.tipsStep1Title,
+        description: context.l10n.tipsStep1Desc,
       ),
       _StepItem(
         icon: Assets.tipsAdviceIcons.icCalculate,
         iconColor: const Color(0xFF06B6D4),
         bgColor: const Color(0xFF06B6D4).withValues(alpha: 0.08),
-        title: 'Calculate Affordability',
-        description:
-            'Ensure your EMI stays within 30–40% of your monthly income. Use the Loan Calculator to find a comfortable tenure.',
+        title: context.l10n.tipsStep2Title,
+        description: context.l10n.tipsStep2Desc,
       ),
       _StepItem(
         icon: Assets.tipsAdviceIcons.icScore,
         iconColor: const Color(0xFF8B5CF6),
         bgColor: const Color(0xFF8B5CF6).withValues(alpha: 0.08),
-        title: 'Check Your Credit Score',
-        description:
-            'A score above 750 unlocks the best rates. Review your credit report for errors and resolve them before applying.',
+        title: context.l10n.tipsStep3Title,
+        description: context.l10n.tipsStep3Desc,
       ),
       _StepItem(
         icon: Assets.personalLoanIcons.icImprovementTips,
         iconColor: const Color(0xFFF59E0B),
         bgColor: const Color(0xFFF59E0B).withValues(alpha: 0.08),
-        title: 'Compare Offers',
-        description:
-            'Get quotes from at least 3–5 lenders. Compare total cost (interest + fees), not just the EMI amount.',
+        title: context.l10n.tipsStep4Title,
+        description: context.l10n.tipsStep4Desc,
       ),
       _StepItem(
         icon: Assets.onboardingIcons.icVerification,
         iconColor: const Color(0xFFEF4444),
         bgColor: const Color(0xFFEF4444).withValues(alpha: 0.08),
-        title: 'Read the Fine Print',
-        description:
-            'Understand prepayment penalties, processing fees, and foreclosure charges before signing the loan agreement.',
+        title: context.l10n.tipsStep5Title,
+        description: context.l10n.tipsStep5Desc,
       ),
     ];
 
@@ -215,83 +216,79 @@ class _TipsAdviceScreenState extends State<TipsAdviceScreen> {
         icon: Assets.tipsAdviceIcons.icEmergency,
         iconColor: const Color(0xFFEF4444),
         bgColor: const Color(0xFFFEF2F2),
-        title: 'Choose the Right Tenure',
-        badge: 'Pro Tip',
+        title: context.l10n.tipsStrategy1Title,
+        badge: context.l10n.tipsStrategy1Badge,
         badgeColor: const Color(0xFF2563EB),
         badgeBg: const Color(0xFFEFF6FF),
-        description:
-            'Shorter tenure = higher EMI but lower total interest. Find the sweet spot for your budget.',
+        description: context.l10n.tipsStrategy1Desc,
       ),
       _StrategyItem(
         icon: Assets.personalLoanIcons.icClock,
         iconColor: const Color(0xFF0D9488),
         bgColor: const Color(0xFFEFFAF9),
-        title: 'Make Partial Prepayments',
-        badge: 'High Impact',
+        title: context.l10n.tipsStrategy2Title,
+        badge: context.l10n.tipsImpactHigh,
         badgeColor: const Color(0xFF0D9488),
         badgeBg: const Color(0xFFEFFAF9),
-        description:
-            'Prepay in the first 5 years when interest component is highest to save lakhs.',
+        description: context.l10n.tipsStrategy2Desc,
       ),
       _StrategyItem(
         icon: Assets.homeIcons.icCreditCard,
         iconColor: const Color(0xFF7C3AED),
         bgColor: const Color(0xFFF5F3FF),
-        title: 'Negotiate Your Interest Rate',
-        badge: 'Essential',
+        title: context.l10n.tipsStrategy3Title,
+        badge: context.l10n.tipsStrategy3Badge,
         badgeColor: const Color(0xFF7C3AED),
         badgeBg: const Color(0xFFF5F3FF),
-        description:
-            'Use competing offers as leverage. Even 0.5% reduction saves significant money.',
+        description: context.l10n.tipsStrategy3Desc,
       ),
       _StrategyItem(
         icon: Assets.tipsAdviceIcons.icCalculate,
         iconColor: const Color(0xFFF59E0B),
         bgColor: const Color(0xFFFFFBEB),
-        title: 'Balance Transfer Wisely',
-        badge: 'Advanced',
+        title: context.l10n.tipsStrategy4Title,
+        badge: context.l10n.tipsStrategy4Badge,
         badgeColor: const Color(0xFFF59E0B),
         badgeBg: const Color(0xFFFFFBEB),
-        description:
-            'Transfer to lower rates only if savings exceed processing fees and charges.',
+        description: context.l10n.tipsStrategy4Desc,
       ),
     ];
 
     final creditFactors = [
       _CreditFactor(
-        title: 'Payment History',
+        title: context.l10n.creditScoreStep1Title,
         percent: 35,
-        impact: 'High Impact',
-        doItem: 'Pay all bills on time, every time',
-        dontItem: 'Missing even one payment hurts significantly',
+        impact: context.l10n.tipsImpactHigh,
+        doItem: context.l10n.tipsCreditFactor1DoItem,
+        dontItem: context.l10n.tipsCreditFactor1DontItem,
       ),
       _CreditFactor(
-        title: 'Credit Utilization',
+        title: context.l10n.tipsCreditFactor2Title,
         percent: 30,
-        impact: 'High Impact',
-        doItem: 'Keep below 30% of your credit limit',
-        dontItem: 'Maxing out cards signals financial stress',
+        impact: context.l10n.tipsImpactHigh,
+        doItem: context.l10n.tipsCreditFactor2DoItem,
+        dontItem: context.l10n.tipsCreditFactor2DontItem,
       ),
       _CreditFactor(
-        title: 'Credit Age',
+        title: context.l10n.tipsCreditFactorAge,
         percent: 15,
-        impact: 'Medium Impact',
-        doItem: 'Keep old accounts open, even if unused',
-        dontItem: 'Closing oldest card reduces average age',
+        impact: context.l10n.tipsImpactMedium,
+        doItem: context.l10n.tipsCreditFactor3DoItem,
+        dontItem: context.l10n.tipsCreditFactor3DontItem,
       ),
       _CreditFactor(
-        title: 'Credit Mix',
+        title: context.l10n.tipsCreditFactorMix,
         percent: 10,
-        impact: 'Medium Impact',
-        doItem: 'Have a mix: cards, loans, mortgages',
-        dontItem: 'Only one type of credit limits score',
+        impact: context.l10n.tipsImpactMedium,
+        doItem: context.l10n.tipsCreditFactor4DoItem,
+        dontItem: context.l10n.tipsCreditFactor4DontItem,
       ),
       _CreditFactor(
-        title: 'New Credit',
+        title: context.l10n.tipsCreditFactorNewCredit,
         percent: 10,
-        impact: 'Low Impact',
-        doItem: 'Apply for credit only when needed',
-        dontItem: 'Multiple applications in short time',
+        impact: context.l10n.tipsImpactLow,
+        doItem: context.l10n.tipsCreditFactor5DoItem,
+        dontItem: context.l10n.tipsCreditFactor5DontItem,
       ),
     ];
 
@@ -300,41 +297,41 @@ class _TipsAdviceScreenState extends State<TipsAdviceScreen> {
         icon: Assets.tipsAdviceIcons.icEmergency,
         iconColor: const Color(0xFFEF4444),
         bgColor: const Color(0xFFFEF2F2),
-        title: 'No Emergency Fund',
-        severity: 'Critical',
-        description: 'Not having 6 months of expenses saved leads to debt traps during emergencies',
+        title: context.l10n.tipsMistake1Title,
+        severity: _Severity.critical,
+        description: context.l10n.tipsMistake1Desc,
       ),
       _MistakeItem(
         icon: Assets.homeIcons.icCreditCard,
         iconColor: const Color(0xFFF59E0B),
         bgColor: const Color(0xFFFFFBEB),
-        title: 'Paying Only Minimum Due',
-        severity: 'High',
-        description: 'Credit card interest compounds at 36–42% annually — pay full amount always',
+        title: context.l10n.tipsMistake2Title,
+        severity: _Severity.high,
+        description: context.l10n.tipsMistake2Desc,
       ),
       _MistakeItem(
         icon: Assets.onboardingIcons.icWelcome,
         iconColor: const Color(0xFFF59E0B),
         bgColor: const Color(0xFFFFFBEB),
-        title: 'Ignoring Inflation',
-        severity: 'High',
-        description: 'Money in savings account loses value over time. Invest for growth.',
+        title: context.l10n.tipsMistake3Title,
+        severity: _Severity.high,
+        description: context.l10n.tipsMistake3Desc,
       ),
       _MistakeItem(
         icon: Assets.onboardingIcons.icVerification,
         iconColor: const Color(0xFFEF4444),
         bgColor: const Color(0xFFFEF2F2),
-        title: 'No Insurance Coverage',
-        severity: 'Critical',
-        description: 'Health and life insurance protect your family from financial devastation',
+        title: context.l10n.tipsMistake4Title,
+        severity: _Severity.critical,
+        description: context.l10n.tipsMistake4Desc,
       ),
       _MistakeItem(
         icon: Assets.personalLoanIcons.icImprovementTips,
         iconColor: const Color(0xFF0D9488),
         bgColor: const Color(0xFFEFFAF9),
-        title: 'Lifestyle Inflation',
-        severity: 'Medium',
-        description: 'Increasing expenses with every salary hike prevents wealth building',
+        title: context.l10n.tipsMistake5Title,
+        severity: _Severity.medium,
+        description: context.l10n.tipsMistake5Desc,
       ),
     ];
 
@@ -343,45 +340,41 @@ class _TipsAdviceScreenState extends State<TipsAdviceScreen> {
         icon: Assets.tipsAdviceIcons.icCalculate,
         iconColor: const Color(0xFF2563EB),
         bgColor: const Color(0xFFEFF6FF),
-        title: 'Bi-Weekly Payments',
-        impact: 'High',
+        title: context.l10n.tipsPayment1Title,
+        impact: context.l10n.tipsSeverityHigh,
         impactColor: const Color(0xFF22C55E),
         impactBg: const Color(0xFFF0FDF4),
-        description:
-            'Pay half your EMI every two weeks instead of once a month. This results in one extra payment per year, reducing your loan tenure significantly.',
+        description: context.l10n.tipsPayment1Desc,
       ),
       _PaymentMethod(
         icon: Assets.tipsAdviceIcons.icBag,
         iconColor: const Color(0xFF0D9488),
         bgColor: const Color(0xFFEFFAF9),
-        title: 'Lump Sum on Windfalls',
-        impact: 'Very High',
+        title: context.l10n.tipsPayment2Title,
+        impact: context.l10n.tipsPayment2Impact,
         impactColor: const Color(0xFF2563EB),
         impactBg: const Color(0xFFEFF6FF),
-        description:
-            'Use bonuses, tax refunds, or any unexpected income to make large lump-sum prepayments. This directly reduces principal and total interest.',
+        description: context.l10n.tipsPayment2Desc,
       ),
       _PaymentMethod(
         icon: Assets.personalLoanIcons.icInstantApproval,
         iconColor: const Color(0xFF7C3AED),
         bgColor: const Color(0xFFF5F3FF),
-        title: 'Step-Up EMI',
-        impact: 'Medium',
+        title: context.l10n.tipsPayment3Title,
+        impact: context.l10n.tipsSeverityMedium,
         impactColor: const Color(0xFFF59E0B),
         impactBg: const Color(0xFFFFFBEB),
-        description:
-            'Gradually increase your EMI amount each year as your income grows. Even a 5–10% annual increase shortens the loan tenure meaningfully.',
+        description: context.l10n.tipsPayment3Desc,
       ),
       _PaymentMethod(
         icon: Assets.tipsAdviceIcons.icClarity,
         iconColor: const Color(0xFFEF4444),
         bgColor: const Color(0xFFFEF2F2),
-        title: 'Hybrid Approach',
-        impact: 'Variable',
+        title: context.l10n.tipsPayment4Title,
+        impact: context.l10n.tipsPayment4Impact,
         impactColor: const Color(0xFF7C3AED),
         impactBg: const Color(0xFFF5F3FF),
-        description:
-            'Combine regular part-prepayments with step-up EMIs for maximum impact. Adjust based on cash flow while keeping savings goals intact.',
+        description: context.l10n.tipsPayment4Desc,
       ),
     ];
 
@@ -390,75 +383,75 @@ class _TipsAdviceScreenState extends State<TipsAdviceScreen> {
         icon: Assets.personalLoanIcons.icInstantApproval,
         color: const Color(0xFF0D9488),
         bgColor: const Color(0xFFEFFAF9),
-        title: 'Short-Term (0-2 years)',
-        examples: 'Emergency fund, vacation, gadgets',
-        strategy: 'High-liquidity savings, FD, liquid funds',
+        title: context.l10n.tipsGoalShortTerm,
+        examples: context.l10n.tipsGoalShortTermExamples,
+        strategy: context.l10n.tipsGoalShortTermStrategy,
       ),
       _GoalTier(
         icon: Assets.tipsAdviceIcons.icCalculate,
         color: const Color(0xFFF59E0B),
         bgColor: const Color(0xFFFFFBEB),
-        title: 'Mid-Term (2-5 years)',
-        examples: 'Car, wedding, home down payment',
-        strategy: 'Balanced portfolio: FD + debt funds + some equity',
+        title: context.l10n.tipsGoalMidTerm,
+        examples: context.l10n.tipsGoalMidTermExamples,
+        strategy: context.l10n.tipsGoalMidTermStrategy,
       ),
       _GoalTier(
         icon: Assets.tipsAdviceIcons.icScore,
         color: const Color(0xFF7C3AED),
         bgColor: const Color(0xFFF5F3FF),
-        title: 'Long-Term (5+ years)',
-        examples: 'Retirement, child education, wealth building',
-        strategy: 'Equity-heavy portfolio, PPF, NPS, SIP in mutual funds',
+        title: context.l10n.tipsGoalLongTerm,
+        examples: context.l10n.tipsGoalLongTermExamples,
+        strategy: context.l10n.tipsGoalLongTermStrategy,
       ),
     ];
 
     final ageGroups = [
       _AgeGroup(
         icon: Assets.onboardingIcons.icEducation,
-        age: 'In Your 20s',
+        age: context.l10n.tipsAge20s,
         color: const Color(0xFF0D9488),
         bgColor: const Color(0xFFEFFAF9),
         tips: [
-          'Build emergency fund (3–6 months expenses)',
-          'Start investing early—even small amounts compound',
-          'Avoid credit card debt at all costs',
-          'Get term life insurance if dependents exist',
+          context.l10n.tipsAge20sTip1,
+          context.l10n.tipsAge20sTip2,
+          context.l10n.tipsAge20sTip3,
+          context.l10n.tipsAge20sTip4,
         ],
       ),
       _AgeGroup(
         icon: Assets.tipsAdviceIcons.icBag,
-        age: 'In Your 30s',
+        age: context.l10n.tipsAge30s,
         color: const Color(0xFF06B6D4),
-        bgColor:   Color(0xFF06B6D4).withValues(alpha: 0.08),
+        bgColor: Color(0xFF06B6D4).withValues(alpha: 0.08),
         tips: [
-          'Increase emergency fund to 6–12 months',
-          'Max out retirement contributions',
-          'Start child education fund if applicable',
-          'Buy adequate life and health insurance',
+          context.l10n.tipsAge30sTip1,
+          context.l10n.tipsAge30sTip2,
+          context.l10n.tipsAge30sTip3,
+          context.l10n.tipsAge30sTip4,
         ],
       ),
       _AgeGroup(
         icon: Assets.onboardingIcons.icHome,
-        age: 'In Your 40s',
+        age: context.l10n.tipsAge40s,
         color: const Color(0xFF7C3AED),
         bgColor: const Color(0xFFF5F3FF),
         tips: [
-          'Accelerate retirement savings aggressively',
-          'Pay off high-interest debts completely',
-          'Review and increase insurance coverage',
-          'Estate planning and will creation',
+          context.l10n.tipsAge40sTip1,
+          context.l10n.tipsAge40sTip2,
+          context.l10n.tipsAge40sTip3,
+          context.l10n.tipsAge40sTip4,
         ],
       ),
       _AgeGroup(
         icon: Assets.onboardingIcons.icPersonal,
-        age: 'In Your 50s+',
+        age: context.l10n.tipsAge50s,
         color: const Color(0xFFF59E0B),
         bgColor: const Color(0xFFFFFBEB),
         tips: [
-          'Shift to lower-risk, income-focused investments',
-          'Ensure all debts paid before retirement',
-          'Maximize retirement contributions (catch-up allowed)',
-          'Plan healthcare and long-term care costs',
+          context.l10n.tipsAge50sTip1,
+          context.l10n.tipsAge50sTip2,
+          context.l10n.tipsAge50sTip3,
+          context.l10n.tipsAge50sTip4,
         ],
       ),
     ];
@@ -483,7 +476,7 @@ class _TipsAdviceScreenState extends State<TipsAdviceScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                      Text(
-                      'Why Financial Planning Matters',
+                      context.l10n.tipsWhyPlanningTitle,
                       style: context.textTheme.titleMedium?.copyWith(
                         fontSize: AppSize.sp18,
                         fontWeight: FontWeight.w700,
@@ -494,7 +487,7 @@ class _TipsAdviceScreenState extends State<TipsAdviceScreen> {
                     SizedBox(height: AppSize.h15),
                     // ── Before Taking a Loan ───────────────────────────
                     Text(
-                      'Before Taking a Loan: Essential Steps',
+                      context.l10n.tipsBeforeLoanTitle,
                       style: context.textTheme.titleMedium?.copyWith(
                         fontSize: AppSize.sp18,
                         fontWeight: FontWeight.w700,
@@ -508,7 +501,7 @@ class _TipsAdviceScreenState extends State<TipsAdviceScreen> {
                     SizedBox(height: AppSize.h15),
                     // ── Smart Borrowing Strategies ─────────────────────
                     Text(
-                      'Smart Borrowing Strategies',
+                      context.l10n.tipsSmartBorrowingTitle,
                       style: context.textTheme.titleMedium?.copyWith(
                         fontSize: AppSize.sp18,
                         fontWeight: FontWeight.w700,
@@ -522,7 +515,7 @@ class _TipsAdviceScreenState extends State<TipsAdviceScreen> {
 
                     // ── Credit Score ───────────────────────────────────
                     Text(
-                      'Building & Maintaining Credit Score',
+                      context.l10n.tipsCreditScoreSectionTitle,
                       style: context.textTheme.titleMedium?.copyWith(
                         fontSize: AppSize.sp18,
                         fontWeight: FontWeight.w700,
@@ -532,7 +525,7 @@ class _TipsAdviceScreenState extends State<TipsAdviceScreen> {
                     _CreditScoreCard(factors: creditFactors),
                     SizedBox(height: AppSize.h15),
                     Text(
-                      'Common Financial Mistakes to Avoid',
+                      context.l10n.tipsMistakesTitle,
                       style: context.textTheme.titleMedium?.copyWith(
                         fontSize: AppSize.sp18,
                         fontWeight: FontWeight.w700,
@@ -542,7 +535,7 @@ class _TipsAdviceScreenState extends State<TipsAdviceScreen> {
                     ...mistakes.map((m) => _MistakeCard(item: m)),
                     SizedBox(height: AppSize.h15),
                     Text(
-                      'Advanced Loan Payment Methods',
+                      context.l10n.tipsPaymentMethodsTitle,
                       style: context.textTheme.titleMedium?.copyWith(
                         fontSize: AppSize.sp18,
                         fontWeight: FontWeight.w700,
@@ -553,7 +546,7 @@ class _TipsAdviceScreenState extends State<TipsAdviceScreen> {
                     SizedBox(height: AppSize.h15),
                     // ── Financial Goals ────────────────────────────────
                     Text(
-                      'Setting & Achieving Financial Goals',
+                      context.l10n.tipsGoalsTitle,
                       style: context.textTheme.titleMedium?.copyWith(
                         fontSize: AppSize.sp18,
                         fontWeight: FontWeight.w700,
@@ -565,7 +558,7 @@ class _TipsAdviceScreenState extends State<TipsAdviceScreen> {
                     SizedBox(height: AppSize.h15),
                     // ── Invest or Pay Debt ─────────────────────────────
                     Text(
-                      'Should You Invest or Pay Off Debt?',
+                      context.l10n.tipsInvestVsDebtTitle,
                       style: context.textTheme.titleMedium?.copyWith(
                         fontSize: AppSize.sp18,
                         fontWeight: FontWeight.w700,
@@ -579,7 +572,7 @@ class _TipsAdviceScreenState extends State<TipsAdviceScreen> {
                     // ── Age Specific Guidance ──────────────────────────
                     // ── Invest or Pay Debt ─────────────────────────────
                     Text(
-                      'Age-Specific Financial Guidance',
+                      context.l10n.tipsAgeGuidanceTitle,
                       style: context.textTheme.titleMedium?.copyWith(
                         fontSize: AppSize.sp18,
                         fontWeight: FontWeight.w700,
@@ -644,7 +637,7 @@ class _TipsHeader extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Tips & Advice',
+                        context.l10n.homeTipsAdvice,
                         style: context.textTheme.titleLarge?.copyWith(
                           color: context.themeTextColors.secondaryTextColor,
                           fontSize: AppSize.sp28,
@@ -652,7 +645,7 @@ class _TipsHeader extends StatelessWidget {
                       ),
                       SizedBox(height: AppSize.h6),
                       Text(
-                        'Expert financial guidance for success',
+                        context.l10n.tipsAdviceSubtitle,
                         style: context.textTheme.bodySmall?.copyWith(
                           color: context.themeTextColors.secondaryTextColor,
                           fontSize: AppSize.sp13,
@@ -749,7 +742,7 @@ class _WhyPlanningCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Build a Secure Future',
+                      context.l10n.tipsBuildSecureFutureTitle,
                       style: context.textTheme.titleSmall?.copyWith(
                         fontSize: AppSize.sp14,
                         fontWeight: FontWeight.w700,
@@ -758,7 +751,7 @@ class _WhyPlanningCard extends StatelessWidget {
                     ),
                     SizedBox(height: AppSize.h6),
                     Text(
-                      'Financial planning helps you achieve life goals, handle emergencies, and build wealth systematically. It\'s not about restricting yourself — it\'s about making informed choices that align with your priorities.',
+                      context.l10n.tipsBuildSecureFutureDesc,
                       style: context.textTheme.bodySmall?.copyWith(
                         fontSize: AppSize.sp12,
                         color: const Color(0xFF64748B),
@@ -778,19 +771,19 @@ class _WhyPlanningCard extends StatelessWidget {
                 icon: Assets.tipsAdviceIcons.icClarity,
                 iconColor: const Color(0xFF10B981),
                 bgColor: const Color(0xFF10B981).withValues(alpha: 0.08),
-                label: 'Clarity',
+                label: context.l10n.tipsClarity,
               ),
                _StatItem(
                 icon: Assets.tipsAdviceIcons.icControl,
                 iconColor: const Color(0xFF06B6D4),
                 bgColor: const Color(0xFF06B6D4).withValues(alpha: 0.08),
-                label: 'Control',
+                label: context.l10n.tipsControl,
               ),
                _StatItem(
                 icon: Assets.onboardingIcons.icStars,
                 iconColor: const Color(0xFF8B5CF6),
                 bgColor: const Color(0xFF8B5CF6).withValues(alpha: 0.08),
-                label: 'Confidence',
+                label: context.l10n.tipsConfidence,
               ),
             ],
           ),
@@ -1091,17 +1084,22 @@ class _MistakeCard extends StatelessWidget {
 
   final _MistakeItem item;
 
-  // Returns badge colors based on severity level
   (Color bg, Color text) _severityColors() {
     switch (item.severity) {
-      case 'Critical':
+      case _Severity.critical:
         return (const Color(0xFFFEE2E2), const Color(0xFFEF4444));
-      case 'High':
+      case _Severity.high:
         return (const Color(0xFFF1F5F9), const Color(0xFF475569));
-      case 'Medium':
+      case _Severity.medium:
         return (const Color(0xFFF1F5F9), const Color(0xFF475569));
-      default:
-        return (const Color(0xFFF1F5F9), const Color(0xFF475569));
+    }
+  }
+
+  String _severityLabel(BuildContext context) {
+    switch (item.severity) {
+      case _Severity.critical: return context.l10n.tipsSeverityCritical;
+      case _Severity.high: return context.l10n.tipsSeverityHigh;
+      case _Severity.medium: return context.l10n.tipsSeverityMedium;
     }
   }
 
@@ -1163,7 +1161,7 @@ class _MistakeCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(AppSize.r6),
                       ),
                       child: Text(
-                        item.severity,
+                        _severityLabel(context),
                         style: context.textTheme.bodySmall?.copyWith(
                           fontSize: AppSize.sp11,
                           fontWeight: FontWeight.w600,
@@ -1313,7 +1311,7 @@ class _GoalsCard extends StatelessWidget {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: 'Examples: ',
+                            text: context.l10n.tipsGoalExamplesLabel,
                             style: context.textTheme.bodySmall?.copyWith(
                               fontSize: AppSize.sp13,
                               fontWeight: FontWeight.w600,
@@ -1335,7 +1333,7 @@ class _GoalsCard extends StatelessWidget {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: 'Strategy: ',
+                            text: context.l10n.tipsGoalStrategyLabel,
                             style: context.textTheme.bodySmall?.copyWith(
                               fontSize: AppSize.sp13,
                               fontWeight: FontWeight.w600,
@@ -1378,12 +1376,12 @@ class _InvestVsDebtCard extends StatelessWidget {
           icon: Assets.tipsAdviceIcons.icEmergency,
           iconColor: const Color(0xFFEF4444),
           bgColor: const Color(0xFFFEF2F2),
-          title: 'Pay Debt First If:',
-          bullets: const [
-            'Interest rate is above 12% (credit cards, personal loans)',
-            'You\'re paying only minimum dues on credit cards',
-            'Debt is causing stress or affecting credit score',
-            'No emergency fund exists yet',
+          title: context.l10n.tipsPayDebtFirstTitle,
+          bullets: [
+            context.l10n.tipsPayDebtBullet1,
+            context.l10n.tipsPayDebtBullet2,
+            context.l10n.tipsPayDebtBullet3,
+            context.l10n.tipsPayDebtBullet4,
           ],
         ),
         SizedBox(height: AppSize.h10),
@@ -1391,12 +1389,12 @@ class _InvestVsDebtCard extends StatelessWidget {
           icon: Assets.personalLoanIcons.icRightCurcle,
           iconColor: const Color(0xFF22C55E),
           bgColor: const Color(0xFFF0FDF4),
-          title: 'Invest Alongside Debt If:',
-          bullets: const [
-            'Interest rate is below 10% (home loan, education loan)',
-            'You have 6-month emergency fund already',
-            'Employer matches retirement contributions (free money)',
-            'Long investment horizon (15+ years)',
+          title: context.l10n.tipsInvestAlongsideTitle,
+          bullets: [
+            context.l10n.tipsInvestBullet1,
+            context.l10n.tipsInvestBullet2,
+            context.l10n.tipsInvestBullet3,
+            context.l10n.tipsInvestBullet4,
           ],
         ),
         SizedBox(height: AppSize.h10),
@@ -1404,9 +1402,8 @@ class _InvestVsDebtCard extends StatelessWidget {
           icon: Assets.onboardingIcons.icStars,
           iconColor: const Color(0xFF7C3AED),
           bgColor: const Color(0xFFF5F3FF),
-          title: 'Best Approach:',
-          description:
-              'Balance both: Pay extra on high-interest debt while investing consistently in retirement accounts. As debt reduces, shift more toward investing. It\'s not all-or-nothing.',
+          title: context.l10n.tipsBestApproachTitle,
+          description: context.l10n.tipsBestApproachDesc,
         ),
       ],
     );
@@ -1620,7 +1617,7 @@ class _CtaCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Need Personalized Advice?',
+                  context.l10n.tipsCtaTitle,
                   style: context.textTheme.titleSmall?.copyWith(
                     fontSize: AppSize.sp16,
                     fontWeight: FontWeight.w700,
@@ -1629,7 +1626,7 @@ class _CtaCard extends StatelessWidget {
                 ),
                 SizedBox(height: AppSize.h6),
                 Text(
-                  'Every financial situation is unique. Our certified advisors can create a custom plan for your goals.',
+                  context.l10n.tipsCtaDesc,
                   style: context.textTheme.bodySmall?.copyWith(
                     fontSize: AppSize.sp13,
                     color: const Color(0xFF64748B),
@@ -1639,7 +1636,7 @@ class _CtaCard extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      'Explore Financial Tools',
+                      context.l10n.tipsCtaButton,
                       style: context.textTheme.bodyMedium?.copyWith(
                         fontSize: AppSize.sp14,
                         fontWeight: FontWeight.w700,

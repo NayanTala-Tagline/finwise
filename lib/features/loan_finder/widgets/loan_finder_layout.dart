@@ -253,7 +253,7 @@ class _LoanFinderLayoutState extends State<LoanFinderLayout> {
           AppSize.h8,
         ),
         child: AppButton(
-          text: widget.nextButtonText ?? 'Continue',
+          text: widget.nextButtonText ?? context.l10n.onboarding1Continue,
           isLoading: widget.isLoading,
           onPressed: widget.onNextPressed,
           suffixIcon:   Icon(
@@ -296,7 +296,7 @@ class _StepCounter extends StatelessWidget {
     final textColors = context.themeTextColors;
 
     return Text(
-      '${stepIndex + 1} of ${totalSteps}',
+      context.l10n.loanFinderStepOf(stepIndex + 1, totalSteps),
        style: context.textTheme.titleMedium?.copyWith(
         color: textColors.textColor,
         fontSize: AppSize.sp12,

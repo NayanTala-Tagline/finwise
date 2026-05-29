@@ -24,8 +24,6 @@ class FdCalculatorSheet extends StatefulWidget {
 }
 
 class _FdCalculatorSheetState extends State<FdCalculatorSheet> {
-  static const List<String> _tenureUnits = ['Month', 'Year'];
-
   InlineAdManager? _inlineAd;
 
   @override
@@ -75,8 +73,8 @@ class _FdCalculatorSheetState extends State<FdCalculatorSheet> {
     final provider = context.read<FixedDepositProvider>();
     if (!provider.isInputValid) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter valid values greater than zero.'),
+        SnackBar(
+          content: Text(context.l10n.fdCalculatorValidation),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -95,14 +93,16 @@ class _FdCalculatorSheetState extends State<FdCalculatorSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final provider = context.watch<FixedDepositProvider>();
     final sym = context.watch<CurrencyProvider>().symbol;
     final dateLabel = DateFormat('dd/MM/yyyy').format(provider.startDate);
+    final tenureUnits = [l10n.compareCardMonth, l10n.compareCardYear];
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
       appBar: CommonAppBar(
-        titleText: 'FD Calculator',
+        titleText: l10n.homeFdCalculator,
         onBackPress: () => Navigator.of(context).pop(),
       ),
       body: Column(
@@ -114,12 +114,10 @@ class _FdCalculatorSheetState extends State<FdCalculatorSheet> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   SizedBox(height: AppSize.h24),
-
-                  // Investment Amount
                   AppTextFormField(
-                    title: 'Investment Amount',
+                    title: l10n.fdCalculatorInvestmentAmount,
                     controller: provider.amountController,
-                    hintText: 'Enter investment amount',
+                    hintText: l10n.fdCalculatorInvestmentAmountHint,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
                     onChanged: (_) {},
@@ -130,12 +128,10 @@ class _FdCalculatorSheetState extends State<FdCalculatorSheet> {
                     suffixIconConstraints: BoxConstraints(minWidth: AppSize.w30, minHeight: 0),
                   ),
                   SizedBox(height: AppSize.h20),
-
-                  // Interest Rate
                   AppTextFormField(
-                    title: 'Interest Rate',
+                    title: l10n.fdCalculatorInterestRate,
                     controller: provider.rateController,
-                    hintText: 'Enter interest rate',
+                    hintText: l10n.fdCalculatorInterestRateHint,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
                     onChanged: (_) {},
@@ -146,14 +142,10 @@ class _FdCalculatorSheetState extends State<FdCalculatorSheet> {
                     suffixIconConstraints: BoxConstraints(minWidth: AppSize.w30, minHeight: 0),
                   ),
                   SizedBox(height: AppSize.h20),
-
-                  // Tenure
-                  _TenureRow(tenureUnits: _tenureUnits, provider: provider),
+                  _TenureRow(tenureUnits: tenureUnits, provider: provider),
                   SizedBox(height: AppSize.h20),
-
-                  // Start Date
                   AppTextFormField(
-                    title: 'Start Date',
+                    title: l10n.fdCalculatorStartDate,
                     controller: TextEditingController(text: dateLabel),
                     hintText: dateLabel,
                     readOnly: true,
@@ -173,8 +165,6 @@ class _FdCalculatorSheetState extends State<FdCalculatorSheet> {
             ),
           ),
           AdSlot(ad: _inlineAd, safeAreaBottom: false),
-
-          // ── Bottom Button ────────────────────────────────────────────────────
           Container(
             decoration: const BoxDecoration(
               color: Colors.white,
@@ -187,7 +177,7 @@ class _FdCalculatorSheetState extends State<FdCalculatorSheet> {
               child: Padding(
                 padding: EdgeInsets.fromLTRB(AppSize.w16, AppSize.h8, AppSize.w16, AppSize.h0),
                 child: AppButton(
-                  text: 'Calculate',
+                  text: l10n.fdCalculateButton,
                   borderRadius: AppSize.r50,
                   suffixIcon: const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 18),
                   onPressed: () => _calculate(context),
@@ -215,7 +205,7 @@ class _TenureRow extends StatelessWidget {
         Padding(
           padding: EdgeInsets.only(left: AppSize.w6),
           child: Text(
-            'Tenure',
+            context.l10n.fdCalculatorTenure,
             style: context.textTheme.titleSmall?.copyWith(
               fontSize: AppSize.sp17,
               overflow: TextOverflow.ellipsis,
@@ -228,13 +218,13 @@ class _TenureRow extends StatelessWidget {
             Expanded(
               child: AppTextFormField(
                 controller: provider.tenureController,
-                hintText: 'Duration',
+                hintText: context.l10n.fdCalculatorDurationHint,
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))],
                 onChanged: (_) {},
               ),
             ),
-             SizedBox(
+            SizedBox(
               width: AppSize.w130,
               child: AppTextFormField(
                 dropdownItems: tenureUnits,

@@ -105,7 +105,7 @@ class _LoanFinderAmountSectionState extends State<LoanFinderAmountSection> {
         ),
         SizedBox(height: AppSize.h8),
         Text(
-          widget.amountLabel ?? 'Loan amount',
+          widget.amountLabel ?? context.l10n.loanAmountLabel,
           style: context.textTheme.bodyMedium?.copyWith(
             color: textColors.descriptionColor,
             fontSize: AppSize.sp14,
@@ -136,7 +136,7 @@ class _LoanFinderAmountSectionState extends State<LoanFinderAmountSection> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Loan amount',
+                    context.l10n.loanAmountLabel,
                     style: context.textTheme.titleSmall?.copyWith(
                       color: textColors.textColor,
                       fontSize: AppSize.sp15,

@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 
 import '../../extension/ext_context.dart';
 import '../../gen/assets.gen.dart';
+import '../../utils/anaytics_manager.dart';
 import '../../utils/app_size.dart';
 import '../../utils/navigation_helper.dart';
 import '../../widgets/app_button.dart';
@@ -44,45 +45,6 @@ class _FdDetailViewState extends State<_FdDetailView> {
 
   InlineAdManager? _inlineAd;
 
-  static const _features = [
-    (
-      icon: 'assets/personal_loan_icons/ic_secure.svg',
-      title: 'Guaranteed Returns',
-      subtitle: 'Fixed interest rate for entire tenure',
-    ),
-    (
-      icon: 'assets/temperature_icons/ic_Help_center.svg',
-      title: 'Compound Interest',
-      subtitle: 'Quarterly compounding for higher returns',
-    ),
-    (
-      icon: 'assets/onboarding_icons/ic_currency.svg',
-      title: 'Premature Withdrawal',
-      subtitle: 'Partial or full withdrawal with minimal penalty',
-    ),
-    (
-      icon: 'assets/tips_advice_icons/ic_score.svg',
-      title: 'Tax Saving FD',
-      subtitle: 'Save up to ₹46,800 in taxes under 80C',
-    ),
-  ];
-
-  static const _useCases = [
-    'Build emergency fund with guaranteed returns',
-    'Save for specific goals like education or marriage',
-    'Park surplus funds for short-term',
-    'Tax-saving FD under Section 80C',
-    'Senior citizen higher interest rates',
-    'Ladder strategy for regular income',
-  ];
-
-  static const _steps = [
-    (title: 'Choose Amount & Tenure', subtitle: 'Decide deposit amount and lock-in period'),
-    (title: 'Select FD Type', subtitle: 'Regular FD or tax-saving FD (5-year lock-in)'),
-    (title: 'Open FD', subtitle: 'Book online or visit branch with KYC documents'),
-    (title: 'Receive Certificate', subtitle: 'Get FD receipt and start earning fixed returns'),
-  ];
-
   void _openCalculator(BuildContext context) {
     final provider = context.read<FixedDepositProvider>();
     NavigationHelper().navigateWithAdCheck(context, () {
@@ -111,6 +73,7 @@ class _FdDetailViewState extends State<_FdDetailView> {
   @override
   void initState() {
     super.initState();
+    AnalyticsManager.instance.logScreenView(screenName: 'fixed_deposit_screen');
     _loadInline();
   }
 
@@ -129,6 +92,46 @@ class _FdDetailViewState extends State<_FdDetailView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final features = [
+      (
+        icon: 'assets/personal_loan_icons/ic_secure.svg',
+        title: l10n.fdGuaranteedReturns,
+        subtitle: l10n.fdGuaranteedReturnsDesc,
+      ),
+      (
+        icon: 'assets/temperature_icons/ic_Help_center.svg',
+        title: l10n.fdCompoundInterest,
+        subtitle: l10n.fdCompoundInterestDesc,
+      ),
+      (
+        icon: 'assets/onboarding_icons/ic_currency.svg',
+        title: l10n.fdPrematureWithdrawal,
+        subtitle: l10n.fdPrematureWithdrawalDesc,
+      ),
+      (
+        icon: 'assets/tips_advice_icons/ic_score.svg',
+        title: l10n.fdTaxSaving,
+        subtitle: l10n.fdTaxSavingDesc,
+      ),
+    ];
+
+    final useCases = [
+      l10n.fdUseCaseEmergencyFund,
+      l10n.fdUseCaseSpecificGoals,
+      l10n.fdUseCaseSurplusFunds,
+      l10n.fdUseCaseTaxSaving,
+      l10n.fdUseCaseSeniorCitizen,
+      l10n.fdUseCaseLadderStrategy,
+    ];
+
+    final steps = [
+      (title: l10n.fdStep1Title, subtitle: l10n.fdStep1Subtitle),
+      (title: l10n.fdStep2Title, subtitle: l10n.fdStep2Subtitle),
+      (title: l10n.fdStep3Title, subtitle: l10n.fdStep3Subtitle),
+      (title: l10n.fdStep4Title, subtitle: l10n.fdStep4Subtitle),
+    ];
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
@@ -142,9 +145,6 @@ class _FdDetailViewState extends State<_FdDetailView> {
             // ── Header ──────────────────────────────────────────────────────
             AppSummaryBackground(
               gradientColors: const [_green, _greenDark],
-
-
-
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(AppSize.r24),
                 bottomRight: Radius.circular(AppSize.r24),
@@ -171,7 +171,7 @@ class _FdDetailViewState extends State<_FdDetailView> {
                       ),
                       SizedBox(height: AppSize.h16),
                       Text(
-                        'Fixed Deposit',
+                        l10n.fdTitle,
                         style: context.textTheme.titleLarge?.copyWith(
                           color: Colors.white,
                           fontSize: AppSize.sp26,
@@ -180,7 +180,7 @@ class _FdDetailViewState extends State<_FdDetailView> {
                       ),
                       SizedBox(height: AppSize.h6),
                       Text(
-                        'Grow your savings with guaranteed returns and flexible tenure options.',
+                        l10n.fdSubtitle,
                         style: context.textTheme.bodySmall?.copyWith(
                           color: Colors.white.withValues(alpha: 0.85),
                           fontSize: AppSize.sp13,
@@ -207,37 +207,30 @@ class _FdDetailViewState extends State<_FdDetailView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Key Features
                     _SectionHeader(
                       icon: Assets.personalLoanIcons.icInstantApproval.svg(width: AppSize.w20, height: AppSize.h20),
-                      title: 'Key Features',
+                      title: l10n.fdKeyFeatures,
                     ),
                     SizedBox(height: AppSize.h12),
-                    _FeaturesGrid(features: _features, accentColor: _green),
+                    _FeaturesGrid(features: features, accentColor: _green),
                     SizedBox(height: AppSize.h20),
-
-                    // Common Use Cases
                     _SectionHeader(
                       icon: Assets.homeIcons.icDocuments.svg(width: AppSize.w20, height: AppSize.h20),
-                      title: 'Common Use Cases',
+                      title: l10n.fdCommonUseCases,
                     ),
                     SizedBox(height: AppSize.h12),
-                    _UseCasesCard(useCases: _useCases),
+                    _UseCasesCard(useCases: useCases),
                     SizedBox(height: AppSize.h20),
-
-                    // Application Process
                     KeyedSubtree(
                       key: _stepsKey,
                       child: _SectionHeader(
                         icon: Assets.personalLoanIcons.icClock.svg(width: AppSize.w20, height: AppSize.h20),
-                        title: 'Application Process',
+                        title: l10n.fdApplicationProcess,
                       ),
                     ),
                     SizedBox(height: AppSize.h12),
-                    _StepsCard(steps: _steps, accentColor: _green),
+                    _StepsCard(steps: steps, accentColor: _green),
                     SizedBox(height: AppSize.h12),
-
-                    // Trust Badge
                     _TrustBadgeCard(accentColor: _green),
                     SizedBox(height: AppSize.h8),
                   ],
@@ -245,10 +238,7 @@ class _FdDetailViewState extends State<_FdDetailView> {
               ),
             ),
 
-            // ── Inline Ad ───────────────────────────────────────────────────
-
             AdSlot(ad: _inlineAd, safeAreaBottom: false),
-            // ── Bottom Buttons ───────────────────────────────────────────────
             Container(
               decoration: const BoxDecoration(
                 color: Colors.white,
@@ -268,14 +258,14 @@ class _FdDetailViewState extends State<_FdDetailView> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       AppButton(
-                        text: 'Calculate',
-                         suffixIcon:   Icon(Icons.arrow_forward_ios, color: Colors.white, size: AppSize.sp18),
+                        text: l10n.fdCalculateButton,
+                        suffixIcon: Icon(Icons.arrow_forward_ios, color: Colors.white, size: AppSize.sp18),
                         onPressed: () => _openCalculator(context),
                       ),
-                       AppButton(
-                        text: 'View Application Steps',
+                      AppButton(
+                        text: l10n.fdViewStepsButton,
                         isOutlined: true,
-                         onPressed: _scrollToSteps,
+                        onPressed: _scrollToSteps,
                       ),
                     ],
                   ),
@@ -426,9 +416,9 @@ class _UseCasesCard extends StatelessWidget {
         ],
       ),
       child: Column(
-        children: useCases.map((item) {
+        children: useCases.asMap().entries.map((entry) {
           return Padding(
-            padding: EdgeInsets.only(bottom: item != useCases.last ? AppSize.h12 : 0),
+            padding: EdgeInsets.only(bottom: entry.key < useCases.length - 1 ? AppSize.h12 : 0),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -443,7 +433,7 @@ class _UseCasesCard extends StatelessWidget {
                 SizedBox(width: AppSize.w10),
                 Expanded(
                   child: Text(
-                    item,
+                    entry.value,
                     style: context.textTheme.bodyMedium?.copyWith(fontSize: AppSize.sp14),
                   ),
                 ),
@@ -566,12 +556,12 @@ class _TrustBadgeCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Secure & Trusted',
+                  context.l10n.fdSecureTrusted,
                   style: context.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 SizedBox(height: AppSize.h4),
                 Text(
-                  'Your data is protected with bank-level encryption. We never share your information without consent.',
+                  context.l10n.fdSecureTrustedDesc,
                   style: context.textTheme.bodySmall?.copyWith(
                     fontSize: AppSize.sp12,
                     color: context.themeTextColors.descriptionColor,

@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../../extension/ext_context.dart';
 import '../../gen/assets.gen.dart';
+import '../../utils/anaytics_manager.dart';
 import '../../utils/app_size.dart';
 import '../../utils/navigation_helper.dart';
 import '../../utils/remote_config.dart';
@@ -46,48 +47,11 @@ class _RdDetailViewState extends State<_RdDetailView> {
   // static const Color _green = Color(0xFF059669);
   // static const Color _greenDark = Color(0xFF047857);
 
-  static const _features = [
-    (
-      icon: 'assets/personal_loan_icons/ic_secure.svg',
-      title: 'Flexible Monthly Deposit',
-      subtitle: 'Deposit fixed amount every month',
-    ),
-    (
-      icon: 'assets/temperature_icons/ic_Help_center.svg',
-      title: 'Higher Interest',
-      subtitle: 'Better returns than regular savings account',
-    ),
-    (
-      icon: 'assets/tips_advice_icons/ic_calculate.svg',
-      title: 'Auto-Debit',
-      subtitle: 'Set up automatic monthly deductions',
-    ),
-    (
-      icon: 'assets/tips_advice_icons/ic_score.svg',
-      title: 'Disciplined Savings',
-      subtitle: 'Build corpus through regular contributions',
-    ),
-  ];
-
-  static const _useCases = [
-    'Build corpus for wedding or celebration',
-    'Save for down payment on car or home',
-    'Create emergency fund systematically',
-    'Child education planning',
-    'Vacation and travel fund',
-    'Retirement savings supplement',
-  ];
-
-  static const _steps = [
-    (title: 'Select Monthly Amount', subtitle: 'Choose comfortable monthly installment and tenure'),
-    (title: 'Open RD Account', subtitle: 'Complete KYC and link savings account for auto-debit'),
-    (title: 'Regular Deposits', subtitle: 'Amount auto-debited monthly from linked account'),
-    (title: 'Maturity Payout', subtitle: 'Receive corpus with accumulated interest'),
-  ];
 
   @override
   void initState() {
     super.initState();
+    AnalyticsManager.instance.logScreenView(screenName: 'recurring_deposit_screen');
     _loadInline();
   }
 
@@ -131,6 +95,26 @@ class _RdDetailViewState extends State<_RdDetailView> {
 
   @override
   Widget build(BuildContext context) {
+    final features = [
+      (icon: 'assets/personal_loan_icons/ic_secure.svg', title: context.l10n.rdFlexibleDeposit, subtitle: context.l10n.rdFlexibleDepositDesc),
+      (icon: 'assets/temperature_icons/ic_Help_center.svg', title: context.l10n.rdHigherInterest, subtitle: context.l10n.rdHigherInterestDesc),
+      (icon: 'assets/tips_advice_icons/ic_calculate.svg', title: context.l10n.rdAutoDebit, subtitle: context.l10n.rdAutoDebitDesc),
+      (icon: 'assets/tips_advice_icons/ic_score.svg', title: context.l10n.rdDisciplinedSavings, subtitle: context.l10n.rdDisciplinedSavingsDesc),
+    ];
+    final useCases = [
+      context.l10n.rdUseCaseWedding,
+      context.l10n.rdUseCaseDownPayment,
+      context.l10n.rdUseCaseEmergencyFund,
+      context.l10n.rdUseCaseChildEducation,
+      context.l10n.rdUseCaseVacation,
+      context.l10n.rdUseCaseRetirement,
+    ];
+    final steps = [
+      (title: context.l10n.rdStep1Title, subtitle: context.l10n.rdStep1Subtitle),
+      (title: context.l10n.rdStep2Title, subtitle: context.l10n.rdStep2Subtitle),
+      (title: context.l10n.rdStep3Title, subtitle: context.l10n.rdStep3Subtitle),
+      (title: context.l10n.rdStep4Title, subtitle: context.l10n.rdStep4Subtitle),
+    ];
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
@@ -170,7 +154,7 @@ class _RdDetailViewState extends State<_RdDetailView> {
                       ),
                       SizedBox(height: AppSize.h16),
                       Text(
-                        'Recurring Deposit',
+                        context.l10n.rdTitle,
                         style: context.textTheme.titleLarge?.copyWith(
                           color: Colors.white,
                           fontSize: AppSize.sp26,
@@ -179,7 +163,7 @@ class _RdDetailViewState extends State<_RdDetailView> {
                       ),
                       SizedBox(height: AppSize.h6),
                       Text(
-                        'Build your savings systematically with fixed monthly deposits and guaranteed returns.',
+                        context.l10n.rdSubtitle,
                         style: context.textTheme.bodySmall?.copyWith(
                           color: Colors.white.withValues(alpha: 0.85),
                           fontSize: AppSize.sp13,
@@ -209,19 +193,19 @@ class _RdDetailViewState extends State<_RdDetailView> {
                     // Key Features
                     _SectionHeader(
                       icon: Assets.personalLoanIcons.icInstantApproval.svg(width: AppSize.w20, height: AppSize.h20),
-                      title: 'Key Features',
+                      title: context.l10n.fdKeyFeatures,
                     ),
                     SizedBox(height: AppSize.h12),
-                    _FeaturesGrid(features: _features, accentColor: _green),
+                    _FeaturesGrid(features: features, accentColor: _green),
                     SizedBox(height: AppSize.h20),
 
                     // Common Use Cases
                     _SectionHeader(
                       icon: Assets.homeIcons.icDocuments.svg(width: AppSize.w20, height: AppSize.h20),
-                      title: 'Common Use Cases',
+                      title: context.l10n.fdCommonUseCases,
                     ),
                     SizedBox(height: AppSize.h12),
-                    _UseCasesCard(useCases: _useCases),
+                    _UseCasesCard(useCases: useCases),
                     SizedBox(height: AppSize.h20),
 
                     // Application Process
@@ -229,11 +213,11 @@ class _RdDetailViewState extends State<_RdDetailView> {
                       key: _stepsKey,
                       child: _SectionHeader(
                         icon: Assets.personalLoanIcons.icClock.svg(width: AppSize.w20, height: AppSize.h20),
-                        title: 'Application Process',
+                        title: context.l10n.fdApplicationProcess,
                       ),
                     ),
                     SizedBox(height: AppSize.h12),
-                    _StepsCard(steps: _steps, accentColor: _green),
+                    _StepsCard(steps: steps, accentColor: _green),
                     SizedBox(height: AppSize.h12),
 
                     // Trust Badge
@@ -263,12 +247,12 @@ class _RdDetailViewState extends State<_RdDetailView> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       AppButton(
-                        text: 'Calculate',
+                        text: context.l10n.fdCalculateButton,
                         suffixIcon: Icon(Icons.arrow_forward_ios, color: Colors.white, size: AppSize.sp18),
                         onPressed: () => _openCalculator(context),
                       ),
                       AppButton(
-                        text: 'View Application Steps',
+                        text: context.l10n.fdViewStepsButton,
                         isOutlined: true,
                         onPressed: _scrollToSteps,
                       ),
@@ -561,12 +545,12 @@ class _TrustBadgeCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Secure & Trusted',
+                  context.l10n.fdSecureTrusted,
                   style: context.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 SizedBox(height: AppSize.h4),
                 Text(
-                  'Your data is protected with bank-level encryption. We never share your information without consent.',
+                  context.l10n.fdSecureTrustedDesc,
                   style: context.textTheme.bodySmall?.copyWith(
                     fontSize: AppSize.sp12,
                     color: context.themeTextColors.descriptionColor,

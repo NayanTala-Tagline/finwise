@@ -13,31 +13,31 @@ import 'tool_item.dart';
 class ToolsGrid {
   const ToolsGrid._();
 
-  static List<ToolItem> _buildTools() => [
+  static List<ToolItem> _buildTools(BuildContext context) => [
         ToolItem(
-          title: 'Temperature Convert',
-          description: 'Convert between Celsius, Fahrenheit, and Kelvin instantly',
+          title: context.l10n.toolsTemperatureConvert,
+          description: context.l10n.toolsTemperatureConvertDesc,
           icon: Assets.temperatureIcons.icTemperatureConvert,
           routeName: AppRoutes.temperatureConvert,
           iconBgColor: const Color(0xFFEF4444).withValues(alpha: 0.08),
         ),
         ToolItem(
-          title: 'Mass Convert',
-          description: 'Convert kilograms, pounds, ounces, and grams effortlessly',
+          title: context.l10n.toolsMassConvert,
+          description: context.l10n.toolsMassConvertDesc,
           icon: Assets.temperatureIcons.icMassConvert,
           routeName: AppRoutes.massConvert,
           iconBgColor: const Color(0xFF8B5CF6).withValues(alpha: 0.08),
         ),
         ToolItem(
-          title: 'Speed Convert',
-          description: 'Switch between km/h, mph, m/s, and knots with ease',
+          title: context.l10n.toolsSpeedConvert,
+          description: context.l10n.toolsSpeedConvertDesc,
           icon: Assets.temperatureIcons.icSpeedConvert,
           routeName: AppRoutes.speedConvert,
           iconBgColor: const Color(0xFF06B6D4).withValues(alpha: 0.08),
         ),
         ToolItem(
-          title: 'Length Convert',
-          description: 'Convert meters, feet, inches, and miles accurately',
+          title: context.l10n.toolsLengthConvert,
+          description: context.l10n.toolsLengthConvertDesc,
           icon: Assets.temperatureIcons.icLengthConvert,
           routeName: AppRoutes.lengthConvert,
           iconBgColor: const Color(0xFF10B981).withValues(alpha: 0.08),
@@ -45,7 +45,7 @@ class ToolsGrid {
       ];
 
   static Widget build(BuildContext context) {
-    final tools = _buildTools();
+    final tools = _buildTools(context);
     return Padding(
       padding: EdgeInsets.fromLTRB(
         AppSize.w16,
@@ -125,7 +125,7 @@ class _WhyUseCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Why Use Our Converters?',
+                  context.l10n.toolsWhyUseConverters,
                   style: context.textTheme.titleMedium?.copyWith(
                     fontSize: AppSize.sp14,
                     fontWeight: FontWeight.w600,
@@ -133,7 +133,7 @@ class _WhyUseCard extends StatelessWidget {
                 ),
                 SizedBox(height: AppSize.h4),
                 Text(
-                  'Instant, accurate unit conversions with a clean interface. No ads, no clutter—just the conversion you need.',
+                  context.l10n.toolsWhyConvertersDesc,
                   style: context.textTheme.bodyLarge?.copyWith(
                     fontSize: AppSize.sp12,
                     color: context.themeTextColors.descriptionColor,
@@ -157,7 +157,7 @@ class _SectionHeading extends StatelessWidget {
     return Row(
       children: [
         Text(
-          'Conversion Tools',
+          context.l10n.toolsConversionTools,
           style: context.textTheme.titleLarge?.copyWith(
              fontSize: AppSize.sp17,
           ),
@@ -173,7 +173,7 @@ class _SectionHeading extends StatelessWidget {
             borderRadius: BorderRadius.circular(AppSize.r5),
           ),
           child: Text(
-            '$count Tools',
+            context.l10n.toolsCountBadge(count),
             style: context.textTheme.bodyLarge?.copyWith(
               fontSize: AppSize.sp12,
               fontWeight: FontWeight.w500,
@@ -187,15 +187,14 @@ class _SectionHeading extends StatelessWidget {
 }
 
 class _HowToUseCard extends StatelessWidget {
-  static const _steps = [
-    'Tap any converter to open',
-    'Enter value in any unit field',
-    'See instant conversion results',
-    'Swap units with one tap',
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final steps = [
+      context.l10n.toolsHowToUseStep1,
+      context.l10n.toolsHowToUseStep2,
+      context.l10n.toolsHowToUseStep3,
+      context.l10n.toolsHowToUseStep4,
+    ];
     final colors = context.themeColors;
     return Container(
       padding: EdgeInsets.all(AppSize.w16),
@@ -214,14 +213,14 @@ class _HowToUseCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'How to Use',
+            context.l10n.toolsHowToUse,
             style: context.textTheme.titleMedium?.copyWith(
               fontSize: AppSize.sp15,
              ),
           ),
           SizedBox(height: AppSize.h14),
           ...List.generate(
-            _steps.length,
+            steps.length,
             (i) => Row(
               children: [
                 Container(
@@ -242,7 +241,7 @@ class _HowToUseCard extends StatelessWidget {
                 ),
                 SizedBox(width: AppSize.w8),
                 Text(
-                  _steps[i],
+                  steps[i],
                   style: context.textTheme.titleSmall?.copyWith(
                     fontSize: AppSize.sp13,
                     color: context.themeTextColors.descriptionColor,

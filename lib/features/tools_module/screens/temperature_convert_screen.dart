@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../extension/ext_context.dart';
+import '../../../utils/anaytics_manager.dart';
 import '../../../utils/app_size.dart';
 import '../../../utils/navigation_helper.dart';
 import '../../../utils/remote_config.dart';
@@ -72,15 +73,6 @@ class _TemperatureConvertScreenState extends State<TemperatureConvertScreen> {
     return v.toStringAsFixed(2).replaceFirst(RegExp(r'\.?0+$'), '');
   }
 
-  (String label, Color color) _comfort(double celsius) {
-    if (celsius < 0) return ('Freezing', const Color(0xFF3B82F6));
-    if (celsius < 10) return ('Cold', const Color(0xFF60A5FA));
-    if (celsius < 18) return ('Cool', const Color(0xFF06B6D4));
-    if (celsius < 24) return ('Comfortable', const Color(0xFF10B981));
-    if (celsius < 32) return ('Warm', const Color(0xFFF59E0B));
-    return ('Hot', const Color(0xFFEF4444));
-  }
-
   // ── Actions ────────────────────────────────────────────────────────────────
 
   void _convert2() {
@@ -88,7 +80,7 @@ class _TemperatureConvertScreenState extends State<TemperatureConvertScreen> {
     final raw = double.tryParse(_controller.text.trim());
     if (raw == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid temperature value')),
+        SnackBar(content: Text(context.l10n.temperatureValidation)),
       );
       return;
     }
@@ -122,6 +114,7 @@ class _TemperatureConvertScreenState extends State<TemperatureConvertScreen> {
   @override
   void initState() {
     super.initState();
+    AnalyticsManager.instance.logScreenView(screenName: 'temperature_convert_screen');
     _loadInline();
   }
 
@@ -171,7 +164,7 @@ class _TemperatureConvertScreenState extends State<TemperatureConvertScreen> {
                     _InputCard(controller: _controller),
                     SizedBox(height: AppSize.h14),
                     _UnitSection(
-                      label: 'From Unit',
+                      label: context.l10n.converterFromUnit,
                       selected: _fromUnit,
                       units: _units,
                       onSelect: (u) => setState(() {
@@ -185,7 +178,7 @@ class _TemperatureConvertScreenState extends State<TemperatureConvertScreen> {
                     ),
                     SizedBox(height: AppSize.h12),
                     _UnitSection(
-                      label: 'To Unit',
+                      label: context.l10n.converterToUnit,
                       selected: _toUnit,
                       units: _units,
                       onSelect: (u) => setState(() {
@@ -210,7 +203,6 @@ class _TemperatureConvertScreenState extends State<TemperatureConvertScreen> {
                           result: _result!,
                           celsius: _toCelsius(_inputValue!, _fromUnit),
                           fmt: _fmt,
-                          comfort: _comfort,
                         ),
                       ),
                     ],
@@ -245,7 +237,7 @@ class _TemperatureConvertScreenState extends State<TemperatureConvertScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   AppButton(
-                    text: 'Convert',
+                    text: context.l10n.converterButton,
                     suffixIcon: Icon(
                       Icons.arrow_forward_ios,
                       color: Colors.white,
@@ -253,7 +245,7 @@ class _TemperatureConvertScreenState extends State<TemperatureConvertScreen> {
                     ),
                     onPressed: _convert2,
                   ),
-                  AppButton(text: 'Reset', isOutlined: true, onPressed: _reset),
+                  AppButton(text: context.l10n.fdReset, isOutlined: true, onPressed: _reset),
                 ],
               ),
             ),
@@ -293,7 +285,7 @@ class _TemperatureConvertScreenState extends State<TemperatureConvertScreen> {
               ),
               SizedBox(height: AppSize.h14),
               Text(
-                'Temperature Converter',
+                context.l10n.temperatureConverterTitle,
                 style: context.textTheme.titleLarge?.copyWith(
                   fontSize: AppSize.sp24,
                   fontWeight: FontWeight.w700,
@@ -302,7 +294,7 @@ class _TemperatureConvertScreenState extends State<TemperatureConvertScreen> {
               ),
               SizedBox(height: AppSize.h4),
               Text(
-                'Instant temperature unit conversion',
+                context.l10n.temperatureConverterSubtitle,
                 style: context.textTheme.bodySmall?.copyWith(
                   fontSize: AppSize.sp13,
                   color: Colors.white.withValues(alpha: 0.85),
@@ -329,7 +321,7 @@ class _InputCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Temperature Value',
+          context.l10n.temperatureValueLabel,
           style: context.textTheme.titleMedium?.copyWith(
             fontSize: AppSize.sp14,
             fontWeight: FontWeight.w600,
@@ -360,7 +352,7 @@ class _InputCard extends StatelessWidget {
         ),
         SizedBox(height: AppSize.h5),
         Text(
-          'Enter any temperature value to convert',
+          context.l10n.temperatureValueHint,
           style: context.textTheme.bodySmall?.copyWith(
             fontSize: AppSize.sp12,
             color: context.themeTextColors.descriptionColor,
@@ -406,7 +398,7 @@ class _UnitSection extends StatelessWidget {
               onTap: onClear,
               behavior: HitTestBehavior.opaque,
               child: Text(
-                'Clear',
+                context.l10n.converterClear,
                 style: context.textTheme.titleMedium?.copyWith(
                   fontSize: AppSize.sp14,
                   color: context.themeColors.primary,
@@ -510,7 +502,7 @@ class _ConversionFormulasCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Conversion Formulas',
+            context.l10n.temperatureConversionFormulas,
             style: context.textTheme.titleMedium?.copyWith(
               fontSize: AppSize.sp14,
               fontWeight: FontWeight.w600,
@@ -573,7 +565,6 @@ class _ResultCard extends StatelessWidget {
     required this.result,
     required this.celsius,
     required this.fmt,
-    required this.comfort,
   });
 
   final double inputValue;
@@ -582,11 +573,19 @@ class _ResultCard extends StatelessWidget {
   final double result;
   final double celsius;
   final String Function(double) fmt;
-  final (String, Color) Function(double) comfort;
+
+  (String, Color) _comfortOf(BuildContext context) {
+    if (celsius < 0) return (context.l10n.temperatureComfortFreezing, const Color(0xFF3B82F6));
+    if (celsius < 10) return (context.l10n.temperatureComfortCold, const Color(0xFF60A5FA));
+    if (celsius < 18) return (context.l10n.temperatureComfortCool, const Color(0xFF06B6D4));
+    if (celsius < 24) return (context.l10n.temperatureComfortComfortable, const Color(0xFF10B981));
+    if (celsius < 32) return (context.l10n.temperatureComfortWarm, const Color(0xFFF59E0B));
+    return (context.l10n.temperatureComfortHot, const Color(0xFFEF4444));
+  }
 
   @override
   Widget build(BuildContext context) {
-    final (comfortLabel, comfortColor) = comfort(celsius);
+    final (comfortLabel, comfortColor) = _comfortOf(context);
 
     return Column(
       children: [
@@ -659,7 +658,7 @@ class _ResultCard extends StatelessWidget {
                     Column(
                       children: [
                         Text(
-                          'From',
+                          context.l10n.converterFromLabel,
                           style: context.textTheme.titleMedium?.copyWith(
                             color: Colors.white.withValues(alpha: 0.7),
                             fontSize: AppSize.sp12,
@@ -687,7 +686,7 @@ class _ResultCard extends StatelessWidget {
                     Column(
                       children: [
                         Text(
-                          'To',
+                          context.l10n.converterToLabel,
                           style: context.textTheme.titleMedium?.copyWith(
                             color: Colors.white.withValues(alpha: 0.7),
                             fontSize: AppSize.sp12,
@@ -730,7 +729,7 @@ class _ResultCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: _MiniValueCard(
-                      label: 'Source',
+                      label: context.l10n.converterSourceLabel,
                       value: fmt(inputValue),
                       unit: fromUnit,
                     ),
@@ -738,7 +737,7 @@ class _ResultCard extends StatelessWidget {
                   SizedBox(width: AppSize.w12),
                   Expanded(
                     child: _MiniValueCard(
-                      label: 'Converted',
+                      label: context.l10n.converterConvertedLabel,
                       value: fmt(result),
                       unit: toUnit,
                       isHighlighted: true,
@@ -790,13 +789,13 @@ class _MiniValueCard extends StatelessWidget {
         vertical: AppSize.h18,
       ),
       decoration: BoxDecoration(
-        color: label == "Source"
-            ? Color(0xffF1F5F9)
-            : Color(0xff059669).withValues(alpha: 0.1),
+        color: !isHighlighted
+            ? const Color(0xffF1F5F9)
+            : const Color(0xff059669).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AppSize.r20),
-        border: label == "Source"
+        border: !isHighlighted
             ? null
-            : Border.all(color: Color(0xff059669).withValues(alpha: 0.2)),
+            : Border.all(color: const Color(0xff059669).withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -845,7 +844,7 @@ class _QuickReferenceCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Quick Reference',
+            context.l10n.temperatureQuickReference,
             style: context.textTheme.titleMedium?.copyWith(
               fontSize: AppSize.sp14,
             ),

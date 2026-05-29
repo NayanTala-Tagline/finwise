@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../../extension/ext_context.dart';
 import '../../routes/app_router.dart';
+import '../../utils/anaytics_manager.dart';
 import '../../utils/app_size.dart';
 import '../../widgets/ad_slot.dart';
 import '../../widgets/rate_slider.dart';
@@ -27,6 +28,7 @@ class _Step3CreditLimitsScreenState extends State<Step3CreditLimitsScreen> {
   @override
   void initState() {
     super.initState();
+    AnalyticsManager.instance.logScreenView(screenName: 'credit_score_step3_screen');
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       context.read<CreditScoreAdProvider>().preloadAfterStep(2);
@@ -41,14 +43,15 @@ class _Step3CreditLimitsScreenState extends State<Step3CreditLimitsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final provider = context.watch<CreditScoreEstimatorProvider>();
     final adProvider = context.watch<CreditScoreAdProvider>();
     final limit = provider.totalCreditLimit;
 
     return CreditScoreLayout(
       stepIndex: 2,
-      title: 'Credit Limits',
-      subtitle: 'Add up all credit limits on your open credit cards',
+      title: l10n.creditScoreStep3Title,
+      subtitle: l10n.creditScoreStep3Question,
       isLoading: adProvider.busy,
       adSlot: AdSlot(ad: widget.inlineAd),
       onNextPressed: () => context.read<CreditScoreAdProvider>().next(context, AppRoutes.creditScoreStep4),
@@ -71,7 +74,7 @@ class _Step3CreditLimitsScreenState extends State<Step3CreditLimitsScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Total Credit Limit',
+                        l10n.creditScoreStep3TotalLimit,
                         style: context.textTheme.titleMedium?.copyWith(
                           fontSize: AppSize.sp15,
                         ),
@@ -113,7 +116,7 @@ class _Step3CreditLimitsScreenState extends State<Step3CreditLimitsScreen> {
                   SizedBox(width: AppSize.w8),
                   Expanded(
                     child: Text(
-                      'Include all personal credit cards. Don\'t include business cards or authorized user accounts.',
+                      l10n.creditScoreStep3CardTip,
                       style: context.textTheme.bodySmall?.copyWith(
                         fontSize: AppSize.sp12,
                         color: context.themeTextColors.descriptionColor,

@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 
 import '../../extension/ext_context.dart';
 import '../../routes/app_router.dart';
+import '../../utils/anaytics_manager.dart';
 import '../../utils/app_size.dart';
 import '../../widgets/ad_slot.dart';
 import '../../widgets/app_textfield.dart';
@@ -30,6 +31,7 @@ class _Step4CurrentBalancesScreenState extends State<Step4CurrentBalancesScreen>
   @override
   void initState() {
     super.initState();
+    AnalyticsManager.instance.logScreenView(screenName: 'credit_score_step4_screen');
     final current = context.read<CreditScoreEstimatorProvider>().totalBalance;
     if (current > 0) _controller.text = current.toStringAsFixed(0);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -47,6 +49,7 @@ class _Step4CurrentBalancesScreenState extends State<Step4CurrentBalancesScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final provider = context.watch<CreditScoreEstimatorProvider>();
     final adProvider = context.watch<CreditScoreAdProvider>();
     final utilRate = provider.utilizationRate * 100;
@@ -54,8 +57,8 @@ class _Step4CurrentBalancesScreenState extends State<Step4CurrentBalancesScreen>
 
     return CreditScoreLayout(
       stepIndex: 3,
-      title: 'Current Balances',
-      subtitle: 'Add up all the most recent statement balances',
+      title: l10n.creditScoreStep4Title,
+      subtitle: l10n.creditScoreStep4Question,
       isLoading: adProvider.busy,
       adSlot: AdSlot(ad: widget.inlineAd),
       onNextPressed: () => context.read<CreditScoreAdProvider>().next(context, AppRoutes.creditScoreStep5),
@@ -65,7 +68,7 @@ class _Step4CurrentBalancesScreenState extends State<Step4CurrentBalancesScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AppTextFormField(
-              title: 'Total Balance',
+              title: l10n.creditScoreStep4TotalBalance,
               controller: _controller,
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -106,7 +109,7 @@ class _Step4CurrentBalancesScreenState extends State<Step4CurrentBalancesScreen>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Credit Utilization',
+                        l10n.tipsCreditFactor2Title,
                         style: context.textTheme.bodyMedium?.copyWith(
                           fontSize: AppSize.sp14,
                           fontWeight: FontWeight.w600,
@@ -136,7 +139,7 @@ class _Step4CurrentBalancesScreenState extends State<Step4CurrentBalancesScreen>
                   ),
                   SizedBox(height: AppSize.h10),
                   Text(
-                    'Aim for under 30% for best results',
+                    l10n.creditScoreStep4UtilizationTip,
                     style: context.textTheme.bodySmall?.copyWith(
                       fontSize: AppSize.sp12,
                       color: context.themeTextColors.descriptionColor,

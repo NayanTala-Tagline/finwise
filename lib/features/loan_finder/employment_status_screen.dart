@@ -52,7 +52,7 @@ class _EmploymentStatusScreenState extends State<EmploymentStatusScreen> {
         name: 'loan_finder_validation_failed',
         parameters: const {'step': 4, 'field': 'employment_status'},
       );
-      'Please select your employment status'.showErrorAlert();
+      context.l10n.employmentStatusValidation.showErrorAlert();
       return;
     }
     AnalyticsManager.instance.logEvent(
@@ -71,16 +71,16 @@ class _EmploymentStatusScreenState extends State<EmploymentStatusScreen> {
     final formProvider = context.watch<LoanFinderProvider>();
     final adProvider = context.watch<LoanFinderAdProvider>();
     final options = [
-      _Option(EmploymentStatus.salaried, 'Salaried', 'Regular monthly salary'),
-      _Option(EmploymentStatus.selfEmployed, 'Self-Employed', 'Own business income'),
-      _Option(EmploymentStatus.businessOwner, 'Business Owner',  'Company proprietor'),
-      _Option(EmploymentStatus.professional, 'Freelancer',  'Project-based work'),
-      _Option(EmploymentStatus.retired, 'Retired',  'Pension or savings'),
+      _Option(EmploymentStatus.salaried, l10n.employmentSalaried, l10n.employmentSalariedDesc),
+      _Option(EmploymentStatus.selfEmployed, l10n.employmentSelfEmployed, l10n.employmentSelfEmployedDesc),
+      _Option(EmploymentStatus.businessOwner, l10n.employmentBusinessOwner, l10n.employmentBusinessOwnerDesc),
+      _Option(EmploymentStatus.professional, l10n.employmentFreelancer, l10n.employmentFreelancerDesc),
+      _Option(EmploymentStatus.retired, l10n.employmentRetired, l10n.employmentRetiredDesc),
     ];
     return LoanFinderLayout(
       stepIndex: 3,
-      title: 'What is your employment status?',
-      subtitle: 'Select your current employment type',
+      title: l10n.employmentStatusTitle,
+      subtitle: l10n.employmentStatusSubtitle,
       isLoading: adProvider.busy,
       adSlot: AdSlot(ad: widget.inlineAd),
       onNextPressed: _next,

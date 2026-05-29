@@ -131,7 +131,7 @@ class _BottomNavPageState extends State<BottomNavPage> {
         DateTime.now().difference(_currentBackPressTime!) >
             const Duration(seconds: 2)) {
       _currentBackPressTime = DateTime.now();
-      'Press again to exit from app'
+      context.l10n.exitAppAlert
           .showInfoAlert(duration: const Duration(seconds: 2));
       AnalyticsManager.instance.logEvent(name: "app_exit_attempted");
     } else {

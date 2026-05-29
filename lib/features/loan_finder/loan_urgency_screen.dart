@@ -57,7 +57,7 @@ class _LoanUrgencyScreenState extends State<LoanUrgencyScreen> {
         name: 'loan_finder_validation_failed',
         parameters: const {'step': 7, 'field': 'urgency'},
       );
-      'Please select how urgently you need the loan'.showErrorAlert();
+      context.l10n.loanUrgencyValidation.showErrorAlert();
       return;
     }
     AnalyticsManager.instance.logEvent(
@@ -88,15 +88,15 @@ class _LoanUrgencyScreenState extends State<LoanUrgencyScreen> {
     final formProvider = context.watch<LoanFinderProvider>();
     final adProvider = context.watch<LoanFinderAdProvider>();
     final options = [
-      _Option(LoanUrgency.immediately, 'Immediately','Within a week'),
-      _Option(LoanUrgency.withinWeek, 'Soon','1-2 weeks'),
-      _Option(LoanUrgency.withinMonth, 'Within a month','Planning ahead'),
-      _Option(LoanUrgency.flexible, 'Flexible','No Rush'),
+      _Option(LoanUrgency.immediately, l10n.loanUrgencyImmediately, l10n.loanUrgencyImmediatelyDesc),
+      _Option(LoanUrgency.withinWeek, l10n.loanUrgencySoon, l10n.loanUrgencySoonDesc),
+      _Option(LoanUrgency.withinMonth, l10n.loanUrgencyWithinMonth, l10n.loanUrgencyPlanningAhead),
+      _Option(LoanUrgency.flexible, l10n.loanUrgencyFlexible, l10n.loanUrgencyNoRush),
     ];
     return LoanFinderLayout(
       stepIndex: 6,
-      title: 'How Urgently do you need the loan?',
-      subtitle: 'Select the timeframe',
+      title: l10n.loanUrgencyTitle,
+      subtitle: l10n.loanUrgencySubtitle,
       isLoading: adProvider.busy,
       adSlot: AdSlot(ad: widget.inlineAd),
       onNextPressed: _next,

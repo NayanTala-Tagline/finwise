@@ -46,7 +46,7 @@ class _Onboarding1ScreenState extends State<Onboarding1Screen> {
         builder: (context, provider, _) {
           return OnboardingLayout(
             stepIndex: 1,
-            buttonText: 'Continue',
+            buttonText: context.l10n.onboarding1Continue,
             isLoading: provider.busy,
             onButtonPressed: () {
               AnalyticsManager.instance.logEvent(
@@ -89,7 +89,7 @@ class _ExploreLoanTypesContent extends StatelessWidget {
           ),
           SizedBox(height: AppSize.h25),
           Text(
-            'Explore Loan Types',
+            context.l10n.onboarding1Title,
             style: context.textTheme.titleMedium?.copyWith(
               fontSize: AppSize.sp30,
             ),
@@ -97,7 +97,7 @@ class _ExploreLoanTypesContent extends StatelessWidget {
           ),
           SizedBox(height: AppSize.h8),
           Text(
-            'From home loans to education financing,\nwe help you find the perfect match',
+            context.l10n.onboarding1Subtitle,
             style: context.textTheme.bodyLarge?.copyWith(
               fontSize: AppSize.sp15,
               color: context.themeTextColors.descriptionColor,
@@ -116,31 +116,11 @@ class _LoanTypeGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loanTypes = [
-      _LoanType(
-        'Home Loan',
-        Assets.onboardingIcons.icHome.svg(),
-        const Color(0xFF3B82F6),
-      ),
-      _LoanType(
-        'Education',
-        Assets.onboardingIcons.icEducation.svg(),
-        const Color(0xFF10B981),
-      ),
-      _LoanType(
-        'Personal',
-        Assets.onboardingIcons.icPersonal.svg(),
-        const Color(0xFFEF4444),
-      ),
-      _LoanType(
-        'Vehicle Loan',
-        Assets.onboardingIcons.icVehicle.svg(),
-        const Color(0xFF10B981),
-      ),
-      _LoanType(
-        'Business',
-        Assets.onboardingIcons.icBusiness.svg(),
-        const Color(0xFFF59E0B),
-      ),
+      _LoanType(context.l10n.homeLoanHome, Assets.onboardingIcons.icHome.svg(), const Color(0xFF3B82F6)),
+      _LoanType(context.l10n.onboarding1Education, Assets.onboardingIcons.icEducation.svg(), const Color(0xFF10B981)),
+      _LoanType(context.l10n.onboarding1Personal, Assets.onboardingIcons.icPersonal.svg(), const Color(0xFFEF4444)),
+      _LoanType(context.l10n.onboarding1VehicleLoan, Assets.onboardingIcons.icVehicle.svg(), const Color(0xFF10B981)),
+      _LoanType(context.l10n.onboarding1Business, Assets.onboardingIcons.icBusiness.svg(), const Color(0xFFF59E0B)),
     ];
 
     return GridView.builder(

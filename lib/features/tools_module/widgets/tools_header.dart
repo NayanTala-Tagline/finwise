@@ -29,7 +29,7 @@ class ToolsHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Quick Utility Tools',
+                context.l10n.toolsHeaderTitle,
                 style: context.textTheme.titleMedium?.copyWith(
                   fontSize: AppSize.sp24,
                    color: Colors.white,
@@ -37,7 +37,7 @@ class ToolsHeader extends StatelessWidget {
               ),
               SizedBox(height: AppSize.h6),
               Text(
-                'Professional converters at your fingertips',
+                context.l10n.toolsHeaderSubtitle,
                 style: context.textTheme.bodySmall?.copyWith(
                   fontSize: AppSize.sp13,
                   color: Colors.white.withValues(alpha: 0.82),

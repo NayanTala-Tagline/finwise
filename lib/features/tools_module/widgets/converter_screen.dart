@@ -184,7 +184,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
               ),
               SizedBox(height: AppSize.h20),
               if (widget.showConvertTo) ...[
-                SectionTitle(title: widget.toLabel ?? 'Convert To'),
+                SectionTitle(title: widget.toLabel ?? context.l10n.converterConvertTo),
                 SizedBox(height: AppSize.h12),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: AppSize.w6),
@@ -197,7 +197,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
                 SizedBox(height: AppSize.h20),
               ],
               if (calculated) ...[
-                SectionTitle(key: _resultKey, title: 'Result'),
+                SectionTitle(key: _resultKey, title: context.l10n.fdResult),
                 SizedBox(height: AppSize.h12),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: AppSize.w6),
@@ -232,7 +232,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
                 spacing: AppSize.h8,
                 children: [
                   AppButton(
-                    text: 'Convert',
+                    text: context.l10n.converterButton,
                     textStyle: context.textTheme.bodyMedium?.copyWith(
                         fontSize: AppSize.sp14,
                         fontWeight: FontWeight.w500
@@ -246,7 +246,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
                           parameters: {'kind': widget.kind.name},
                         );
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Please enter a value greater than zero')),
+                          SnackBar(content: Text(context.l10n.converterValidation)),
                         );
                         return;
                       }
@@ -265,7 +265,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
                     },
                   ),
                   AppButton(
-                    text: 'Refresh',
+                    text: context.l10n.converterRefresh,
                     isOutlined: true,
                     textStyle: context.textTheme.bodyMedium?.copyWith(
                         fontSize: AppSize.sp16,

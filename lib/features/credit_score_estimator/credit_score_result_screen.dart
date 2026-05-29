@@ -9,7 +9,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../extension/ext_context.dart';
 import '../../routes/app_router.dart';
+import '../../utils/anaytics_manager.dart';
 import '../../utils/app_size.dart';
+import '../../utils/navigation_helper.dart';
 import '../../utils/remote_config.dart';
 import '../../widgets/ad_slot.dart';
 import '../../widgets/app_button.dart';
@@ -31,6 +33,7 @@ class _CreditScoreResultScreenState extends State<CreditScoreResultScreen> {
   @override
   void initState() {
     super.initState();
+    AnalyticsManager.instance.logScreenView(screenName: 'credit_score_result_screen');
     _loadAd();
   }
 
@@ -80,14 +83,14 @@ class _CreditScoreResultScreenState extends State<CreditScoreResultScreen> {
                 children: [
                   Expanded(
                     child: _ScoreStat(
-                      label: 'Utilization',
+                      label: context.l10n.creditScoreUtilization,
                       value: '${widget.result.utilization.toStringAsFixed(0)}%',
                     ),
                   ),
                   SizedBox(width: AppSize.w20),
                   Expanded(
                     child: _ScoreStat(
-                      label: 'Total Accounts',
+                      label: context.l10n.creditScoreTotalAccounts,
                       value: '${widget.result.totalAccounts}',
                     ),
                   ),
@@ -97,7 +100,7 @@ class _CreditScoreResultScreenState extends State<CreditScoreResultScreen> {
             SizedBox(height: AppSize.h16),
             _ScoreFactorsCard(result: widget.result).animate().fadeIn(delay: 150.ms, duration: 500.ms).slideY(begin: 0.2, end: 0, delay: 150.ms, duration: 600.ms, curve: Curves.easeOutCubic),
             SizedBox(height: AppSize.h16),
-             _FactorDistributionCard(result: widget.result).animate().fadeIn(delay: 300.ms, duration: 500.ms).slideY(begin: 0.2, end: 0, delay: 300.ms, duration: 600.ms, curve: Curves.easeOutCubic),
+            _FactorDistributionCard(result: widget.result).animate().fadeIn(delay: 300.ms, duration: 500.ms).slideY(begin: 0.2, end: 0, delay: 300.ms, duration: 600.ms, curve: Curves.easeOutCubic),
             SizedBox(height: AppSize.h16),
             _ImprovementTipsCard(result: widget.result).animate().fadeIn(delay: 420.ms, duration: 500.ms).slideY(begin: 0.2, end: 0, delay: 420.ms, duration: 600.ms, curve: Curves.easeOutCubic),
             SizedBox(height: AppSize.h12),
@@ -108,10 +111,13 @@ class _CreditScoreResultScreenState extends State<CreditScoreResultScreen> {
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          AdSlot(ad: _nativeAd,safeAreaBottom: false,),
+          AdSlot(ad: _nativeAd, safeAreaBottom: false),
           _BottomButtons(
-            onRecalculate: () => context.pop(),
-            onTips: () => context.push('/${AppRoutes.tipsAdvice}'),
+            onRecalculate: () => NavigationHelper().handleBackPress(context),
+            onTips: () => NavigationHelper().navigateWithAdCheck(
+              context,
+              () => context.push('/${AppRoutes.tipsAdvice}'),
+            ),
           ),
         ],
       ),
@@ -142,7 +148,7 @@ class _ResultAppBar extends StatelessWidget implements PreferredSizeWidget {
               Positioned(
                 left: AppSize.w12,
                 child: GestureDetector(
-                  onTap: () => context.pop(),
+                  onTap: () => NavigationHelper().handleBackPress(context),
                   behavior: HitTestBehavior.opaque,
                   child: Assets.personalLoanIcons.icBack.svg(
                     width: AppSize.w22,
@@ -152,7 +158,7 @@ class _ResultAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
               ),
               Text(
-                'Credit Score Estimator',
+                context.l10n.creditScoreEstimatorTitle,
                 style: context.textTheme.titleSmall?.copyWith(fontSize: AppSize.sp18),
               ),
             ],
@@ -173,11 +179,11 @@ class _ScoreCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppSummaryBackground(
       gradientColors: const [Color(0xFFF59E0B), Color(0xFFF59E0B)],
-      borderRadius: BorderRadius.only(topLeft: Radius.circular(AppSize.r26),topRight: Radius.circular(AppSize.r26)),
+      borderRadius: BorderRadius.only(topLeft: Radius.circular(AppSize.r26), topRight: Radius.circular(AppSize.r26)),
       useImage: true,
       imagePath: 'assets/images/splash_screen.png',
       imageOpacity: 0.8,
-      backgroundColor: Color(0xFFF59E0B),
+      backgroundColor: const Color(0xFFF59E0B),
       child: Padding(
         padding: EdgeInsets.all(AppSize.r20),
         child: Column(
@@ -192,41 +198,39 @@ class _ScoreCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(AppSize.r5),
                   ),
                   child: Text(
-                    'Estimated Credit Score',
+                    context.l10n.creditScoreEstimatedScore,
                     style: context.textTheme.titleMedium?.copyWith(
                       fontSize: AppSize.sp13,
                       color: Colors.white,
-                     ),
+                    ),
                   ),
                 ),
                 const Spacer(),
-                GestureDetector(onTap: () => context.pop(),child: Assets.personalLoanIcons.icRestart.svg(fit: BoxFit.contain))
-
-
+                GestureDetector(
+                  onTap: () => NavigationHelper().handleBackPress(context),
+                  child: Assets.personalLoanIcons.icRestart.svg(fit: BoxFit.contain),
+                ),
               ],
             ),
             SizedBox(height: AppSize.h12),
-
-                Text(
-                  '${result.score}',
-                  style: context.textTheme.titleLarge?.copyWith(
-                    fontSize: AppSize.sp60,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.white,
-                    height: 1,
-                  ),
-                ),
-
+            Text(
+              '${result.score}',
+              style: context.textTheme.titleLarge?.copyWith(
+                fontSize: AppSize.sp60,
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+                height: 1,
+              ),
+            ),
             Text(
               result.grade,
               style: context.textTheme.titleSmall?.copyWith(
                 fontSize: AppSize.sp18,
-                 color: Colors.white.withValues(alpha: 0.8),
+                color: Colors.white.withValues(alpha: 0.8),
               ),
             ),
             SizedBox(height: AppSize.h16),
             _ScoreProgressBar(score: result.score),
-
           ],
         ),
       ),
@@ -275,8 +279,6 @@ class _ScoreProgressBar extends StatelessWidget {
             ],
           ),
         ),
-
-
       ],
     );
   }
@@ -290,10 +292,10 @@ class _ScoreStat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: AppSize.w20,vertical: AppSize.h20),
+      padding: EdgeInsets.symmetric(horizontal: AppSize.w20, vertical: AppSize.h20),
       decoration: BoxDecoration(
-        color: Color(0xffF1F5F9),
-        borderRadius: BorderRadius.circular(AppSize.r24)
+        color: const Color(0xffF1F5F9),
+        borderRadius: BorderRadius.circular(AppSize.r24),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -304,9 +306,7 @@ class _ScoreStat extends StatelessWidget {
           ),
           Text(
             value,
-            style: context.textTheme.titleLarge?.copyWith(
-              fontSize: AppSize.sp30,
-             ),
+            style: context.textTheme.titleLarge?.copyWith(fontSize: AppSize.sp30),
           ),
         ],
       ),
@@ -322,12 +322,13 @@ class _ScoreFactorsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final factors = [
-      _FactorData('Payment History', 'High Impact', result.paymentHistoryScore, const Color(0xFF16A34A)),
-      _FactorData('Credit Utilization', 'High Impact', result.creditUtilizationScore, const Color(0xFF2563EB)),
-      _FactorData('Credit Age', 'Medium Impact', result.creditAgeScore, const Color(0xFF7C3AED)),
-      _FactorData('Account Mix', 'Medium Impact', result.accountMixScore, const Color(0xFFF59E0B)),
-      _FactorData('Credit Inquiries', 'Low Impact', result.creditInquiriesScore, const Color(0xFFDC2626)),
+      _FactorData(l10n.creditScoreStep1Title, l10n.tipsImpactHigh, result.paymentHistoryScore, const Color(0xFF16A34A)),
+      _FactorData(l10n.tipsCreditFactor2Title, l10n.tipsImpactHigh, result.creditUtilizationScore, const Color(0xFF2563EB)),
+      _FactorData(l10n.tipsCreditFactorAge, l10n.tipsImpactMedium, result.creditAgeScore, const Color(0xFF7C3AED)),
+      _FactorData(l10n.creditScoreStep2Title, l10n.tipsImpactMedium, result.accountMixScore, const Color(0xFFF59E0B)),
+      _FactorData(l10n.creditScoreStep5Title, l10n.tipsImpactLow, result.creditInquiriesScore, const Color(0xFFDC2626)),
     ];
 
     return Container(
@@ -349,7 +350,7 @@ class _ScoreFactorsCard extends StatelessWidget {
               ),
               SizedBox(width: AppSize.w8),
               Text(
-                'Score Factors',
+                l10n.creditScoreFactors,
                 style: context.textTheme.titleSmall?.copyWith(
                   fontSize: AppSize.sp16,
                   fontWeight: FontWeight.w700,
@@ -444,12 +445,13 @@ class _FactorDistributionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final segments = [
-      _DonutSegment('Payment History', result.paymentHistoryScore * 0.35, const Color(0xFF16A34A)),
-      _DonutSegment('Credit Utilization', result.creditUtilizationScore * 0.30, const Color(0xFF06B6D4)),
-      _DonutSegment('Credit Age', result.creditAgeScore * 0.15, const Color(0xFF7C3AED)),
-      _DonutSegment('Credit Inquiries', result.creditInquiriesScore * 0.10, const Color(0xFFDC2626)),
-      _DonutSegment('Account Mix', result.accountMixScore * 0.10, const Color(0xFFF59E0B)),
+      _DonutSegment(l10n.creditScoreStep1Title, result.paymentHistoryScore * 0.35, const Color(0xFF16A34A)),
+      _DonutSegment(l10n.tipsCreditFactor2Title, result.creditUtilizationScore * 0.30, const Color(0xFF06B6D4)),
+      _DonutSegment(l10n.tipsCreditFactorAge, result.creditAgeScore * 0.15, const Color(0xFF7C3AED)),
+      _DonutSegment(l10n.creditScoreStep5Title, result.creditInquiriesScore * 0.10, const Color(0xFFDC2626)),
+      _DonutSegment(l10n.creditScoreStep2Title, result.accountMixScore * 0.10, const Color(0xFFF59E0B)),
     ];
 
     return Container(
@@ -471,7 +473,7 @@ class _FactorDistributionCard extends StatelessWidget {
               ),
               SizedBox(width: AppSize.w8),
               Text(
-                'Factor Distribution',
+                l10n.creditScoreFactorDistribution,
                 style: context.textTheme.titleSmall?.copyWith(fontSize: AppSize.sp16, fontWeight: FontWeight.w700),
               ),
             ],
@@ -603,16 +605,17 @@ class _ImprovementTipsCard extends StatelessWidget {
   const _ImprovementTipsCard({required this.result});
   final CreditScoreResult result;
 
-  List<_TipData> _buildTips() {
+  List<_TipData> _buildTips(BuildContext context) {
+    final l10n = context.l10n;
     final tips = <_TipData>[];
 
     if (result.creditUtilizationScore < 0.8) {
       tips.add(_TipData(
         iconAsset: Assets.personalLoanIcons.icRightCurcle,
         iconColor: const Color(0xFFDC2626),
-        title: 'Reduce Credit Utilization',
-        description: 'Keep balances below 30% of your total credit limit',
-        badge: 'High Priority',
+        title: l10n.creditScoreTipReduceUtilization,
+        description: l10n.creditScoreTipReduceUtilizationDesc,
+        badge: l10n.creditScoreTipHighPriority,
         badgeColor: const Color(0xFF2563EB),
       ));
     }
@@ -620,9 +623,9 @@ class _ImprovementTipsCard extends StatelessWidget {
     tips.add(_TipData(
       iconAsset: Assets.personalLoanIcons.icRightCurcle,
       iconColor: const Color(0xFF0D9488),
-      title: 'Make On-Time Payments',
-      description: 'Payment history is the most important factor',
-      badge: 'Maintain',
+      title: l10n.creditScoreTipOnTimePayments,
+      description: l10n.creditScoreTipOnTimePaymentsDesc,
+      badge: l10n.creditScoreTipMaintain,
       badgeColor: const Color(0xFF2563EB),
     ));
 
@@ -630,9 +633,9 @@ class _ImprovementTipsCard extends StatelessWidget {
       tips.add(_TipData(
         iconAsset: Assets.personalLoanIcons.icRightCurcle,
         iconColor: const Color(0xFF16A34A),
-        title: 'Limit Credit Applications',
-        description: 'Too many inquiries can lower your score',
-        badge: 'Good',
+        title: l10n.creditScoreTipLimitApplications,
+        description: l10n.creditScoreTipLimitApplicationsDesc,
+        badge: l10n.creditScoreGood,
         badgeColor: const Color(0xFF16A34A),
       ));
     }
@@ -641,9 +644,9 @@ class _ImprovementTipsCard extends StatelessWidget {
       tips.add(_TipData(
         iconAsset: Assets.personalLoanIcons.icRightCurcle,
         iconColor: const Color(0xFF0284C7),
-        title: 'Diversify Account Types',
-        description: 'Mix of credit cards, loans, and mortgages helps',
-        badge: 'Consider',
+        title: l10n.creditScoreTipDiversify,
+        description: l10n.creditScoreTipDiversifyDesc,
+        badge: l10n.creditScoreTipConsider,
         badgeColor: const Color(0xFF1E40AF),
       ));
     }
@@ -653,7 +656,7 @@ class _ImprovementTipsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tips = _buildTips();
+    final tips = _buildTips(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -667,7 +670,7 @@ class _ImprovementTipsCard extends StatelessWidget {
             ),
             SizedBox(width: AppSize.w8),
             Text(
-              'Improvement Tips',
+              context.l10n.creditScoreImprovementTips,
               style: context.textTheme.titleSmall?.copyWith(fontSize: AppSize.sp16, fontWeight: FontWeight.w700),
             ),
           ],
@@ -789,7 +792,7 @@ class _DisclaimerText extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: AppSize.w4),
       child: Text(
-        'This is an estimated score based on the information you provided. Your actual credit score may vary. For your official credit report, contact authorized credit bureaus.',
+        context.l10n.creditScoreResultDisclaimer,
         textAlign: TextAlign.center,
         style: context.textTheme.bodySmall?.copyWith(
           fontSize: AppSize.sp11,
@@ -821,7 +824,7 @@ class _BottomButtons extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               AppButton(
-                text: 'Recalculate Score',
+                text: context.l10n.creditScoreRecalculate,
                 onPressed: onRecalculate,
                 prefixIcon: Assets.personalLoanIcons.icRecalculateScore.svg(
                   width: 18,
@@ -829,8 +832,8 @@ class _BottomButtons extends StatelessWidget {
                   colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
                 ),
               ),
-               AppButton(
-                text: 'View More Financial Tips',
+              AppButton(
+                text: context.l10n.creditScoreViewMoreTips,
                 onPressed: onTips,
                 isOutlined: true,
               ),

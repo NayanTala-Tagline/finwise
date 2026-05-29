@@ -10,8 +10,8 @@ class LoanCalculatorProvider with ChangeNotifier {
   double _interestRate = 10.5;
   double get interestRate => _interestRate;
 
-  String _termUnit = 'Months';
-  String get termUnit => _termUnit;
+  bool _isMonths = true;
+  bool get isMonths => _isMonths;
 
   DateTime? _startDate;
   DateTime? get startDate => _startDate;
@@ -35,8 +35,8 @@ class LoanCalculatorProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setTermUnit(String unit) {
-    _termUnit = unit;
+  void setIsMonths(bool value) {
+    _isMonths = value;
     notifyListeners();
   }
 
@@ -62,7 +62,7 @@ class LoanCalculatorProvider with ChangeNotifier {
     loanAmountController.clear();
     loanTermController.clear();
     _interestRate = 10.5;
-    _termUnit = 'Months';
+    _isMonths = true;
     _isCalculated = false;
     _initStartDate();
     notifyListeners();
@@ -71,7 +71,7 @@ class LoanCalculatorProvider with ChangeNotifier {
   LoanCalculatorResult get result {
     final loanAmount = double.tryParse(loanAmountController.text.trim()) ?? 0;
     final termValue = double.tryParse(loanTermController.text.trim()) ?? 0;
-    final int n = _termUnit == 'Months' ? termValue.round() : (termValue * 12).round();
+    final int n = _isMonths ? termValue.round() : (termValue * 12).round();
     final double loanTermYears = n / 12;
     final monthlyRate = _interestRate / 100 / 12;
 

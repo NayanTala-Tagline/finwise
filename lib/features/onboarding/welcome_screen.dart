@@ -44,7 +44,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         builder: (context, provider, _) {
           return OnboardingLayout(
             stepIndex: 0,
-            buttonText: 'Continue',
+            buttonText: context.l10n.onboarding1Continue,
             isLoading: provider.busy,
             onButtonPressed: () {
               AnalyticsManager.instance.logEvent(
@@ -102,19 +102,19 @@ mainAxisAlignment: MainAxisAlignment.center,
         
         // Welcome title
         Text(
-          'Welcome to FinWise',
+          context.l10n.welcomeTitle,
           style: context.textTheme.titleMedium?.copyWith(
             fontSize: AppSize.sp30,
             fontWeight: FontWeight.w700,
           ),
           textAlign: TextAlign.center,
         ),
-        
+
         SizedBox(height: AppSize.h5),
-        
+
         // Description
         Text(
-          'Your trusted companion for smarter\nfinancial decisions and personalized loan\nrecommendations',
+          context.l10n.welcomeSubtitle,
           style: context.textTheme.bodyLarge?.copyWith(
             fontSize: AppSize.sp15,
             color: context.themeTextColors.descriptionColor,

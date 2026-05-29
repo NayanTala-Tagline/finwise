@@ -65,7 +65,7 @@ class LoanCalculatorResultSheet extends StatelessWidget {
                 ),
                 Expanded(
                   child: Text(
-                    'Result',
+                    context.l10n.fdResult,
                     textAlign: TextAlign.center,
                     style: context.textTheme.bodyMedium?.copyWith(
                       fontSize: AppSize.sp20,
@@ -88,26 +88,26 @@ class LoanCalculatorResultSheet extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SectionTitle(title: 'Loan Information'),
+                  SectionTitle(title: context.l10n.loanCalculatorLoanInfo),
                   SizedBox(height: AppSize.h12),
                   _InfoCard(rows: [
-                    ('Loan Amount', '${_fmt(result.loanAmount)}$sym'),
-                    ('Down Payment', '${_fmt(result.downPayment)}$sym'),
-                    ('Loan Term', '${result.loanTermYears.toStringAsFixed(0)} years'),
-                    ('Interest Rate', '${_fmt(result.annualRate)} %'),
+                    (context.l10n.loanCalculatorLoanAmount, '${_fmt(result.loanAmount)}$sym'),
+                    (context.l10n.loanPurposeDownPayment, '${_fmt(result.downPayment)}$sym'),
+                    (context.l10n.loanCalculatorLoanTerm, '${result.loanTermYears.toStringAsFixed(0)} ${context.l10n.loanCalculatorYearsLabel}'),
+                    (context.l10n.fdCalculatorInterestRate, '${_fmt(result.annualRate)} %'),
                   ]),
                   SizedBox(height: AppSize.h20),
-                  SectionTitle(title: 'Result after calculation'),
+                  SectionTitle(title: context.l10n.loanSheetResultAfterCalc),
                   SizedBox(height: AppSize.h12),
                   _InfoCard(rows: [
-                    ('Principal Amount', '${_fmt(result.principal)}$sym'),
-                    ('Monthly Payment', '${_fmt(result.monthlyPayment)}$sym'),
-                    ('Total Interest', '${_fmt(result.totalInterest)}$sym'),
-                    ('Total Payment', '${_fmt(result.totalPayment)}$sym'),
+                    (context.l10n.fdResultPrincipalAmount, '${_fmt(result.principal)}$sym'),
+                    (context.l10n.loanSheetMonthlyPayment, '${_fmt(result.monthlyPayment)}$sym'),
+                    (context.l10n.fdResultTotalInterest, '${_fmt(result.totalInterest)}$sym'),
+                    (context.l10n.loanSheetTotalPayment, '${_fmt(result.totalPayment)}$sym'),
                   ]),
                   SizedBox(height: AppSize.h28),
                   AppButton(
-                    text: 'Back to Home',
+                    text: context.l10n.loanSheetBackToHome,
                     onPressed: () {
                       Navigator.of(context).pop();
                       context.pop();

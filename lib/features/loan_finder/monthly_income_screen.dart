@@ -56,8 +56,8 @@ class _MonthlyIncomeScreenState extends State<MonthlyIncomeScreen> {
     final adProvider = context.watch<LoanFinderAdProvider>();
     return LoanFinderLayout(
       stepIndex: 2,
-      title: 'What is your monthly income?',
-      subtitle: 'Your gross monthly salary or income',
+      title: context.l10n.monthlyIncomeTitle,
+      subtitle: context.l10n.monthlyIncomeSubtitle,
       isLoading: adProvider.busy,
       adSlot: AdSlot(ad: widget.inlineAd),
       onNextPressed: () {
@@ -84,7 +84,7 @@ class _MonthlyIncomeScreenState extends State<MonthlyIncomeScreen> {
           onChanged: (v) =>
               context.read<LoanFinderProvider>().setMonthlyIncome(v),
           amountColor: const Color(0xFF0D9488), // Teal color for income
-          amountLabel: 'Per month',
+          amountLabel: context.l10n.monthlyIncomePerMonth,
         )
             .animate()
             .fadeIn(delay: 280.ms, duration: 420.ms)

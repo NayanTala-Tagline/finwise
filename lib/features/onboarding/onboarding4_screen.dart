@@ -58,7 +58,7 @@ class _Onboarding4ScreenState extends State<Onboarding4Screen> {
         builder: (context, provider, _) {
           return OnboardingLayout(
             stepIndex: 4,
-            buttonText: 'Continue',
+            buttonText: context.l10n.onboarding1Continue,
             isLoading: provider.busy,
             onButtonPressed: () => _handleStart(provider),
             onBackPressed: () {
@@ -110,7 +110,7 @@ class _LanguageSelectionContent extends StatelessWidget {
           ),
           SizedBox(height: AppSize.h32),
           Text(
-            'Choose Your\nLanguage',
+            context.l10n.onboarding4Title,
             style: context.textTheme.titleMedium?.copyWith(
               fontSize: AppSize.sp30,
             ),
@@ -118,7 +118,7 @@ class _LanguageSelectionContent extends StatelessWidget {
           ),
           SizedBox(height: AppSize.h12),
           Text(
-            'Select your preferred language for the app',
+            context.l10n.onboarding4Subtitle,
             style: context.textTheme.bodyLarge?.copyWith(
               fontSize: AppSize.sp15,
               color: context.themeTextColors.descriptionColor,

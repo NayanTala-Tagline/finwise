@@ -60,7 +60,7 @@ class _ExistingLoansScreenState extends State<ExistingLoansScreen> {
         name: 'loan_finder_validation_failed',
         parameters: const {'step': 6, 'field': 'existing_loans'},
       );
-      'Please select Yes or No'.showErrorAlert();
+      context.l10n.existingLoansValidationSelect.showErrorAlert();
       return;
     }
     
@@ -69,11 +69,11 @@ class _ExistingLoansScreenState extends State<ExistingLoansScreen> {
     
     if (_hasExistingLoans == true) {
       if (_numberOfLoansController.text.isEmpty) {
-        'Please enter number of existing loans'.showErrorAlert();
+        context.l10n.existingLoansValidationNumber.showErrorAlert();
         return;
       }
       if (_totalEmiController.text.isEmpty) {
-        'Please enter approximate total EMI'.showErrorAlert();
+        context.l10n.existingLoansValidationEmi.showErrorAlert();
         return;
       }
       
@@ -101,8 +101,8 @@ class _ExistingLoansScreenState extends State<ExistingLoansScreen> {
     
     return LoanFinderLayout(
       stepIndex: 5,
-      title: 'Do you have any\nexisting loans?',
-      subtitle: 'This helps us understand your financial obligations',
+      title: context.l10n.loanFinderExistingTitle,
+      subtitle: context.l10n.existingLoansSubtitle,
       isLoading: adProvider.busy,
       adSlot: AdSlot(ad: widget.inlineAd),
       onNextPressed: _next,
@@ -119,8 +119,8 @@ class _ExistingLoansScreenState extends State<ExistingLoansScreen> {
               children: [
                 Expanded(
                   child: _OptionButton(
-                    label: 'Yes',
-                    subtitle: 'I have existing\nloans',
+                    label: context.l10n.existingLoansYes,
+                    subtitle: context.l10n.loanFinderExistingYesSubtitle,
                     selected: _hasExistingLoans == true,
                     onTap: () {
                       setState(() {
@@ -136,8 +136,8 @@ class _ExistingLoansScreenState extends State<ExistingLoansScreen> {
                 SizedBox(width: AppSize.w16),
                 Expanded(
                   child: _OptionButton(
-                    label: 'No',
-                    subtitle: 'No current loans',
+                    label: context.l10n.existingLoansNo,
+                    subtitle: context.l10n.existingLoansNoDesc,
                     selected: _hasExistingLoans == false,
                     onTap: () {
                       setState(() {
@@ -162,20 +162,20 @@ class _ExistingLoansScreenState extends State<ExistingLoansScreen> {
             if (_hasExistingLoans == true) ...[
               SizedBox(height: AppSize.h24),
               AppTextFormField(
-                title: 'Number of existing loans',
+                title: context.l10n.existingLoansNumberLabel,
                 controller: _numberOfLoansController,
                 keyboardType: TextInputType.number,
-                hintText: 'Enter number of loans',
+                hintText: context.l10n.existingLoansNumberHint,
               )
                   .animate()
                   .fadeIn(delay: 200.ms, duration: 400.ms)
                   .slideY(begin: 0.1, end: 0, delay: 200.ms, duration: 500.ms),
               SizedBox(height: AppSize.h20),
               AppTextFormField(
-                title: 'Approximate total EMI (monthly)',
+                title: context.l10n.existingLoansEmiLabel,
                 controller: _totalEmiController,
                 keyboardType: TextInputType.number,
-                hintText: 'Enter total EMI amount',
+                hintText: context.l10n.existingLoansEmiHint,
               )
                   .animate()
                   .fadeIn(delay: 300.ms, duration: 400.ms)

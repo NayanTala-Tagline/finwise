@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../extension/ext_context.dart';
+import '../../../utils/anaytics_manager.dart';
 import '../../../utils/app_size.dart';
 import '../../../utils/navigation_helper.dart';
 import '../../../utils/remote_config.dart';
@@ -48,6 +49,7 @@ class _LengthConvertScreenState extends State<LengthConvertScreen> {
   @override
   void initState() {
     super.initState();
+    AnalyticsManager.instance.logScreenView(screenName: 'length_convert_screen');
     _loadInline();
     _controller.addListener(() {
       final has = _controller.text.trim().isNotEmpty;
@@ -68,37 +70,12 @@ class _LengthConvertScreenState extends State<LengthConvertScreen> {
     return v.toStringAsFixed(4).replaceFirst(RegExp(r'\.?0+$'), '');
   }
 
-  String _unitFullName(String unit) {
-    switch (unit) {
-      case 'm':
-        return 'Meter (m)';
-      case 'km':
-        return 'Kilometer (km)';
-      case 'cm':
-        return 'Centimeter (cm)';
-      case 'in':
-        return 'Inch (in)';
-      case 'ft':
-        return 'Foot (ft)';
-      default:
-        return unit;
-    }
-  }
-
-  (String label, Color color) _lengthCategory(double meters) {
-    if (meters < 0.01) return ('Tiny', const Color(0xFF8B5CF6));
-    if (meters < 1) return ('Small', const Color(0xFF06B6D4));
-    if (meters < 100) return ('Medium', const Color(0xFF10B981));
-    if (meters < 1000) return ('Large', const Color(0xFFF59E0B));
-    return ('Vast', const Color(0xFFEF4444));
-  }
-
   void _convert2() {
     FocusManager.instance.primaryFocus?.unfocus();
     final raw = double.tryParse(_controller.text.trim());
     if (raw == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid length value')),
+        SnackBar(content: Text(context.l10n.lengthValidation)),
       );
       return;
     }
@@ -173,7 +150,7 @@ class _LengthConvertScreenState extends State<LengthConvertScreen> {
                     _InputCard(controller: _controller),
                     SizedBox(height: AppSize.h14),
                     _UnitSection(
-                      label: 'From Unit',
+                      label: context.l10n.converterFromUnit,
                       selected: _fromUnit,
                       units: _units,
                       onSelect: (u) => setState(() {
@@ -187,7 +164,7 @@ class _LengthConvertScreenState extends State<LengthConvertScreen> {
                     ),
                     SizedBox(height: AppSize.h12),
                     _UnitSection(
-                      label: 'To Unit',
+                      label: context.l10n.converterToUnit,
                       selected: _toUnit,
                       units: _units,
                       onSelect: (u) => setState(() {
@@ -215,8 +192,6 @@ class _LengthConvertScreenState extends State<LengthConvertScreen> {
                           inputInMeters:
                               _inputValue! * (_toMeters[_fromUnit] ?? 1.0),
                           fmt: _fmt,
-                          unitFullName: _unitFullName,
-                          lengthCategory: _lengthCategory,
                         ),
                       ),
                     ],
@@ -251,7 +226,7 @@ class _LengthConvertScreenState extends State<LengthConvertScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             AppButton(
-                              text: 'Convert',
+                              text: context.l10n.converterButton,
                               suffixIcon: Icon(
                                 Icons.arrow_forward_ios,
                                 color: Colors.white,
@@ -260,7 +235,7 @@ class _LengthConvertScreenState extends State<LengthConvertScreen> {
                               onPressed: _convert2,
                             ),
                              AppButton(
-                              text: 'Reset',
+                              text: context.l10n.fdReset,
                               isOutlined: true,
                               onPressed: _reset,
                             ),
@@ -304,7 +279,7 @@ class _LengthConvertScreenState extends State<LengthConvertScreen> {
               ),
               SizedBox(height: AppSize.h14),
               Text(
-                'Length Converter',
+                context.l10n.lengthConverterTitle,
                 style: context.textTheme.titleLarge?.copyWith(
                   fontSize: AppSize.sp24,
                   fontWeight: FontWeight.w700,
@@ -313,7 +288,7 @@ class _LengthConvertScreenState extends State<LengthConvertScreen> {
               ),
               SizedBox(height: AppSize.h4),
               Text(
-                'Convert between length units accurately',
+                context.l10n.lengthConverterSubtitle,
                 style: context.textTheme.bodySmall?.copyWith(
                   fontSize: AppSize.sp13,
                   color: Colors.white.withValues(alpha: 0.85),
@@ -340,7 +315,7 @@ class _InputCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Length Value',
+          context.l10n.lengthValueLabel,
           style: context.textTheme.titleMedium?.copyWith(
             fontSize: AppSize.sp14,
             fontWeight: FontWeight.w600,
@@ -374,7 +349,7 @@ class _InputCard extends StatelessWidget {
         ),
         SizedBox(height: AppSize.h5),
         Text(
-          'Enter any length value to convert',
+          context.l10n.lengthValueHint,
           style: context.textTheme.bodySmall?.copyWith(
             fontSize: AppSize.sp12,
             color: context.themeTextColors.descriptionColor,
@@ -420,7 +395,7 @@ class _UnitSection extends StatelessWidget {
               onTap: onClear,
               behavior: HitTestBehavior.opaque,
               child: Text(
-                'Clear',
+                context.l10n.converterClear,
                 style: context.textTheme.titleMedium?.copyWith(
                   fontSize: AppSize.sp14,
                   color: context.themeColors.primary,
@@ -501,21 +476,20 @@ class _UnitChip extends StatelessWidget {
 class _QuickConversionGuideCard extends StatelessWidget {
   const _QuickConversionGuideCard();
 
-  static const _guides = [
-    (from: '1 m', to: '≈ 3.28 ft', note: 'Metric to Imperial'),
-    (from: '1 km', to: '≈ 0.62 mi', note: 'Distance conversion'),
-    (from: '1 in', to: '= 2.54 cm', note: 'Precise conversion'),
-    (from: '1 mi', to: '≈ 1.61 km', note: 'Road distances'),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final guides = [
+      (from: '1 m', to: '≈ 3.28 ft', note: context.l10n.lengthGuideNoteMetricToImperial),
+      (from: '1 km', to: '≈ 0.62 mi', note: context.l10n.lengthGuideNoteDistance),
+      (from: '1 in', to: '= 2.54 cm', note: context.l10n.lengthGuideNotePrecise),
+      (from: '1 mi', to: '≈ 1.61 km', note: context.l10n.lengthGuideNoteRoad),
+    ];
     return _Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Quick Conversion Guide',
+            context.l10n.converterQuickConversionGuide,
             style: context.textTheme.titleMedium?.copyWith(
               fontSize: AppSize.sp14,
               fontWeight: FontWeight.w600,
@@ -523,9 +497,9 @@ class _QuickConversionGuideCard extends StatelessWidget {
             ),
           ),
           SizedBox(height: AppSize.h12),
-          ...List.generate(_guides.length, (i) {
-            final g = _guides[i];
-            final isLast = i == _guides.length - 1;
+          ...List.generate(guides.length, (i) {
+            final g = guides[i];
+            final isLast = i == guides.length - 1;
             return Padding(
               padding: EdgeInsets.only(bottom: isLast ? 0 : AppSize.h10),
               child: Row(
@@ -577,20 +551,20 @@ class _WhenToUseCard extends StatelessWidget {
     final items = [
       (
         icon: Assets.onboardingIcons.icHome,
-        title: 'Property Measurements',
-        desc: 'Convert room dimensions and property sizes',
+        title: context.l10n.lengthWhenPropertyTitle,
+        desc: context.l10n.lengthWhenPropertyDesc,
         color: const Color(0xFF059669),
       ),
       (
         icon: Assets.onboardingIcons.icVehicle,
-        title: 'Travel Distances',
-        desc: 'Calculate trip distances in your preferred unit',
+        title: context.l10n.lengthWhenTravelTitle,
+        desc: context.l10n.lengthWhenTravelDesc,
         color: const Color(0xFF059669),
       ),
       (
         icon: Assets.temperatureIcons.icLengthConvert,
-        title: 'Construction & DIY',
-        desc: 'Convert measurements for home projects',
+        title: context.l10n.lengthWhenConstructionTitle,
+        desc: context.l10n.lengthWhenConstructionDesc,
         color: const Color(0xFF059669),
       ),
     ];
@@ -600,7 +574,7 @@ class _WhenToUseCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'When to Use',
+            context.l10n.converterWhenToUse,
             style: context.textTheme.titleMedium?.copyWith(
               fontSize: AppSize.sp14,
               fontWeight: FontWeight.w600,
@@ -671,8 +645,6 @@ class _ResultCard extends StatelessWidget {
     required this.result,
     required this.inputInMeters,
     required this.fmt,
-    required this.unitFullName,
-    required this.lengthCategory,
   });
 
   final double inputValue;
@@ -681,12 +653,29 @@ class _ResultCard extends StatelessWidget {
   final double result;
   final double inputInMeters;
   final String Function(double) fmt;
-  final String Function(String) unitFullName;
-  final (String, Color) Function(double) lengthCategory;
+
+  String _unitFullName(String unit) {
+    switch (unit) {
+      case 'm': return 'Meter (m)';
+      case 'km': return 'Kilometer (km)';
+      case 'cm': return 'Centimeter (cm)';
+      case 'in': return 'Inch (in)';
+      case 'ft': return 'Foot (ft)';
+      default: return unit;
+    }
+  }
+
+  (String, Color) _lengthCategoryOf(BuildContext context, double meters) {
+    if (meters < 0.01) return (context.l10n.lengthCategoryTiny, const Color(0xFF8B5CF6));
+    if (meters < 1) return (context.l10n.lengthCategorySmall, const Color(0xFF06B6D4));
+    if (meters < 100) return (context.l10n.tipsSeverityMedium, const Color(0xFF10B981));
+    if (meters < 1000) return (context.l10n.lengthCategoryLarge, const Color(0xFFF59E0B));
+    return (context.l10n.lengthCategoryVast, const Color(0xFFEF4444));
+  }
 
   @override
   Widget build(BuildContext context) {
-    final (categoryLabel, _) = lengthCategory(inputInMeters);
+    final (categoryLabel, _) = _lengthCategoryOf(context, inputInMeters);
     final ratio =
         (inputValue == 0 || result == 0) ? 1.0 : (result / inputValue).abs();
 
@@ -747,7 +736,7 @@ class _ResultCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  unitFullName(toUnit),
+                  _unitFullName(toUnit),
                   style: context.textTheme.titleMedium?.copyWith(
                     color: Colors.white,
                     fontSize: AppSize.sp18,
@@ -762,7 +751,7 @@ class _ResultCard extends StatelessWidget {
                     Column(
                       children: [
                         Text(
-                          'From',
+                          context.l10n.converterFromLabel,
                           style: context.textTheme.titleMedium?.copyWith(
                             color: Colors.white.withValues(alpha: 0.7),
                             fontSize: AppSize.sp12,
@@ -790,7 +779,7 @@ class _ResultCard extends StatelessWidget {
                     Column(
                       children: [
                         Text(
-                          'To',
+                          context.l10n.converterToLabel,
                           style: context.textTheme.titleMedium?.copyWith(
                             color: Colors.white.withValues(alpha: 0.7),
                             fontSize: AppSize.sp12,
@@ -833,7 +822,7 @@ class _ResultCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: _MiniValueCard(
-                      label: 'Source',
+                      label: context.l10n.converterSourceLabel,
                       value: fmt(inputValue),
                       unit: fromUnit,
                     ),
@@ -841,7 +830,7 @@ class _ResultCard extends StatelessWidget {
                   SizedBox(width: AppSize.w12),
                   Expanded(
                     child: _MiniValueCard(
-                      label: 'Converted',
+                      label: context.l10n.converterConvertedLabel,
                       value: fmt(result),
                       unit: toUnit,
                       isHighlighted: true,
@@ -931,10 +920,10 @@ class _RelativeScaleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final cappedProgress = (ratio > 10 ? 10.0 : ratio) / 10.0;
     final label = ratio > 1
-        ? '${ratio.toStringAsFixed(2)}x larger'
+        ? context.l10n.converterRatioLarger(ratio.toStringAsFixed(2))
         : ratio < 1
-            ? '${(1 / ratio).toStringAsFixed(2)}x smaller'
-            : 'Equal';
+            ? context.l10n.converterRatioSmaller((1 / ratio).toStringAsFixed(2))
+            : context.l10n.converterRatioEqual;
 
     return Container(
       padding: EdgeInsets.symmetric(
@@ -953,7 +942,7 @@ class _RelativeScaleCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Relative Scale',
+                  context.l10n.converterRelativeScale,
                   style: context.textTheme.titleMedium?.copyWith(
                     fontSize: AppSize.sp13,
                     fontWeight: FontWeight.w600,
@@ -994,28 +983,27 @@ class _RelativeScaleCard extends StatelessWidget {
 class _CommonReferencesCard extends StatelessWidget {
   const _CommonReferencesCard();
 
-  static const _refs = [
-    '1 meter = 100 centimeters',
-    '1 kilometer = 1000 meters',
-    '1 inch = 2.54 centimeters',
-    '1 foot = 30.48 centimeters',
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final refs = [
+      context.l10n.lengthRef1,
+      context.l10n.lengthRef2,
+      context.l10n.lengthRef3,
+      context.l10n.lengthRef4,
+    ];
     return _Card(
       color: context.themeColors.primary.withValues(alpha: 0.01),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Common References',
+            context.l10n.converterCommonReferences,
             style: context.textTheme.titleMedium?.copyWith(
               fontSize: AppSize.sp14,
             ),
           ),
           SizedBox(height: AppSize.h10),
-          ..._refs.map(
+          ...refs.map(
             (ref) => Padding(
               padding: EdgeInsets.only(bottom: AppSize.h6),
               child: Row(

@@ -52,7 +52,7 @@ class _CreditScoreScreenState extends State<CreditScoreScreen> {
         name: 'loan_finder_validation_failed',
         parameters: const {'step': 5, 'field': 'credit_score'},
       );
-      'Please select your credit score range'.showErrorAlert();
+      context.l10n.creditScoreRangeValidation.showErrorAlert();
       return;
     }
     AnalyticsManager.instance.logEvent(
@@ -73,16 +73,16 @@ class _CreditScoreScreenState extends State<CreditScoreScreen> {
     final formProvider = context.watch<LoanFinderProvider>();
     final adProvider = context.watch<LoanFinderAdProvider>();
     final options = [
-      _Option(CreditScoreRange.excellent, 'Excellent', '750+'),
-      _Option(CreditScoreRange.good, 'Good',  '700-750'),
-      _Option(CreditScoreRange.fair, 'Fair', '650-700'),
-      _Option(CreditScoreRange.poor, 'Poor', 'Below 650' ),
-      _Option(CreditScoreRange.dontKnow, 'Don\'t Know',''),
+      _Option(CreditScoreRange.excellent, l10n.creditScoreExcellent, l10n.creditScoreExcellentRange),
+      _Option(CreditScoreRange.good, l10n.creditScoreGood, l10n.creditScoreGoodRange),
+      _Option(CreditScoreRange.fair, l10n.creditScoreFair, l10n.creditScoreFairRange),
+      _Option(CreditScoreRange.poor, l10n.creditScorePoor, l10n.creditScorePoorRange),
+      _Option(CreditScoreRange.dontKnow, l10n.creditScoreDontKnow, ''),
     ];
     return LoanFinderLayout(
       stepIndex: 4,
-      title: 'What is your Credit Score range?',
-      subtitle: 'Select the range that applies to you',
+      title: l10n.creditScoreRangeTitle,
+      subtitle: l10n.creditScoreRangeSubtitle,
       isLoading: adProvider.busy,
       adSlot: AdSlot(ad: widget.inlineAd),
       onNextPressed: _next,
