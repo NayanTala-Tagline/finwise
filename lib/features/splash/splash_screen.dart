@@ -293,8 +293,8 @@ class _SplashScreenState extends State<SplashScreen> {
     // Check if organic install
     if (db.isOrganicInstall) {
       // Use remote config to decide whether to show onboarding for organic installs
-      if (!rc.showOnboardingOrganicInstall) {
-        return true; // Skip onboarding for organic installs
+      if (rc.showOnboardingOrganicInstall) {
+        return false; // Skip onboarding for organic installs
       }
       // If showOnboardingOrganicInstall is true, continue to check other conditions
     }
