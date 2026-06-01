@@ -67,7 +67,7 @@ class NotificationPermissionDialog extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [colors.primary, colors.secondary],
+                colors: [colors.primary, Color(0xff153885)],
               ),
               shape: BoxShape.circle,
               boxShadow: [

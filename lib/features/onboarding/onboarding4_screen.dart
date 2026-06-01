@@ -1,7 +1,10 @@
 import 'dart:async';
 
 import 'package:ad_manager/ad_manager.dart';
+import 'package:finwise/utils/remote_config.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../db/app_db.dart';
@@ -27,37 +30,15 @@ class Onboarding4Screen extends StatefulWidget {
 }
 
 class _Onboarding4ScreenState extends State<Onboarding4Screen> {
-  String selectedLanguageCode = 'en';
-  int selectedLanguageIndex = 0;
-  bool _initialized = false;
+  String? selectedLanguageCode;
+  int selectedLanguageIndex = -1;
+  InlineAdManager? _secondAd;
+  bool _secondAdLoaded = false;
 
   @override
   void initState() {
     super.initState();
     AnalyticsManager.instance.logScreenView(screenName: 'onboarding4_screen');
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_initialized) {
-      _initializeSelectedLanguage();
-      _initialized = true;
-    }
-  }
-
-  void _initializeSelectedLanguage() {
-    final languageProvider = context.read<LocaleProvider>();
-    selectedLanguageCode = languageProvider.getCurrentLocaleCode() ?? 'en';
-    
-    final languages = _getLanguages();
-    selectedLanguageIndex = languages.indexWhere(
-      (lang) => lang.code == selectedLanguageCode,
-    );
-    if (selectedLanguageIndex == -1) {
-      selectedLanguageCode = 'en';
-      selectedLanguageIndex = 0;
-    }
   }
 
   List<_Language> _getLanguages() {
@@ -74,20 +55,45 @@ class _Onboarding4ScreenState extends State<Onboarding4Screen> {
   @override
   void dispose() {
     unawaited(widget.inlineAd?.dispose());
+    unawaited(_secondAd?.dispose());
     super.dispose();
   }
 
+  void _loadSecondAd() {
+
+    if (_secondAdLoaded) return;
+    
+    final adData = RemoteConfigService.instance.onboardingNative4_2;
+    if (!adData.enabled || adData.adId.isEmpty) return;
+    
+    _secondAd = InlineAdManager(adData: adData);
+    _secondAdLoaded = true;
+    
+    unawaited(_secondAd!.load());
+    
+    // Listen for ad load completion
+    _secondAd!.future().then((status) {
+      if (mounted && status == AdStatus.loaded) {
+        setState(() {
+          // Trigger rebuild when second ad is loaded
+        });
+      }
+    });
+  }
+
   Future<void> _handleStart(OnboardingProvider provider) async {
+    if (selectedLanguageCode == null) return;
+
     final languageProvider = context.read<LocaleProvider>();
     await languageProvider.setLocale(
-      Locale(selectedLanguageCode),
+      Locale(selectedLanguageCode!),
       selectedLanguageIndex,
       true,
     );
 
     AnalyticsManager.instance.logEvent(
       name: 'onboarding_next',
-      parameters: {'language': selectedLanguageCode, 'step': 4},
+      parameters: {'language': selectedLanguageCode!, 'step': 4},
     );
     
     if (!mounted) return;
@@ -106,19 +112,27 @@ class _Onboarding4ScreenState extends State<Onboarding4Screen> {
             stepIndex: 4,
             buttonText: context.l10n.onboarding1Continue,
             isLoading: provider.busy,
-            onButtonPressed: () => _handleStart(provider),
+            onButtonPressed: selectedLanguageCode != null
+                ? () => _handleStart(provider)
+                : (){},
             onBackPressed: () {
               AnalyticsManager.instance.logEvent(
                 name: 'onboarding_back',
                 parameters: const {'step': 4},
               );
-              NavigationHelper().handleBackPress(context);
+              context.pop();
             },
-            adSlot: AdSlot(ad: widget.inlineAd, safeAreaBottom: false),
+            adSlot: AdSlot(
+              ad: selectedLanguageCode != null ? _secondAd : widget.inlineAd,
+              safeAreaBottom: false,
+            ),
             child: _LanguageSelectionContent(
               selectedLanguageCode: selectedLanguageCode,
               languages: _getLanguages(),
               onLanguageSelected: (code, index) {
+                if (!_secondAdLoaded) {
+                  _loadSecondAd();
+                }
                 setState(() {
                   selectedLanguageCode = code;
                   selectedLanguageIndex = index;
@@ -133,7 +147,7 @@ class _Onboarding4ScreenState extends State<Onboarding4Screen> {
 }
 
 class _LanguageSelectionContent extends StatelessWidget {
-  final String selectedLanguageCode;
+  final String? selectedLanguageCode;
   final List<_Language> languages;
   final Function(String, int) onLanguageSelected;
 
@@ -157,7 +171,16 @@ class _LanguageSelectionContent extends StatelessWidget {
               borderRadius: BorderRadius.circular(AppSize.r24),
             ),
             child: Assets.onboardingIcons.icLanguage.svg(),
-          ),
+          )
+              .animate()
+              .fadeIn(delay: 200.ms, duration: 500.ms)
+              .scale(
+                begin: const Offset(0.8, 0.8),
+                end: const Offset(1, 1),
+                delay: 200.ms,
+                duration: 600.ms,
+                curve: Curves.easeOutCubic,
+              ),
           SizedBox(height: AppSize.h32),
           Text(
             context.l10n.onboarding4Title,
@@ -165,7 +188,10 @@ class _LanguageSelectionContent extends StatelessWidget {
               fontSize: AppSize.sp30,
             ),
             textAlign: TextAlign.center,
-          ),
+          )
+              .animate()
+              .fadeIn(delay: 400.ms, duration: 500.ms)
+              .slideY(begin: 0.3, end: 0, delay: 400.ms, duration: 500.ms, curve: Curves.easeOut),
           SizedBox(height: AppSize.h12),
           Text(
             context.l10n.onboarding4Subtitle,
@@ -174,7 +200,10 @@ class _LanguageSelectionContent extends StatelessWidget {
               color: context.themeTextColors.descriptionColor,
             ),
             textAlign: TextAlign.center,
-          ),
+          )
+              .animate()
+              .fadeIn(delay: 600.ms, duration: 500.ms)
+              .slideY(begin: 0.3, end: 0, delay: 600.ms, duration: 500.ms, curve: Curves.easeOut),
           SizedBox(height: AppSize.h40),
           _LanguageGrid(
             selectedLanguageCode: selectedLanguageCode,
@@ -189,7 +218,7 @@ class _LanguageSelectionContent extends StatelessWidget {
 }
 
 class _LanguageGrid extends StatelessWidget {
-  final String selectedLanguageCode;
+  final String? selectedLanguageCode;
   final List<_Language> languages;
   final Function(String, int) onLanguageSelected;
 
@@ -216,7 +245,16 @@ class _LanguageGrid extends StatelessWidget {
           language: languages[index],
           isSelected: selectedLanguageCode == languages[index].code,
           onTap: () => onLanguageSelected(languages[index].code, index),
-        );
+        )
+            .animate()
+            .fadeIn(delay: (700 + index * 100).ms, duration: 400.ms)
+            .scale(
+              begin: const Offset(0.8, 0.8),
+              end: const Offset(1, 1),
+              delay: (700 + index * 100).ms,
+              duration: 500.ms,
+              curve: Curves.easeOutCubic,
+            );
       },
     );
   }

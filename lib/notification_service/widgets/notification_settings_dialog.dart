@@ -67,7 +67,7 @@ class NotificationSettingsDialog extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [colors.primary, colors.secondary],
+                colors: [colors.primary, Color(0xff153885)],
               ),
               shape: BoxShape.circle,
               boxShadow: [
@@ -124,7 +124,7 @@ class NotificationSettingsDialog extends StatelessWidget {
             ),
             SizedBox(height: AppSize.h10),
             Text(
-              'You blocked notifications earlier. Open device settings and enable notifications for Finlora to receive loan updates.',
+              'You blocked notifications earlier. Open device settings and enable notifications for FinWise to receive loan updates.',
               textAlign: TextAlign.center,
               style: context.textTheme.bodyMedium?.copyWith(
                 color: textColors.descriptionColor,

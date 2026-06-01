@@ -167,6 +167,13 @@ final ThemeData lightTheme = _lightThemeData.copyWith(
             ),
         ),
     ),
+    snackBarTheme: SnackBarThemeData(
+        backgroundColor: _themeColors.primary,
+        contentTextStyle: const TextStyle(color: Colors.white),
+        actionTextColor: Colors.white,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    ),
     extensions: <ThemeExtension<dynamic>>[_themeColors, _themeTextColors],
     tabBarTheme: _tabBarTheme,
 );

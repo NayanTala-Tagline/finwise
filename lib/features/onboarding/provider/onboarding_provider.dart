@@ -29,7 +29,19 @@ class OnboardingProvider extends ChangeNotifier {
   bool _busy = false;
   bool _disposed = false;
 
+  /// Selected loan type on onboarding1 (single selection)
+  String? _selectedLoanType;
+
   bool get busy => _busy;
+  String? get selectedLoanType => _selectedLoanType;
+
+  void selectLoanType(String loanType) {
+    _selectedLoanType = loanType;
+    _safeNotify();
+  }
+
+  bool isLoanTypeSelected(String loanType) =>
+      _selectedLoanType == loanType;
 
   // ─── preload helpers ────────────────────────────────────────────────────
 
@@ -42,8 +54,11 @@ class OnboardingProvider extends ChangeNotifier {
   void preloadOnboarding3Native() =>
       _preloadInline(RemoteConfigService.instance.onboardingNative3);
 
-  void preloadOnboarding4Native() =>
-      _preloadInline(RemoteConfigService.instance.onboardingNative4);
+  void preloadOnboarding4Native1() =>
+      _preloadInline(RemoteConfigService.instance.onboardingNative4_1);
+
+  void preloadOnboarding4Native2() =>
+      _preloadInline(RemoteConfigService.instance.onboardingNative4_2);
 
   void preloadOnboarding5Native() =>
       _preloadInline(RemoteConfigService.instance.onboardingNative5);

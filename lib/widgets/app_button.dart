@@ -283,7 +283,7 @@ class _AppButtonState extends State<AppButton> {
       // Handle prefix and suffix icons
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        spacing: AppSize.w8,
+        // spacing: AppSize.w8,
         children: [
           if (widget.prefixIcon != null) widget.prefixIcon!,
           Flexible(child: textWidget),

@@ -144,6 +144,11 @@ class RewardedAdDialog extends StatelessWidget {
                 Expanded(
                   child: AppButton(
                     text: context.l10n.rewardedAdWatch,
+                    prefixIcon: Icon(
+                      Icons.play_arrow_rounded,
+                      color: colors.whiteColor,
+                      size: AppSize.sp30,
+                    ),
                     onPressed: () {
                       Navigator.of(context).pop();
                       onWatchAd();

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:ad_manager/ad_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 
 import '../../extension/ext_context.dart';
@@ -96,7 +97,16 @@ mainAxisAlignment: MainAxisAlignment.center,
             ],
           ),
           child: Assets.onboardingIcons.icWelcome.svg(),
-        ),
+        )
+            .animate()
+            .fadeIn(delay: 200.ms, duration: 500.ms)
+            .scale(
+              begin: const Offset(0.8, 0.8),
+              end: const Offset(1, 1),
+              delay: 200.ms,
+              duration: 600.ms,
+              curve: Curves.easeOutCubic,
+            ),
         
         SizedBox(height: AppSize.h30),
         
@@ -108,7 +118,10 @@ mainAxisAlignment: MainAxisAlignment.center,
             fontWeight: FontWeight.w700,
           ),
           textAlign: TextAlign.center,
-        ),
+        )
+            .animate()
+            .fadeIn(delay: 400.ms, duration: 500.ms)
+            .slideY(begin: 0.3, end: 0, delay: 400.ms, duration: 500.ms, curve: Curves.easeOut),
 
         SizedBox(height: AppSize.h5),
 
@@ -121,7 +134,10 @@ mainAxisAlignment: MainAxisAlignment.center,
             height: 1.5,
           ),
           textAlign: TextAlign.center,
-        ),
+        )
+            .animate()
+            .fadeIn(delay: 600.ms, duration: 500.ms)
+            .slideY(begin: 0.3, end: 0, delay: 600.ms, duration: 500.ms, curve: Curves.easeOut),
         
         SizedBox(height: AppSize.h24),
       ],

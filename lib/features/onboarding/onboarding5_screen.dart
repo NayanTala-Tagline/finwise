@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:ad_manager/ad_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../db/app_db.dart';
@@ -13,7 +15,6 @@ import '../../gen/assets.gen.dart';
 import '../../routes/app_router.dart';
 import '../../utils/anaytics_manager.dart';
 import '../../utils/app_size.dart';
-import '../../utils/navigation_helper.dart';
 import '../../widgets/ad_slot.dart';
 import 'provider/onboarding_provider.dart';
 import 'widgets/onboarding_layout.dart';
@@ -60,6 +61,7 @@ class _Onboarding5ScreenState extends State<Onboarding5Screen> {
     await currencyProvider.setCurrency(item);
 
     if (!mounted) return;
+
     final db = Injector.instance<AppDB>();
     db.isOnboardingCompleted = true;
 
@@ -82,7 +84,7 @@ class _Onboarding5ScreenState extends State<Onboarding5Screen> {
                 name: 'onboarding_back',
                 parameters: const {'step': 5},
               );
-              NavigationHelper().handleBackPress(context);
+              context.pop();
             },
             adSlot: AdSlot(ad: widget.inlineAd, safeAreaBottom: false),
             child: _CurrencySelectionContent(
@@ -123,7 +125,16 @@ class _CurrencySelectionContent extends StatelessWidget {
               borderRadius: BorderRadius.circular(AppSize.r24),
             ),
             child: Assets.onboardingIcons.icCurrency.svg(),
-          ),
+          )
+              .animate()
+              .fadeIn(delay: 200.ms, duration: 500.ms)
+              .scale(
+                begin: const Offset(0.8, 0.8),
+                end: const Offset(1, 1),
+                delay: 200.ms,
+                duration: 600.ms,
+                curve: Curves.easeOutCubic,
+              ),
           SizedBox(height: AppSize.h32),
           Text(
             context.l10n.onboarding5Title,
@@ -131,7 +142,10 @@ class _CurrencySelectionContent extends StatelessWidget {
               fontSize: AppSize.sp30,
             ),
             textAlign: TextAlign.center,
-          ),
+          )
+              .animate()
+              .fadeIn(delay: 400.ms, duration: 500.ms)
+              .slideY(begin: 0.3, end: 0, delay: 400.ms, duration: 500.ms, curve: Curves.easeOut),
           SizedBox(height: AppSize.h12),
           Text(
             context.l10n.onboarding5Subtitle,
@@ -140,7 +154,10 @@ class _CurrencySelectionContent extends StatelessWidget {
               color: context.themeTextColors.descriptionColor,
             ),
             textAlign: TextAlign.center,
-          ),
+          )
+              .animate()
+              .fadeIn(delay: 600.ms, duration: 500.ms)
+              .slideY(begin: 0.3, end: 0, delay: 600.ms, duration: 500.ms, curve: Curves.easeOut),
           SizedBox(height: AppSize.h40),
           _CurrencyList(
             selectedCurrency: selectedCurrency,
@@ -181,7 +198,16 @@ class _CurrencyList extends StatelessWidget {
           currency: currencies[index],
           isSelected: selectedCurrency == currencies[index].code,
           onTap: () => onCurrencySelected(currencies[index].code),
-        );
+        )
+            .animate()
+            .fadeIn(delay: (700 + index * 100).ms, duration: 400.ms)
+            .slideX(
+              begin: -0.2,
+              end: 0,
+              delay: (700 + index * 100).ms,
+              duration: 500.ms,
+              curve: Curves.easeOut,
+            );
       },
     );
   }

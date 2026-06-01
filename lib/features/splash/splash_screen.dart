@@ -11,6 +11,7 @@ import 'package:finwise/utils/ad_repository.dart';
 import 'package:finwise/utils/anaytics_manager.dart';
 import 'package:finwise/utils/app_size.dart';
 import 'package:finwise/utils/install_referrer_service.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:finwise/utils/logger.dart';
 import 'package:finwise/utils/remote_config.dart';
 import 'package:finwise/widgets/app_button.dart';
@@ -52,6 +53,7 @@ class _SplashScreenState extends State<SplashScreen> {
   bool _navigated = false;
   bool _showNoInternet = false;
   bool _retrying = false;
+  bool _isShowingAd = false;
   DateTime _startedAt = DateTime.now();
 
   @override
@@ -190,12 +192,20 @@ class _SplashScreenState extends State<SplashScreen> {
       _fullScreen = FullScreenAdManager(
         adData: data,
         openAppCallback: FullScreenContentCallback<AppOpenAd>(
-          onAdDismissedFullScreenContent: (_) => unawaited(_goNext()),
-          onAdFailedToShowFullScreenContent: (_, _) => unawaited(_goNext()),
+          onAdDismissedFullScreenContent: (_) {
+            unawaited(_goNext());
+          },
+          onAdFailedToShowFullScreenContent: (_, _) {
+            unawaited(_goNext());
+          },
         ),
         interstitialCallback: FullScreenContentCallback<InterstitialAd>(
-          onAdDismissedFullScreenContent: (_) => unawaited(_goNext()),
-          onAdFailedToShowFullScreenContent: (_, _) => unawaited(_goNext()),
+          onAdDismissedFullScreenContent: (_) {
+            unawaited(_goNext());
+          },
+          onAdFailedToShowFullScreenContent: (_, _) {
+            unawaited(_goNext());
+          },
         ),
       );
 
@@ -210,8 +220,11 @@ class _SplashScreenState extends State<SplashScreen> {
       if (!mounted) return;
 
       if (status == AdStatus.loaded && (_fullScreen?.isLoaded ?? false)) {
+        if (mounted) setState(() => _isShowingAd = true);
         final shown = await _fullScreen!.show();
-        if (!shown) unawaited(_goNext());
+        if (!shown) {
+          unawaited(_goNext());
+        }
         // shown == true → dismiss/fail callback drives navigation.
       } else {
         unawaited(_goNext());
@@ -244,6 +257,9 @@ class _SplashScreenState extends State<SplashScreen> {
           const Duration(seconds: 2),
           onTimeout: () {},
         );
+    if (!mounted) return;
+
+    await Permission.notification.request();
     if (!mounted) return;
 
     if (_shouldGoHome()) {
@@ -369,16 +385,17 @@ class _SplashScreenState extends State<SplashScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SizedBox(
-                  height: AppSize.h3,
-                  child: LinearProgressIndicator(
-                    minHeight: AppSize.h3,
-                    backgroundColor:
-                        colors.whiteColor.withValues(alpha: 0.25),
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(colors.whiteColor),
+                if (!_isShowingAd)
+                  SizedBox(
+                    height: AppSize.h3,
+                    child: LinearProgressIndicator(
+                      minHeight: AppSize.h3,
+                      backgroundColor:
+                          colors.whiteColor.withValues(alpha: 0.25),
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(colors.whiteColor),
+                    ),
                   ),
-                ),
                 if (_banner != null && _banner!.isLoaded)
                   SizedBox(
                     width: double.infinity,

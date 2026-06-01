@@ -34,93 +34,178 @@ class _HomeScreenView extends StatefulWidget {
 }
 
 class _HomeScreenViewState extends State<_HomeScreenView> {
+  final ScrollController _scrollController = ScrollController();
+  bool _isCollapsed = false;
+
   @override
   void initState() {
     super.initState();
     AnalyticsManager.instance.logScreenView(screenName: 'home_screen');
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final isCollapsed = _scrollController.hasClients && _scrollController.offset > AppSize.h200;
+    if (_isCollapsed != isCollapsed) {
+      setState(() {
+        _isCollapsed = isCollapsed;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.themeColors.backgroundColor,
-      body: Column(
-        children: [
-          const _HomeHeader(), // l10n applied inside _HomeHeader.build()
-          Expanded(
-            child: SingleChildScrollView(
-              physics: const ClampingScrollPhysics(),
-              child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                AppSize.appPadding,
-                AppSize.h20,
-                AppSize.appPadding,
-                AppSize.h20,
+      body: CustomScrollView(
+        controller: _scrollController,
+        slivers: [
+          SliverAppBar(
+            expandedHeight: MediaQuery.of(context).padding.top + AppSize.h250,
+            collapsedHeight: AppSize.h80,
+            toolbarHeight: AppSize.h80,
+            pinned: true,
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            leading: const SizedBox.shrink(),
+            leadingWidth: 0,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(24),
+                bottomRight: Radius.circular(24),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            ),
+            title: AnimatedOpacity(
+              opacity: _isCollapsed ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 200),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  _SectionTitle(
-                    title: context.l10n.homeSectionLoanTools,
-                    subtitle: context.l10n.homeSectionLoanToolsSubtitle,
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          context.l10n.homeHeaderWelcomeBack,
+                          style: context.textTheme.bodyMedium?.copyWith(
+                            color: Colors.white.withValues(alpha: 0.85),
+                            fontSize: AppSize.sp13,
+                          ),
+                        ),
+                        Text(
+                          context.l10n.homeHeaderAppName,
+                          style: context.textTheme.titleLarge?.copyWith(
+                            color: Colors.white,
+                            fontSize: AppSize.sp24,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  SizedBox(height: AppSize.h16),
-                  const _LoanTypesGrid(),
-                  SizedBox(height: AppSize.h20),
-                  _SectionTitle(
-                    title: context.l10n.homeSectionInvestmentTools,
-                    subtitle: context.l10n.homeSectionInvestmentToolsSubtitle,
+                  Assets.images.splashScreenLogo.image(
+                    width: AppSize.w80,
+                    height: AppSize.h80,
+                    fit: BoxFit.contain,
                   ),
-                  SizedBox(height: AppSize.h16),
-                  const _InvestmentRow(),
-                  SizedBox(height: AppSize.h20),
-                  _SectionTitle(
-                    title: context.l10n.homeSectionHelpfulResources,
-                    subtitle: context.l10n.homeSectionHelpfulResourcesSubtitle,
-                  ),
-                  SizedBox(height: AppSize.h16),
-                  _ResourceTile(
-                    icon: Assets.homeIcons.icDocuments,
-                    title: context.l10n.homeDocumentsRequired,
-                    subtitle: context.l10n.homeDocumentsSubtitle,
-                    iconBgColor: const Color(0xFF2563EB).withValues(alpha: 0.08),
-                    iconColor: const Color(0xFF2563EB),
-                    onTap: () {
-                      AnalyticsManager.instance.logEvent(
-                        name: 'home_resource_tap',
-                        parameters: const {'resource': 'documents_required'},
-                      );
-                      NavigationHelper().navigateWithAdCheck(context, () {
-                        context.pushNamed(AppRoutes.documentRequired);
-                      });
-                    },
-                  ),
-                  SizedBox(height: AppSize.h12),
-                  _ResourceTile(
-                    icon: Assets.onboardingIcons.icMakeSmart,
-                    title: context.l10n.homeTipsAdvice,
-                    subtitle: context.l10n.homeTipsSubtitle,
-                    iconBgColor: const Color(0xFFF59E0B).withValues(alpha: 0.08),
-                    iconColor: const Color(0xFFF59E0B),
-                    onTap: () {
-                      AnalyticsManager.instance.logEvent(
-                        name: 'home_resource_tap',
-                        parameters: const {'resource': 'tips_advice'},
-                      );
-                      NavigationHelper().navigateWithAdCheck(context, () {
-                        context.pushNamed(AppRoutes.tipsAdvice);
-                      });
-                    },
-                  ),
-                  SizedBox(height: AppSize.h8),
                 ],
               ),
             ),
+            flexibleSpace: Container(
+              decoration:   BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [context.themeColors.primary, Color(0xFF153885)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(24),
+                  bottomRight: Radius.circular(24),
+                ),
+              ),
+              child: FlexibleSpaceBar(
+                background: const _HomeHeader(),
+                collapseMode: CollapseMode.parallax,
+              ),
+            ),
           ),
-        ),
-      ],
-    ),
-  );
+          SliverPadding(
+            padding: EdgeInsets.fromLTRB(
+              AppSize.appPadding,
+              AppSize.h20,
+              AppSize.appPadding,
+              AppSize.h20,
+            ),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                _SectionTitle(
+                  title: context.l10n.homeSectionLoanTools,
+                  subtitle: context.l10n.homeSectionLoanToolsSubtitle,
+                ),
+                SizedBox(height: AppSize.h16),
+                const _LoanTypesGrid(),
+                SizedBox(height: AppSize.h20),
+                _SectionTitle(
+                  title: context.l10n.homeSectionInvestmentTools,
+                  subtitle: context.l10n.homeSectionInvestmentToolsSubtitle,
+                ),
+                SizedBox(height: AppSize.h16),
+                const _InvestmentRow(),
+                SizedBox(height: AppSize.h20),
+                _SectionTitle(
+                  title: context.l10n.homeSectionHelpfulResources,
+                  subtitle: context.l10n.homeSectionHelpfulResourcesSubtitle,
+                ),
+                SizedBox(height: AppSize.h16),
+                _ResourceTile(
+                  icon: Assets.homeIcons.icDocuments,
+                  title: context.l10n.homeDocumentsRequired,
+                  subtitle: context.l10n.homeDocumentsSubtitle,
+                  iconBgColor: const Color(0xFF2563EB).withValues(alpha: 0.08),
+                  iconColor: const Color(0xFF2563EB),
+                  onTap: () {
+                    AnalyticsManager.instance.logEvent(
+                      name: 'home_resource_tap',
+                      parameters: const {'resource': 'documents_required'},
+                    );
+                    NavigationHelper().navigateWithAdCheck(context, () {
+                      context.pushNamed(AppRoutes.documentRequired);
+                    });
+                  },
+                ),
+                SizedBox(height: AppSize.h12),
+                _ResourceTile(
+                  icon: Assets.onboardingIcons.icMakeSmart,
+                  title: context.l10n.homeTipsAdvice,
+                  subtitle: context.l10n.homeTipsSubtitle,
+                  iconBgColor: const Color(0xFFF59E0B).withValues(alpha: 0.08),
+                  iconColor: const Color(0xFFF59E0B),
+                  onTap: () {
+                    AnalyticsManager.instance.logEvent(
+                      name: 'home_resource_tap',
+                      parameters: const {'resource': 'tips_advice'},
+                    );
+                    NavigationHelper().navigateWithAdCheck(context, () {
+                      context.pushNamed(AppRoutes.tipsAdvice);
+                    });
+                  },
+                ),
+                SizedBox(height: AppSize.h8),
+              ]),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -145,9 +230,9 @@ class _HomeHeader extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.fromLTRB(
             AppSize.appPadding,
-            AppSize.h16,
+            AppSize.h0,
             AppSize.appPadding,
-            AppSize.h24,
+            AppSize.h0,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,7 +269,8 @@ class _HomeHeader extends StatelessWidget {
                   ),
                 ],
               ),
-               Container(
+              SizedBox(height: AppSize.h12),
+              Container(
                 padding: EdgeInsets.all(AppSize.h16),
                 decoration: BoxDecoration(
                   color: Colors.white,

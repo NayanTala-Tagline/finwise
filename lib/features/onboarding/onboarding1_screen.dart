@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:ad_manager/ad_manager.dart';
 import 'package:finwise/utils/navigation_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -60,7 +61,8 @@ class _Onboarding1ScreenState extends State<Onboarding1Screen> {
                 name: 'onboarding_back',
                 parameters: const {'step': 2},
               );
-              NavigationHelper().handleBackPress(context);
+              context.pop();
+
             },
             adSlot: AdSlot(ad: widget.inlineAd, safeAreaBottom: false),
             child: _ExploreLoanTypesContent(),
@@ -86,7 +88,16 @@ class _ExploreLoanTypesContent extends StatelessWidget {
               borderRadius: BorderRadius.circular(AppSize.r24),
             ),
             child: Assets.onboardingIcons.icStars.svg(),
-          ),
+          )
+              .animate()
+              .fadeIn(delay: 200.ms, duration: 500.ms)
+              .scale(
+                begin: const Offset(0.8, 0.8),
+                end: const Offset(1, 1),
+                delay: 200.ms,
+                duration: 600.ms,
+                curve: Curves.easeOutCubic,
+              ),
           SizedBox(height: AppSize.h25),
           Text(
             context.l10n.onboarding1Title,
@@ -94,7 +105,10 @@ class _ExploreLoanTypesContent extends StatelessWidget {
               fontSize: AppSize.sp30,
             ),
             textAlign: TextAlign.center,
-          ),
+          )
+              .animate()
+              .fadeIn(delay: 400.ms, duration: 500.ms)
+              .slideY(begin: 0.3, end: 0, delay: 400.ms, duration: 500.ms, curve: Curves.easeOut),
           SizedBox(height: AppSize.h8),
           Text(
             context.l10n.onboarding1Subtitle,
@@ -103,7 +117,10 @@ class _ExploreLoanTypesContent extends StatelessWidget {
               color: context.themeTextColors.descriptionColor,
             ),
             textAlign: TextAlign.center,
-          ),
+          )
+              .animate()
+              .fadeIn(delay: 600.ms, duration: 500.ms)
+              .slideY(begin: 0.3, end: 0, delay: 600.ms, duration: 500.ms, curve: Curves.easeOut),
           SizedBox(height: AppSize.h20),
           _LoanTypeGrid(),
          ],
@@ -123,19 +140,38 @@ class _LoanTypeGrid extends StatelessWidget {
       _LoanType(context.l10n.onboarding1Business, Assets.onboardingIcons.icBusiness.svg(), const Color(0xFFF59E0B)),
     ];
 
-    return GridView.builder(
-      shrinkWrap: true,
-      padding: EdgeInsets.symmetric(horizontal: AppSize.w20),
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: AppSize.w18,
-        mainAxisSpacing: AppSize.h18,
-        childAspectRatio: 1.1,
-      ),
-      itemCount: loanTypes.length,
-      itemBuilder: (context, index) {
-        return _LoanTypeCard(loanTypes[index]);
+    return Consumer<OnboardingProvider>(
+      builder: (context, provider, _) {
+        return GridView.builder(
+          shrinkWrap: true,
+          padding: EdgeInsets.symmetric(horizontal: AppSize.w20),
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: AppSize.w18,
+            mainAxisSpacing: AppSize.h18,
+            childAspectRatio: 1.1,
+          ),
+          itemCount: loanTypes.length,
+          itemBuilder: (context, index) {
+            final loanType = loanTypes[index];
+            final isSelected = provider.isLoanTypeSelected(loanType.title);
+            return _LoanTypeCard(
+              loanType,
+              isSelected: isSelected,
+              onTap: () => provider.selectLoanType(loanType.title),
+            )
+                .animate()
+                .fadeIn(delay: (700 + index * 80).ms, duration: 400.ms)
+                .scale(
+                  begin: const Offset(0.8, 0.8),
+                  end: const Offset(1, 1),
+                  delay: (700 + index * 80).ms,
+                  duration: 500.ms,
+                  curve: Curves.easeOutCubic,
+                );
+          },
+        );
       },
     );
   }
@@ -151,42 +187,63 @@ class _LoanType {
 
 class _LoanTypeCard extends StatelessWidget {
   final _LoanType loanType;
+  final bool isSelected;
+  final VoidCallback onTap;
 
-  const _LoanTypeCard(this.loanType);
+  const _LoanTypeCard(
+    this.loanType, {
+    required this.isSelected,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: AppSize.h10,
-        horizontal: AppSize.w16,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppSize.r16),
-        border: Border.all(color:   Color(0xFFE2E8F0), width: 1),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: EdgeInsets.all(AppSize.sp14),
-            decoration: BoxDecoration(
-              color: loanType.color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(AppSize.r12),
-            ),
-            child: loanType.icon,
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: EdgeInsets.symmetric(
+          vertical: AppSize.h10,
+          horizontal: AppSize.w16,
+        ),
+        decoration: BoxDecoration(
+          gradient: isSelected ? LinearGradient(colors: [context.themeColors.primary,Color(0xff153885),]) : LinearGradient(colors: [Colors.white,Colors.white]),
+          borderRadius: BorderRadius.circular(AppSize.r16),
+          border: Border.all(
+            color:  const Color(0xFFE2E8F0),
+            width: isSelected ? 2 : 1,
           ),
-          SizedBox(height: AppSize.h12),
-          Text(
-            loanType.title,
-            style: context.textTheme.bodyLarge?.copyWith(
-              fontSize: AppSize.sp14,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: EdgeInsets.all(AppSize.sp14),
+              decoration: BoxDecoration(
+                color: isSelected 
+                    ? Colors.white.withOpacity(0.2)
+                    : loanType.color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(AppSize.r12),
+              ),
+              child: ColorFiltered(
+                colorFilter: isSelected
+                    ? const ColorFilter.mode(Colors.white, BlendMode.srcIn)
+                    : ColorFilter.mode(loanType.color, BlendMode.srcIn),
+                child: loanType.icon,
+              ),
             ),
-
-            textAlign: TextAlign.center,
-          ),
-        ],
+            SizedBox(height: AppSize.h12),
+            Text(
+              loanType.title,
+              style: context.textTheme.bodyLarge?.copyWith(
+                fontSize: AppSize.sp14,
+                color: isSelected ? Colors.white : null,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

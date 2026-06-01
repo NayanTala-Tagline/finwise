@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:ad_manager/inline_ad_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../extension/ext_context.dart';
@@ -59,7 +61,8 @@ class _Onboarding2ScreenState extends State<Onboarding2Screen> {
                 name: 'onboarding_back',
                 parameters: const {'step': 2},
               );
-              NavigationHelper().handleBackPress(context);
+              context.pop();
+
             },
             adSlot: AdSlot(ad: widget.inlineAd, safeAreaBottom: false),
             child: _SmartFinancialContent(),
@@ -87,7 +90,16 @@ class _SmartFinancialContent extends StatelessWidget {
                 borderRadius: BorderRadius.circular(AppSize.r24),
               ),
               child: Assets.onboardingIcons.icMakeSmart.svg(),
-            ),
+            )
+                .animate()
+                .fadeIn(delay: 200.ms, duration: 500.ms)
+                .scale(
+                  begin: const Offset(0.8, 0.8),
+                  end: const Offset(1, 1),
+                  delay: 200.ms,
+                  duration: 600.ms,
+                  curve: Curves.easeOutCubic,
+                ),
             SizedBox(height: AppSize.h30),
             Text(
               context.l10n.onboarding2Title,
@@ -95,7 +107,10 @@ class _SmartFinancialContent extends StatelessWidget {
                 fontSize: AppSize.sp30,
               ),
               textAlign: TextAlign.center,
-            ),
+            )
+                .animate()
+                .fadeIn(delay: 400.ms, duration: 500.ms)
+                .slideY(begin: 0.3, end: 0, delay: 400.ms, duration: 500.ms, curve: Curves.easeOut),
             SizedBox(height: AppSize.h12),
             Text(
               context.l10n.onboarding2Subtitle,
@@ -105,7 +120,10 @@ class _SmartFinancialContent extends StatelessWidget {
               ),
       
               textAlign: TextAlign.center,
-            ),
+            )
+                .animate()
+                .fadeIn(delay: 600.ms, duration: 500.ms)
+                .slideY(begin: 0.3, end: 0, delay: 600.ms, duration: 500.ms, curve: Curves.easeOut),
             SizedBox(height: AppSize.h30),
             _FeaturesList(),
            ],
@@ -126,10 +144,21 @@ class _FeaturesList extends StatelessWidget {
 
     return Column(
       children: features
-          .map((feature) => Padding(
+          .asMap()
+          .entries
+          .map((entry) => Padding(
                 padding: EdgeInsets.only(bottom: AppSize.h12),
-                child: _FeatureItem(feature),
-              ))
+                child: _FeatureItem(entry.value),
+              )
+                  .animate()
+                  .fadeIn(delay: (800 + entry.key * 150).ms, duration: 400.ms)
+                  .slideX(
+                    begin: -0.2,
+                    end: 0,
+                    delay: (800 + entry.key * 150).ms,
+                    duration: 500.ms,
+                    curve: Curves.easeOut,
+                  ))
           .toList(),
     );
   }

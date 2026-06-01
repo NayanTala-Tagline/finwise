@@ -132,7 +132,9 @@ class RemoteConfigService {
 
   AdData get onboardingNative3 => _getAdData('onboarding_screen3');
 
-  AdData get onboardingNative4 => _getAdData('onboarding_screen4');
+  AdData get onboardingNative4_1 => _getAdData('onboarding_screen4_1');
+
+  AdData get onboardingNative4_2 => _getAdData('onboarding_screen4_2');
 
   AdData get onboardingNative5 => _getAdData('onboarding_screen5');
 

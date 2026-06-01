@@ -85,7 +85,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   _SettingGroup(
                     tiles: [
                       _SettingTile(
-                        icon: Assets.requiredDocuments.icFile.svg(width: AppSize.w20, height: AppSize.h20, colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn)),
+                        icon: Assets.homeIcons.icDocuments.svg(width: AppSize.w20, height: AppSize.h20, colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn)),
                         title: context.l10n.settingsPrivacyPolicy,
                         onTap: () async {
                           final url = Uri.tryParse(RemoteConfigService.instance.privacyPolicyUrl);
@@ -93,7 +93,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         },
                       ),
                       _SettingTile(
-                        icon: Assets.requiredDocuments.icFile.svg(width: AppSize.w20, height: AppSize.h20, colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn)),
+                        icon: Assets.homeIcons.icDocuments.svg(width: AppSize.w20, height: AppSize.h20, colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn)),
                         title: context.l10n.settingsTermsOfService,
                         onTap: () async {
                           final url = Uri.tryParse(RemoteConfigService.instance.termsAndConditions);

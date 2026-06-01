@@ -63,7 +63,7 @@ class AdLoadingOverlay {
   static void hide() {
     if (!_isShowing) return;
     final ctx = _dialogContext;
-    if (ctx != null && ctx.mounted && ctx.canPop()) {
+    if (ctx != null && ctx.mounted ) {
       ctx.pop();
     }
     _dialogContext = null;

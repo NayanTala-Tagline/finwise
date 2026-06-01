@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:ad_manager/ad_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../extension/ext_context.dart';
@@ -39,7 +41,7 @@ class _Onboarding3ScreenState extends State<Onboarding3Screen> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => OnboardingProvider()
-        ..preloadOnboarding4Native()
+        ..preloadOnboarding4Native1()
         ..preloadInter3(),
       child: Consumer<OnboardingProvider>(
         builder: (context, provider, _) {
@@ -59,7 +61,7 @@ class _Onboarding3ScreenState extends State<Onboarding3Screen> {
                 name: 'onboarding_back',
                 parameters: const {'step': 3},
               );
-              NavigationHelper().handleBackPress(context);
+              context.pop();
             },
             adSlot: AdSlot(ad: widget.inlineAd, safeAreaBottom: false),
             child: _ReadyToStartContent(),
@@ -85,7 +87,16 @@ class _ReadyToStartContent extends StatelessWidget {
               borderRadius: BorderRadius.circular(AppSize.r24),
             ),
             child: Assets.onboardingIcons.icVerification.svg(),
-          ),
+          )
+              .animate()
+              .fadeIn(delay: 200.ms, duration: 500.ms)
+              .scale(
+                begin: const Offset(0.8, 0.8),
+                end: const Offset(1, 1),
+                delay: 200.ms,
+                duration: 600.ms,
+                curve: Curves.easeOutCubic,
+              ),
           SizedBox(height: AppSize.h32),
           Text(
             context.l10n.onboarding3Title,
@@ -93,7 +104,10 @@ class _ReadyToStartContent extends StatelessWidget {
               fontSize: AppSize.sp30,
             ),
             textAlign: TextAlign.center,
-          ),
+          )
+              .animate()
+              .fadeIn(delay: 400.ms, duration: 500.ms)
+              .slideY(begin: 0.3, end: 0, delay: 400.ms, duration: 500.ms, curve: Curves.easeOut),
           SizedBox(height: AppSize.h12),
           Text(
             context.l10n.onboarding3Subtitle,
@@ -102,7 +116,10 @@ class _ReadyToStartContent extends StatelessWidget {
               color: context.themeTextColors.descriptionColor,
             ),
             textAlign: TextAlign.center,
-          ),
+          )
+              .animate()
+              .fadeIn(delay: 600.ms, duration: 500.ms)
+              .slideY(begin: 0.3, end: 0, delay: 600.ms, duration: 500.ms, curve: Curves.easeOut),
           SizedBox(height: AppSize.h40),
           Container(
             margin: EdgeInsets.symmetric(horizontal: AppSize.w70),
@@ -127,7 +144,16 @@ class _ReadyToStartContent extends StatelessWidget {
                 ),
               ],
             ),
-          ),
+          )
+              .animate()
+              .fadeIn(delay: 800.ms, duration: 500.ms)
+              .scale(
+                begin: const Offset(0.9, 0.9),
+                end: const Offset(1, 1),
+                delay: 800.ms,
+                duration: 500.ms,
+                curve: Curves.easeOut,
+              ),
           SizedBox(height: AppSize.h24),
         ],
       ),
