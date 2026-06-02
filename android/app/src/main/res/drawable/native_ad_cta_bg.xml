@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- CTA button — mirrors the app's default AppButton (lib/widgets/app_button.dart):
+     solid primary fill, pill radius (r34), white SemiBold text. No elevation
+     (keeps the AdChoices icon visible). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/native_ad_primary" />
+    <corners android:radius="34dp" />
+</shape>

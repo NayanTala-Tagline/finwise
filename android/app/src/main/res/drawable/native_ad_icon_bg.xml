@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Rounded container behind the app icon, matching the app's rounded cards. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/native_ad_surface_blend" />
+    <corners android:radius="10dp" />
+</shape>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Native ad palette — mirrors lib/res/theme_light.dart (ThemeColors / ThemeTextColors)
+         so the native-rendered ad matches the Flutter app theme. -->
+
+    <!-- Surfaces -->
+    <color name="native_ad_surface">#FFFFFFFF</color>        <!-- whiteColor -->
+    <color name="native_ad_surface_blend">#FFF8F9FA</color>  <!-- backgroundColor -->
+    <color name="native_ad_stroke">#1FED5237</color>        <!-- borderColor @ 12% -->
+
+    <!-- Brand -->
+    <color name="native_ad_primary">#FF2563EB</color>       <!-- primary -->
+    <color name="native_ad_button">#FFED5237</color>        <!-- buttonColor -->
+    <color name="native_ad_button_2">#FFF6AC88</color>      <!-- buttonColor2 -->
+    <color name="native_ad_badge_bg">#FFFBD7B7</color>      <!-- secondary2 -->
+    <color name="native_ad_badge_text">#FFED5237</color>    <!-- borderColor -->
+
+    <!-- Text -->
+    <color name="native_ad_text">#FF0F172A</color>          <!-- textColor -->
+    <color name="native_ad_body">#FF64748B</color>          <!-- descriptionColor -->
+    <color name="native_ad_hint">#FF757575</color>          <!-- hintTextColor -->
+    <color name="native_ad_cta_text">#FFFFFFFF</color>      <!-- iconColor / on-button -->
+</resources>

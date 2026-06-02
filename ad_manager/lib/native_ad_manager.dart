@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 
 import 'package:ad_manager/enum/ad_type.dart';
 import 'package:ad_manager/models/ad_data.dart';
@@ -56,11 +57,20 @@ class NativeAdManager {
       _ad = null;
     }
 
+    // factoryId must match an id registered natively. On Android we register
+    // "small"/"medium" factories (see MainActivity) and render our own themed
+    // XML layout, so pass nativeTemplateStyle: null to route to the factory.
+    // On iOS no factory is registered, so we fall back to the SDK's built-in
+    // template renderer.
+    final templateName = factoryId ?? adData.templateType.name; // "small" | "medium"
+
     _ad = NativeAd(
       adUnitId: adData.adId,
-      factoryId: factoryId ?? "default_native_factory",
+      factoryId: templateName,
       request: const AdRequest(),
-      nativeTemplateStyle: NativeTemplateStyle(templateType: adData.templateType),
+      nativeTemplateStyle: Platform.isAndroid
+          ? null
+          : NativeTemplateStyle(templateType: adData.templateType),
       listener: NativeAdListener(
         onAdLoaded: (ad) {
           adStatus = AdStatus.loaded;
