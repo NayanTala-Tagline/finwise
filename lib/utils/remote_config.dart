@@ -66,12 +66,14 @@ class RemoteConfigService {
         return AdData.fromJson(_emptyAd());
       }
 
+      final String adType = raw['ad_type'] ?? 'native';
+
       final Map<String, dynamic> data = {
         'ad_id': raw['ad_id'] ?? '',
         'enabled': raw['enabled'] ?? false,
 
         // ✅ NEW FIELD
-        'ad_type': raw['ad_type'] ?? 'native',
+        'ad_type': adType,
 
         // ✅ TEMPLATE TYPE
         'template_type': raw['template_type'] ?? 'small',
@@ -84,6 +86,9 @@ class RemoteConfigService {
         // ✅ CUSTOM ADS
         'custom_ad_view_url': raw['custom_ad_view_url'] ?? '',
         'custom_ad_url': raw['custom_ad_url'] ?? '',
+
+        // ✅ ADX FALLBACK (per ad_type)
+        'fallback_ad_id': _fallbackAdIdFor(adType),
       };
 
       return AdData.fromJson(data);
@@ -102,7 +107,40 @@ class RemoteConfigService {
     'height': 0.0,
     'custom_ad_view_url': '',
     'custom_ad_url': '',
+    'fallback_ad_id': '',
   };
+
+  // ---------------------------------------------------------------------------
+  // ADX FALLBACK IDS
+  // ---------------------------------------------------------------------------
+
+  String get adxNativeId => _get('adx_native_id', '') ?? '';
+
+  String get adxAppOpenId => _get('adx_app_open_id', '') ?? '';
+
+  String get adxInterstitialId => _get('adx_interstitial_id', '') ?? '';
+
+  String get adxRewardedId => _get('adx_rewarded_id', '') ?? '';
+
+  String get adxBannerId => _get('adx_banner_id', '') ?? '';
+
+  /// Maps a slot `ad_type` string to its ADX fallback id ('' = none).
+  String _fallbackAdIdFor(String adType) {
+    switch (adType) {
+      case 'banner':
+        return adxBannerId;
+      case 'interstatial': // matches AdType enum's exact (mis)spelling
+        return adxInterstitialId;
+      case 'openApp':
+        return adxAppOpenId;
+      case 'rewarded':
+        return adxRewardedId;
+      case 'native':
+      case 'custom':
+      default:
+        return adxNativeId;
+    }
+  }
 
 
   dynamic _get(String key, [dynamic defaultValue]) {

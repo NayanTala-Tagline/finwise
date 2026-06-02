@@ -14,17 +14,27 @@ class BannerAdManager {
   final AdData adData;
   final AdSize size;
   final BannerAdListener? listener;
-  late final BannerAd _ad;
+  BannerAd? _ad;
   bool get isLoaded => adStatus == AdStatus.loaded;
   bool get isLoading => adStatus == AdStatus.loading;
   bool get isFailed => adStatus == AdStatus.failed;
   AdStatus adStatus = AdStatus.idle;
   Completer<AdStatus> _completer = Completer<AdStatus>();
 
+  /// Primary ad id captured at construction so a manual reload can return to it.
+  late final String _primaryAdId = adData.adId;
+
+  /// Set once we have swapped to the fallback; guards against loops.
+  bool _usedFallback = false;
+
   double get _adHeight => adData.height > 0 ? adData.height : size.height.toDouble();
 
-  BannerAdManager({required this.adData, required this.size, this.listener}) {
-    _ad = BannerAd(
+  BannerAdManager({required this.adData, required this.size, this.listener});
+
+  /// Builds a BannerAd against the *current* adData.adId. A BannerAd's ad unit
+  /// id is fixed at construction, so the fallback path rebuilds via this.
+  BannerAd _buildAd() {
+    return BannerAd(
       adUnitId: adData.adId,
       size: size,
       request: const AdRequest(),
@@ -40,12 +50,7 @@ class BannerAdManager {
         },
         onAdFailedToLoad: (ad, error) {
           listener?.onAdFailedToLoad?.call(ad, error);
-          try {
-            adStatus = AdStatus.failed;
-            if (!_completer.isCompleted) _completer.complete(AdStatus.failed);
-          } catch (e) {
-            debugPrint(e.toString());
-          }
+          _failOrFallback();
         },
         onPaidEvent: (ad, valueMicros, precision, currencyCode) {
           listener?.onPaidEvent?.call(ad, valueMicros, precision, currencyCode);
@@ -74,6 +79,26 @@ class BannerAdManager {
         onAdWillDismissScreen: listener?.onAdWillDismissScreen?.call,
       ),
     );
+  }
+
+  /// On a load failure, rebuild once against the ADX fallback id if configured.
+  /// Reuses the same completer so callers see a single final result. If there
+  /// is no usable fallback, completes as failed.
+  void _failOrFallback() {
+    if (!_usedFallback &&
+        adData.fallbackAdId.isNotEmpty &&
+        adData.fallbackAdId != adData.adId) {
+      _usedFallback = true;
+      adData.adId = adData.fallbackAdId; // swap to ADX id
+      adStatus = AdStatus.loading;
+      _ad?.dispose();
+      _ad = _buildAd();
+      _ad!.load();
+      return;
+    }
+
+    adStatus = AdStatus.failed;
+    if (!_completer.isCompleted) _completer.complete(AdStatus.failed);
   }
 
   Widget _buildShimmer() {
@@ -109,11 +134,11 @@ class BannerAdManager {
         ),
       );
     }
-    if (isFailed) return const SizedBox.shrink();
+    if (isFailed || _ad == null) return const SizedBox.shrink();
 
     return SizedBox(
       height: _adHeight,
-      child: isLoaded ? AdWidget(ad: _ad) : _buildShimmer(),
+      child: isLoaded ? AdWidget(ad: _ad!) : _buildShimmer(),
     );
   }
 
@@ -129,7 +154,9 @@ class BannerAdManager {
 
     if (!isLoaded && !isLoading && !adData.enabled) return;
     adStatus = AdStatus.loading;
-    await _ad.load();
+    await _ad?.dispose();
+    _ad = _buildAd();
+    await _ad!.load();
   }
 
   Future<void> reload() async {
@@ -139,12 +166,16 @@ class BannerAdManager {
     if (!isLoaded && !isLoading && !adData.enabled) return;
     adStatus = AdStatus.loading;
     _completer = Completer<AdStatus>();
-    await _ad.load();
+    _usedFallback = false;
+    adData.adId = _primaryAdId;
+    await _ad?.dispose();
+    _ad = _buildAd();
+    await _ad!.load();
   }
 
   Future<AdStatus> future() => _completer.future;
 
-  BannerAd get ad => _ad;
+  BannerAd? get ad => _ad;
 
-  Future<void> dispose() => _ad.dispose();
+  Future<void> dispose() async => _ad?.dispose();
 }

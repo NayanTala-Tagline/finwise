@@ -27,6 +27,12 @@ class NativeAdManager {
 
   Completer<AdStatus> _completer = Completer<AdStatus>();
 
+  /// Primary ad id captured at construction so a manual reload can return to it.
+  late final String _primaryAdId = adData.adId;
+
+  /// Set once we have swapped to the fallback; guards against loops.
+  bool _usedFallback = false;
+
   /// Optional external callbacks
   final NativeAdListener? listener;
 
@@ -50,6 +56,12 @@ class NativeAdManager {
 
     if (isLoaded || isLoading) return;
 
+    await _startLoad();
+  }
+
+  /// Builds and loads against the current adData.adId. Reused by the fallback
+  /// path, so it does NOT reset the completer or re-check the load guards.
+  Future<void> _startLoad() async {
     adStatus = AdStatus.loading;
 
     if (_ad != null) {
@@ -82,15 +94,11 @@ class NativeAdManager {
           }
         },
         onAdFailedToLoad: (ad, error) {
-          adStatus = AdStatus.failed;
-
           listener?.onAdFailedToLoad?.call(ad, error);
 
           AnalyticsManager.instance.logEvent(name: 'native_fail_to_load', parameters: {"message": error.message});
 
-          if (!_completer.isCompleted) {
-            _completer.complete(AdStatus.failed);
-          }
+          _failOrFallback();
         },
         onAdOpened: (ad) {
           listener?.onAdOpened?.call(ad);
@@ -124,10 +132,26 @@ class NativeAdManager {
     try {
       await _ad!.load();
     } catch (e) {
-      adStatus = AdStatus.failed;
-      if (!_completer.isCompleted) _completer.complete(AdStatus.failed);
       debugPrint("NativeAd load error: $e");
+      _failOrFallback();
     }
+  }
+
+  /// On a load failure, retry once against the ADX fallback id if configured.
+  /// Reuses the same completer so callers see a single final result. If there
+  /// is no usable fallback, completes as failed.
+  void _failOrFallback() {
+    if (!_usedFallback &&
+        adData.fallbackAdId.isNotEmpty &&
+        adData.fallbackAdId != adData.adId) {
+      _usedFallback = true;
+      adData.adId = adData.fallbackAdId; // swap to ADX id
+      _startLoad(); // rebuild + load, SAME completer
+      return;
+    }
+
+    adStatus = AdStatus.failed;
+    if (!_completer.isCompleted) _completer.complete(AdStatus.failed);
   }
 
   // -----------------------------
@@ -143,6 +167,8 @@ class NativeAdManager {
     _ad = null;
     _completer = Completer<AdStatus>();
     adStatus = AdStatus.idle;
+    _usedFallback = false;
+    adData.adId = _primaryAdId;
 
     await load();
   }
@@ -151,6 +177,17 @@ class NativeAdManager {
   // FUTURE (resolves on load or fail)
   // -----------------------------
   Future<AdStatus> future() => _completer.future;
+
+  /// Height for the rendered native view. When Remote Config supplies a height
+  /// we honour it; otherwise we fall back per template. This matters on Android:
+  /// the custom NativeAdFactory inflates a `wrap_content` layout whose intrinsic
+  /// size does not always propagate to the Flutter platform view, so a null
+  /// height collapses the ad to 0 (loads fine, but invisible).
+  double get _effectiveHeight {
+    if (adData.height > 0) return adData.height;
+    final templateName = factoryId ?? adData.templateType.name;
+    return templateName == TemplateType.medium.name ? 340 : 110;
+  }
 
   // -----------------------------
   // AD WIDGET
@@ -190,7 +227,7 @@ class NativeAdManager {
     }
 
     return SizedBox(
-      height: adData.height > 0 ? adData.height : null,
+      height: _effectiveHeight,
       child: AdWidget(ad: _ad!),
     );
   }

@@ -44,7 +44,8 @@ class _AdSlotState extends State<AdSlot> {
 
     if (ad.isFailed) return const SizedBox.shrink();
 
-    final placeholderHeight = widget.ad?.adData.height ?? AppSize.h120;
+    final configuredHeight = widget.ad?.adData.height ?? 0;
+    final placeholderHeight = configuredHeight > 0 ? configuredHeight : AppSize.h120;
 
     if (!ad.isLoaded) {
       return _ShimmerPlaceholder(

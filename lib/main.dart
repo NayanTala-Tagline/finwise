@@ -44,6 +44,13 @@ void main() async {
   await GoogleSignIn.instance.initialize();
   await RemoteConfigService.instance.init();
   await MobileAds.instance.initialize();
+  await MobileAds.instance.updateRequestConfiguration(
+    RequestConfiguration(
+      testDeviceIds: [
+        'ABCDEF1234567890',
+      ],
+    ),
+  );
   unawaited(InstallReferrerService.instance.resolveOnce());
 
   // 🔒 Lock orientation (portrait only)

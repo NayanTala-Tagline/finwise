@@ -28,6 +28,12 @@ class RewardedAdManager {
 
   Completer<AdStatus> _completer = Completer<AdStatus>();
 
+  /// Primary ad id captured at construction so a manual reload can return to it.
+  late final String _primaryAdId = adData.adId;
+
+  /// Set once we have swapped to the fallback; guards against loops.
+  bool _usedFallback = false;
+
   RewardedAdManager({required this.adData, this.listener, this.fullScreenContentCallback});
 
   Future<void> load() async {
@@ -45,6 +51,12 @@ class RewardedAdManager {
 
     if (isLoaded || isLoading) return;
 
+    await _startLoad();
+  }
+
+  /// Builds and loads against the current adData.adId. Reused by the fallback
+  /// path, so it does NOT reset the completer or re-check the load guards.
+  Future<void> _startLoad() async {
     adStatus = AdStatus.loading;
 
     if (_ad != null) {
@@ -81,23 +93,32 @@ class RewardedAdManager {
             }
           },
           onAdFailedToLoad: (LoadAdError error) {
-            adStatus = AdStatus.failed;
             listener?.onAdFailedToLoad.call(error);
-
-            if (!_completer.isCompleted) {
-              _completer.complete(AdStatus.failed);
-            }
+            _failOrFallback();
           },
         ),
       );
     } catch (e) {
       debugPrint("RewardedAd load error: $e");
-      adStatus = AdStatus.failed;
-
-      if (!_completer.isCompleted) {
-        _completer.complete(AdStatus.failed);
-      }
+      _failOrFallback();
     }
+  }
+
+  /// On a load failure, retry once against the ADX fallback id if configured.
+  /// Reuses the same completer so callers see a single final result. If there
+  /// is no usable fallback, completes as failed.
+  void _failOrFallback() {
+    if (!_usedFallback &&
+        adData.fallbackAdId.isNotEmpty &&
+        adData.fallbackAdId != adData.adId) {
+      _usedFallback = true;
+      adData.adId = adData.fallbackAdId; // swap to ADX id
+      _startLoad(); // rebuild + load, SAME completer
+      return;
+    }
+
+    adStatus = AdStatus.failed;
+    if (!_completer.isCompleted) _completer.complete(AdStatus.failed);
   }
 
   Future<void> reload() async {
@@ -110,6 +131,8 @@ class RewardedAdManager {
     _ad = null;
     _completer = Completer<AdStatus>();
     adStatus = AdStatus.idle;
+    _usedFallback = false;
+    adData.adId = _primaryAdId;
     await load();
   }
 

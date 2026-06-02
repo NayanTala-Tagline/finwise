@@ -10,6 +10,7 @@ class AdData {
     this.height = 0,
     this.customAdViewUrl = '',
     this.customAdUrl = '',
+    this.fallbackAdId = '',
   });
 
   String adId;
@@ -20,6 +21,10 @@ class AdData {
   String customAdViewUrl;
   String customAdUrl;
 
+  /// ADX (Google Ad Manager) ad unit id used as a fallback when the primary
+  /// [adId] fails to load. Empty means "no fallback — do not retry".
+  String fallbackAdId;
+
   factory AdData.fromJson(Map<String, dynamic> data) => AdData(
     adId: data['ad_id'] ?? '',
     enabled: data['enabled'] ?? false,
@@ -28,6 +33,7 @@ class AdData {
     height: (data['height'] ?? 0).toDouble(),
     customAdViewUrl: data['custom_ad_view_url'] ?? '',
     customAdUrl: data['custom_ad_url'] ?? '',
+    fallbackAdId: data['fallback_ad_id'] ?? '',
   );
 
   Map<String, dynamic> toJson() {
@@ -39,6 +45,7 @@ class AdData {
       'height': height,
       'custom_ad_view_url': customAdViewUrl,
       'custom_ad_url': customAdUrl,
+      'fallback_ad_id': fallbackAdId,
     };
   }
 
